@@ -215,6 +215,13 @@ export default {
         }).catch(res => {
           failure('error')
         })
+      },
+      resVideo:'',    //上传视频的url
+      uploaded:false,//有没有上传完成
+      file_picker_types: 'media', 
+      file_picker_callback: (callback, value, meta) => {
+        console.log(callback, value, meta)
+        // this.open(callback, value, meta)
       }
     };
     tinymce.init; // 初始化

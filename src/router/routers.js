@@ -70,12 +70,21 @@ export const routes = [{
         path: "/chapter",
         component: Layout,
         meta: { title: "章节练习", icon: "tree", noCache: true },
-        children: [{
+        children: [
+            {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/chapter/index"),
                 name: "chapter",
                 meta: { title: "章节练习", icon: "tree" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/chapter/answer"),
+                name: "answer",
+                meta: { title: "回答单选", icon: "tree" },
             },
         ],
     },

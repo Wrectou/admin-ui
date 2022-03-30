@@ -1,15 +1,9 @@
 <template>
   <div class="container answer">
-    
-    <!-- 模式切换组件 -->
-    <QuestionModel 
-      :answerQuestion="answerQuestion" 
-      @changeQuestionModel="changeQuestionModel" 
-    />
 
     <div class="toolbar">
       <div class="type-box">
-        <div class="type">单项选择题</div>
+        <div class="type">判断题</div>
         <div class="chapter">当前章节：社会主义法制理念</div>
       </div>
       <div class="number" @click="isShowAnswerSheet=true">
@@ -28,66 +22,45 @@
         <div class="collect check"><el-icon :size="24"><star-filled /></el-icon></div>
       </p>
       
-      <div class="answer-box" @click="isAnswer=true">
-
-        <!-- 选项组 -->
-        <el-radio-group v-model="answerObj.answer">
-
-          <!-- <el-radio v-for="item in questionObj.answerList" :key="item.value" :value="item.label" :label="item.value" size="large">{{item.label}}</el-radio> -->
-
-          <!-- 未选中项目 -->
-          <label class="el-radio">
-            <span class="el-radio__input">
-              <span class="el-radio__inner">A</span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-          <!-- 多选正确项但是没选 -->
-          <label class="el-radio">
-            <span class="el-radio__input is-checked primary">
-              <span class="el-radio__inner">B</span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-          <!-- 正确 -->
-          <label class="el-radio">
-            <span class="el-radio__input is-checked">
-              <span class="el-radio__inner">
-                <el-icon><check /></el-icon>
-              </span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-          <!-- 错误 -->
-          <label class="el-radio">
-            <span class="el-radio__input is-checked danger">
-              <span class="el-radio__inner">
-                <el-icon><close /></el-icon>
-              </span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-        </el-radio-group>
+      <div class="answer-box">
 
 
-        <div class="determine-answer">
-          <el-button type="primary">确认答案</el-button>
-        </div>
+        <el-collapse>
+          <el-collapse-item name="1">
+            <template #title>
+              <el-button type="primary" round>查看解析</el-button>
+            </template>
+            <div class="content">
+              <div class="tit">答案解析</div>
+              根据《最高人民法院、最高人民检察院、公安部、司法部关于依法惩治妨害新型冠状病毒感染肺炎疫情防控违法犯罪的意见》(法发〔2020]7号)规定,吴某已经确诊新冠肺炎。隔离期未满擅自脱离隔离治疗，并进入公共交通工具,危害公共安全的，未造成他人感染新冠肺炎。依照刑法第一百一十四条的规定,以以危险方法危害公共安全罪定罪处罚。根据《最高人民法院、最高人民检察院、公安部、司法部关于依法惩治妨害新型冠状病毒感染肺炎疫情防控违法犯罪的意见》（法发[2020]7号)规定，梁某拒绝执行卫生防疫机构依照传染病防治法提出的防控措施,引起新型冠状病毒传播，依照刑法第三百三十条的规定，以妨害传染病防治罪定罪处罚。根据《最高人民法院、最高人民检察院、公安部、司法部关于依法惩治妨害新型冠状病毒感染肺炎疫情防控违法犯罪的意见》(法发〔2020]7号)规定,何某以暴力、威胁方法阻碍受国家机关委托代表国家机关行使疫情防控职权的组织中从事公务的人员依法履行为防控疫情而采取的防疫、检疫、强制隔离、隔离治疗等措施的，依照刑法第二百七十七条第一款、第三款的规定，以妨害公务罪定罪处罚。
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+
+        
+
+        <el-form
+          :inline="true"
+          ref="ruleFormRef"
+          :model="ruleForm"
+          :rules="rules"
+          label-width="80px"
+          class="form"
+        >
+          <el-form-item label="自评分数" prop="fraction">
+            <el-input v-model="ruleForm.fraction" type="number" placeholder="请输入0~20之间的自评分数" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+          </el-form-item>
+        </el-form>
+
 
 
         <div class="change-question">
           <el-button type="text">上一题</el-button>
           <el-button type="text">下一题</el-button>
         </div>
-
 
       </div>
 
@@ -148,28 +121,43 @@
   </div>
 </template>
 
-<script setup name="answer">
+<script setup name="discuss">
 
 import { getHomeData, getEnum } from '@/api'
-import QuestionModel from '@/components/questionModel/index'
 
 const { proxy } = getCurrentInstance()
 
-let answerQuestion = ref(false)
-const changeQuestionModel = value => answerQuestion.value = value
+const ruleFormRef = ref()
+const rules = reactive({
+  fraction: [
+    { required: true, message: '请输入0~20之间的自评分数', trigger: 'blur' },
+    { min: 0, max: 20, message: '请输入0~20之间的自评分数', trigger: 'blur' },
+  ],
+})
+const ruleForm = reactive({
+  fraction: '',
+})
+const submitForm = (formEl) => {
+  if (!formEl) return
+  formEl.validate((valid, fields) => {
+    if (valid) {
+      console.log('submit!')
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
 
 const answerObj = reactive({
   answer: ''
 })
 
 const questionObj = reactive({
-  fraction: 1,
-  question: '（）是社会主义法制核心内容。',
+  fraction: 20,
+  question: '请论述辩护律师在公安机关侦查阶段享有的诉讼权利。',
   answerList: [
-    {value: 1, label: '依法治国'},
-    {value: 2, label: '执法为民'},
-    {value: 3, label: '党的领导'},
-    {value: 4, label: '公平正义'},
+    {value: 1, label: '正确'},
+    {value: 2, label: '错误'},
   ]
 })
 
@@ -231,59 +219,30 @@ let isShowAnswerSheet = ref(false)
 }
 
 .answer-box{
-
+  .form{
+    margin: 20px 0;
+  }
 }
 
-::v-deep(.el-radio-group){
-  display: flex;
-  margin: 20px 0 0;
-  .el-radio{
-    flex: 0 0 100vw;
-    margin: 6px 0;
-    .el-radio__label{
-      font-size: 18px;
-      font-weight: 400;
+::v-deep(.el-collapse){
+  border: none;
+  .el-collapse-item__header{
+    border: none;
+    background: #f9f9f9;
+  }
+  .el-collapse-item__wrap{
+    border: none;
+    background: #f9f9f9;
+  }
+  .content{
+    font-size: 15px;
+    color: #666;
+    .tit{
+      margin: 10px 0;
     }
-    .el-radio__inner{
-      width: 24px;
-      height: 24px;
-      color: #999;
-      text-align: center;
-      line-height: 22px;
-      font-weight: 400;
+    .tit:before{
+      top: 7px;
     }
-    .el-radio__input{
-      margin: 2px 0 0 0;
-    }
-  }
-  .el-radio__input.is-checked .el-radio__inner {
-    border-color: #67c23a;
-    background: #67c23a;
-  }
-  .el-radio__input.is-checked+.el-radio__label{
-    color: #67c23a;
-  }
-  .el-radio__input.primary .el-radio__inner {
-    border-color: #409eff;
-    background: #409eff;
-    color: #fff;
-  }
-  .el-radio__input.primary+.el-radio__label{
-    color: #409eff;
-  }
-  .el-radio__input.danger .el-radio__inner {
-    border-color: #f56c6c;
-    background: #f56c6c;
-  }
-  .el-radio__input.danger+.el-radio__label{
-    color: #f56c6c;
-  }
-  .el-radio__input.is-checked .el-radio__inner::after{
-    transform: scale(0);
-  }
-  .el-icon{
-    margin: 4px 0 0;
-    color: #fff;
   }
 }
 

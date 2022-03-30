@@ -1,15 +1,9 @@
 <template>
   <div class="container answer">
-    
-    <!-- 模式切换组件 -->
-    <QuestionModel 
-      :answerQuestion="answerQuestion" 
-      @changeQuestionModel="changeQuestionModel" 
-    />
 
     <div class="toolbar">
       <div class="type-box">
-        <div class="type">单项选择题</div>
+        <div class="type">判断题</div>
         <div class="chapter">当前章节：社会主义法制理念</div>
       </div>
       <div class="number" @click="isShowAnswerSheet=true">
@@ -41,7 +35,7 @@
               <span class="el-radio__inner">A</span>
               <input class="el-radio__original" type="radio">
             </span>
-            <span class="el-radio__label">依法治国</span>
+            <span class="el-radio__label">正确</span>
           </label>
 
           <!-- 多选正确项但是没选 -->
@@ -50,44 +44,16 @@
               <span class="el-radio__inner">B</span>
               <input class="el-radio__original" type="radio">
             </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-          <!-- 正确 -->
-          <label class="el-radio">
-            <span class="el-radio__input is-checked">
-              <span class="el-radio__inner">
-                <el-icon><check /></el-icon>
-              </span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-          <!-- 错误 -->
-          <label class="el-radio">
-            <span class="el-radio__input is-checked danger">
-              <span class="el-radio__inner">
-                <el-icon><close /></el-icon>
-              </span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
+            <span class="el-radio__label">错误</span>
           </label>
 
         </el-radio-group>
-
-
-        <div class="determine-answer">
-          <el-button type="primary">确认答案</el-button>
-        </div>
 
 
         <div class="change-question">
           <el-button type="text">上一题</el-button>
           <el-button type="text">下一题</el-button>
         </div>
-
 
       </div>
 
@@ -148,15 +114,11 @@
   </div>
 </template>
 
-<script setup name="answer">
+<script setup name="judge">
 
 import { getHomeData, getEnum } from '@/api'
-import QuestionModel from '@/components/questionModel/index'
 
 const { proxy } = getCurrentInstance()
-
-let answerQuestion = ref(false)
-const changeQuestionModel = value => answerQuestion.value = value
 
 const answerObj = reactive({
   answer: ''
@@ -164,12 +126,10 @@ const answerObj = reactive({
 
 const questionObj = reactive({
   fraction: 1,
-  question: '（）是社会主义法制核心内容。',
+  question: '法治的含义就是依照法律的规定治理国家，而不是人的意志',
   answerList: [
-    {value: 1, label: '依法治国'},
-    {value: 2, label: '执法为民'},
-    {value: 3, label: '党的领导'},
-    {value: 4, label: '公平正义'},
+    {value: 1, label: '正确'},
+    {value: 2, label: '错误'},
   ]
 })
 

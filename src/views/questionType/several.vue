@@ -1,15 +1,9 @@
 <template>
   <div class="container answer">
-    
-    <!-- 模式切换组件 -->
-    <QuestionModel 
-      :answerQuestion="answerQuestion" 
-      @changeQuestionModel="changeQuestionModel" 
-    />
 
     <div class="toolbar">
       <div class="type-box">
-        <div class="type">单项选择题</div>
+        <div class="type">多项选择题</div>
         <div class="chapter">当前章节：社会主义法制理念</div>
       </div>
       <div class="number" @click="isShowAnswerSheet=true">
@@ -148,15 +142,11 @@
   </div>
 </template>
 
-<script setup name="answer">
+<script setup name="several">
 
 import { getHomeData, getEnum } from '@/api'
-import QuestionModel from '@/components/questionModel/index'
 
 const { proxy } = getCurrentInstance()
-
-let answerQuestion = ref(false)
-const changeQuestionModel = value => answerQuestion.value = value
 
 const answerObj = reactive({
   answer: ''

@@ -1,6 +1,6 @@
 <template>
   <div class="container answer">
-    
+
     <!-- 模式切换组件 -->
     <QuestionModel 
       :answerQuestion="answerQuestion" 
@@ -10,7 +10,6 @@
     <div class="toolbar">
       <div class="type-box">
         <div class="type">单项选择题</div>
-        <div class="chapter">当前章节：社会主义法制理念</div>
       </div>
       <div class="number" @click="isShowAnswerSheet=true">
         <div><span>1</span>/50</div>
@@ -46,11 +45,11 @@
 
           <!-- 多选正确项但是没选 -->
           <label class="el-radio">
-            <span class="el-radio__input is-checked primary">
+            <span class="el-radio__input">
               <span class="el-radio__inner">B</span>
               <input class="el-radio__original" type="radio">
             </span>
-            <span class="el-radio__label">依法治国</span>
+            <span class="el-radio__label">执法为民</span>
           </label>
 
           <!-- 正确 -->
@@ -61,7 +60,7 @@
               </span>
               <input class="el-radio__original" type="radio">
             </span>
-            <span class="el-radio__label">依法治国</span>
+            <span class="el-radio__label">党的领导</span>
           </label>
 
           <!-- 错误 -->
@@ -72,15 +71,10 @@
               </span>
               <input class="el-radio__original" type="radio">
             </span>
-            <span class="el-radio__label">依法治国</span>
+            <span class="el-radio__label">公平正义</span>
           </label>
 
         </el-radio-group>
-
-
-        <div class="determine-answer">
-          <el-button type="primary">确认答案</el-button>
-        </div>
 
 
         <div class="change-question">
@@ -148,14 +142,15 @@
   </div>
 </template>
 
-<script setup name="answer">
+<script setup name="single">
 
 import { getHomeData, getEnum } from '@/api'
 import QuestionModel from '@/components/questionModel/index'
 
 const { proxy } = getCurrentInstance()
 
-let answerQuestion = ref(false)
+// 模式切换数据/方法
+let answerQuestion = ref(true)
 const changeQuestionModel = value => answerQuestion.value = value
 
 const answerObj = reactive({

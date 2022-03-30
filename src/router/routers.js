@@ -89,6 +89,48 @@ export const routes = [{
         ],
     },
     {
+        path: "/questionType",
+        component: Layout,
+        meta: { title: "题型练习", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/questionType/index"),
+                name: "questionType",
+                meta: { title: "题型练习", icon: "tree" },
+            },
+            {
+                path: "single",
+                noCache: true,
+                component: () => import ("@/views/questionType/single"),
+                name: "single",
+                meta: { title: "单项选择题型", icon: "tree" },
+            },
+            {
+                path: "several",
+                noCache: true,
+                component: () => import ("@/views/questionType/several"),
+                name: "several",
+                meta: { title: "多项选择题型", icon: "tree" },
+            },
+            {
+                path: "judge",
+                noCache: true,
+                component: () => import ("@/views/questionType/judge"),
+                name: "judge",
+                meta: { title: "判断题型", icon: "tree" },
+            },
+            {
+                path: "discuss",
+                noCache: true,
+                component: () => import ("@/views/questionType/discuss"),
+                name: "discuss",
+                meta: { title: "论述题型", icon: "tree" },
+            },
+        ],
+    },
+    {
         path: "/product",
         component: Layout,
         meta: { title: "产品管理", icon: "tree", noCache: true },

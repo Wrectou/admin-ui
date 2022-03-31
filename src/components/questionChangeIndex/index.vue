@@ -1,15 +1,19 @@
 <template>
   <!-- 题目切换组件 -->
   <div class="change-question">
-    <el-button type="text" @click="reduceIndex">上一题</el-button>
-    <el-button type="text" @click="plusIndex">下一题</el-button>
+    <el-button type="text" @click="reduceIndex" :disabled="questionIndex === 0">上一题</el-button>
+    <el-button type="text" @click="plusIndex" :disabled="questionIndex+1 >= questionArrLength">下一题</el-button>
   </div>
 </template>
 
-<script setup>
+<script setup name="QuestionChangeIndex">
 
   const props = defineProps({
     questionIndex: {
+      type: Number,
+      default: 0
+    },
+    questionArrLength: {
       type: Number,
       default: 0
     }

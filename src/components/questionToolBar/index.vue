@@ -6,13 +6,13 @@
       <div class="chapter" v-if="props.toolbarObj.chapter">当前章节：{{props.toolbarObj.chapter}}</div>
     </div>
     <div class="number" @click="changeSheet">
-      <div><span>{{props.toolbarObj.number.min}}</span>/{{props.toolbarObj.number.max}}</div>
+      <div><span>{{props.toolbarObj.number.min+1}}</span>/{{props.toolbarObj.number.max}}</div>
       <el-button type="text">答题卡</el-button>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup name="QuestionToolBar">
 
   const props = defineProps({
     toolbarObj: {
@@ -31,7 +31,7 @@
 
   const emit = defineEmits(['changeAnswerSheet'])
 
-  const changeSheet = () => emit('changeAnswerSheet', !props.isShowAnswerSheet)
+  const changeSheet = () => emit('changeAnswerSheet')
 
 </script>
 

@@ -2,13 +2,13 @@
   <!-- 模式切换组件 -->
   <div class="question-model">
     <el-button-group @click="changeModel">
-      <el-button :type="props.answerQuestion ? 'primary' : ''">答题模式</el-button>
-      <el-button :type="!props.answerQuestion ? 'primary' : ''">背题模式</el-button>
+      <el-button :type="answerQuestion ? 'primary' : ''">答题模式</el-button>
+      <el-button :type="!answerQuestion ? 'primary' : ''">背题模式</el-button>
     </el-button-group>
   </div>
 </template>
 
-<script setup>
+<script setup name="questionModel">
 
   const props = defineProps({
     answerQuestion: {
@@ -19,7 +19,7 @@
 
   const emit = defineEmits(['changeQuestionModel'])
 
-  const changeModel = () => emit('changeQuestionModel', !props.answerQuestion)
+  const changeModel = () => emit('changeQuestionModel')
 
 </script>
 

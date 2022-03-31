@@ -9,7 +9,7 @@
   </p>
 </template>
 
-<script setup>
+<script setup name="QuestionTitle">
 
   const props = defineProps({
     questionTitleObj: {
@@ -24,7 +24,7 @@
 
   const emit = defineEmits(['changeCollectTitle'])
 
-  const changeCollect = () => emit('changeCollectTitle', !props.questionTitleObj.isCollect)
+  const changeCollect = () => emit('changeCollectTitle')
 
 </script>
 

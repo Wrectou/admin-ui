@@ -387,4 +387,30 @@ export function camelCase(str) {
 export function isNumberStr(str) {
   return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
 }
+
+// 下标转字母
+export const IndexTolLetter = {
+  1: 'A',
+  2: 'B',
+  3: 'C',
+  4: 'D',
+  5: 'E',
+  6: 'F',
+  7: 'G',
+  8: 'H',
+  9: 'I',
+}
+
+// 下标转字母
+export const questionType = {
+  1: 'single',
+  // 1: 'B',
+  // 2: 'C',
+  // 3: 'D',
+  // 4: 'E',
+  // 5: 'F',
+  // 6: 'G',
+  // 7: 'H',
+  // 8: 'I',
+}
  

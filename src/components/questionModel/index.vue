@@ -1,4 +1,5 @@
 <template>
+  <!-- 模式切换组件 -->
   <div class="question-model">
     <el-button-group @click="changeModel">
       <el-button :type="props.answerQuestion ? 'primary' : ''">答题模式</el-button>

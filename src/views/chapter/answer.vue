@@ -7,54 +7,50 @@
       @changeQuestionModel="changeQuestionModel" 
     />
 
-    <div class="toolbar">
-      <div class="type-box">
-        <div class="type">单项选择题</div>
-        <div class="chapter">当前章节：社会主义法制理念</div>
-      </div>
-      <div class="number" @click="isShowAnswerSheet=true">
-        <div><span>1</span>/50</div>
-        <el-button type="text">答题卡</el-button>
-      </div>
-    </div>
+    <!-- 题目工具条 -->
+    <QuestionToolBar 
+      :toolbarObj="toolbarObj"
+      @changeAnswerSheet="changeAnswerSheet"
+    />
 
+    <!-- 分割线 -->
     <el-divider />
 
+    <!-- 问题内容区域 -->
     <div class="content-box">
-
-      <p class="question-title">
-        <span class="fraction">({{questionObj.fraction}}分)</span>
-        <div class="title">{{questionObj.question}}</div>
-        <div class="collect check"><el-icon :size="24"><star-filled /></el-icon></div>
-      </p>
       
-      <div class="answer-box" @click="isAnswer=true">
+      <!-- 标题组件 -->
+      <QuestionTitle 
+        :questionTitleObj="questionArr[questionIndex]"
+        @changeCollectTitle="changeCollectTitle"
+      />
+      
+      <div class="answer-box"
+        v-loading="isLoading"
+        element-loading-text="Loading..."
+        element-loading-background="rgba(255, 255, 255, 0.3)"
+      >
 
         <!-- 选项组 -->
-        <el-radio-group v-model="answerObj.answer">
-
-          <!-- <el-radio v-for="item in questionObj.answerList" :key="item.value" :value="item.label" :label="item.value" size="large">{{item.label}}</el-radio> -->
+        <div class="el-radio-group">
 
           <!-- 未选中项目 -->
-          <label class="el-radio">
-            <span class="el-radio__input">
-              <span class="el-radio__inner">A</span>
+          <label class="el-radio" v-for="(item, index) in questionArr[questionIndex].answerList" :key="item.value" @change="checkAnswerFunc(item)">
+            <span :class="['el-radio__input', item.isChecked?'is-checked':'', item.isChecked&&questionArr[questionIndex].isShowQuestionAnalysis?'danger':'' ]">
+              <!-- 正确 -->
+              <span v-if="item.isChecked" class="el-radio__inner">
+                <el-icon v-if="!questionArr[questionIndex].isShowQuestionAnalysis"><check /></el-icon>
+                <el-icon v-else><close /></el-icon>
+              </span>
+              <!-- 没选中 -->
+              <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
               <input class="el-radio__original" type="radio">
             </span>
-            <span class="el-radio__label">依法治国</span>
-          </label>
-
-          <!-- 多选正确项但是没选 -->
-          <label class="el-radio">
-            <span class="el-radio__input is-checked primary">
-              <span class="el-radio__inner">B</span>
-              <input class="el-radio__original" type="radio">
-            </span>
-            <span class="el-radio__label">依法治国</span>
+            <span class="el-radio__label">{{item.label}}</span>
           </label>
 
           <!-- 正确 -->
-          <label class="el-radio">
+          <!-- <label class="el-radio">
             <span class="el-radio__input is-checked">
               <span class="el-radio__inner">
                 <el-icon><check /></el-icon>
@@ -62,10 +58,10 @@
               <input class="el-radio__original" type="radio">
             </span>
             <span class="el-radio__label">依法治国</span>
-          </label>
+          </label> -->
 
           <!-- 错误 -->
-          <label class="el-radio">
+          <!-- <label class="el-radio">
             <span class="el-radio__input is-checked danger">
               <span class="el-radio__inner">
                 <el-icon><close /></el-icon>
@@ -73,30 +69,29 @@
               <input class="el-radio__original" type="radio">
             </span>
             <span class="el-radio__label">依法治国</span>
-          </label>
+          </label> -->
 
-        </el-radio-group>
-
-
-        <div class="determine-answer">
-          <el-button type="primary">确认答案</el-button>
         </div>
 
-
-        <div class="change-question">
-          <el-button type="text">上一题</el-button>
-          <el-button type="text">下一题</el-button>
-        </div>
+        <!-- 题目切换组件 -->
+        <QuestionChangeIndex 
+          :questionIndex="questionIndex"
+          @plusQuestionIndex="plusQuestionIndex"
+          @reduceQuestionIndex="reduceQuestionIndex"
+        />
 
 
       </div>
 
 
-      <div v-if="isAnswer">
+      <div v-if="questionArr[questionIndex].isShowQuestionAnalysis">
+
+
         <div class="answer-bar">
-          <div class="default-answer">答案：A</div>
-          <div class="user-answer">你的选择：B，用时： 5秒</div>
+          <div class="default-answer">答案：{{IndexTolLetter[questionArr[questionIndex].okAnswer]}}</div>
+          <div class="user-answer">你的选择：{{IndexTolLetter[questionArr[questionIndex].yourAnswer]}}，用时： 5秒</div>
         </div>
+
 
         <div class="tit">统计</div>
         <div class="statistics-box">
@@ -114,18 +109,10 @@
           </div>
         </div>
 
+
         <div class="tit">解析</div>
-        <div class="analysis-box">
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-          略的卢卡申科大家顺利到家啊啥的就撒的空间啊啥的了；就撒了；到家啊时间到了撒
-        </div>
+        <div class="analysis-box">{{questionArr[questionIndex].analysis}}</div>
+
       </div>
 
 
@@ -151,30 +138,100 @@
 <script setup name="answer">
 
 import { getHomeData, getEnum } from '@/api'
+import { IndexTolLetter } from '@/utils'
 import QuestionModel from '@/components/questionModel/index'
+import QuestionToolBar from '@/components/questionToolBar/index'
+import QuestionTitle from '@/components/questionTitle/index'
+import QuestionChangeIndex from '@/components/questionChangeIndex/index'
 
 const { proxy } = getCurrentInstance()
 
+// 模式切换组件 属性/方法
 let answerQuestion = ref(false)
 const changeQuestionModel = value => answerQuestion.value = value
+
+// 题目工具条 属性/方法
+let toolbarObj = reactive({
+  type: '单项选择题',
+  chapter: '社会主义法制理念',
+  number: {
+    min: '1',
+    max: '50'
+  },
+  isShowAnswerSheet: false
+})
+let isShowAnswerSheet = ref(false)
+const changeAnswerSheet = value => isShowAnswerSheet.value = value
+
+// 标题组件 属性/方法
+const changeCollectTitle = value => {
+  // 此处需要调借口
+  setTimeout(() => {
+    questionArr[questionIndex.value].isCollect = value
+  }, 300)
+}
 
 const answerObj = reactive({
   answer: ''
 })
 
-const questionObj = reactive({
-  fraction: 1,
-  question: '（）是社会主义法制核心内容。',
-  answerList: [
-    {value: 1, label: '依法治国'},
-    {value: 2, label: '执法为民'},
-    {value: 3, label: '党的领导'},
-    {value: 4, label: '公平正义'},
-  ]
-})
+let questionIndex = ref(0)
+const reduceQuestionIndex = () => questionIndex.value --
+const plusQuestionIndex = () => questionIndex.value ++
 
-let isAnswer = ref(false)
-let isShowAnswerSheet = ref(false)
+const questionArr = reactive([
+    {
+      type: 1,
+      fraction: 1,
+      title: '（）是社会主义法制核心内容。',
+      isCollect: false,
+      answerList: [
+        {value: 1, label: '依法治国', isChecked: false},
+        {value: 2, label: '执法为民', isChecked: false},
+        {value: 3, label: '党的领导', isChecked: false},
+        {value: 4, label: '公平正义', isChecked: false},
+      ],
+      yourAnswer: '',
+      okAnswer: 1,
+      analysis: 'dasldk就撒开到好久啊大叔的黑科技啊说的话就卡上的回家看撒',
+      isShowQuestionAnalysis: false,
+    },
+    {
+      type: 1,
+      fraction: 1,
+      title: '（）是社会dklsajdklsjal主义法制核心内容。',
+      isCollect: false,
+      answerList: [
+        {value: 1, label: '依法治国', isChecked: false},
+        {value: 2, label: '执法为民', isChecked: false},
+        {value: 3, label: '党的领导', isChecked: false},
+        {value: 4, label: '公平正义', isChecked: false},
+      ],
+      yourAnswer: '',
+      okAnswer: 2,
+      analysis: 'dasldkdksadlksjkdljsklkj就撒开到好久啊大叔的黑科技啊说的话就卡上的回家看撒',
+      isShowQuestionAnalysis: false,
+    },
+])
+
+// 是否显示问题解析界面
+let isLoading = ref(false)
+// 单选选择
+const checkAnswerFunc = item => {
+  // 是单选切已经选过答案后点击没操作
+  if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].yourAnswer) return
+  isLoading.value = true
+  setTimeout(() => {
+    questionArr[questionIndex.value].yourAnswer = item.value
+    item.isChecked = true
+    if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+      plusQuestionIndex()
+    } else {
+      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    }
+    isLoading.value = false
+  }, 1300)
+}
 
 
 </script>
@@ -185,50 +242,10 @@ let isShowAnswerSheet = ref(false)
   padding: 40px;
 }
 
-.toolbar{
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  .type-box{
-    font-size: 16px;
-    .chapter{
-      font-size: 12px;
-      color: #999;
-    }
-  }
-  .number{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    span{
-      color: #f56c6c;
-    }
-  }
-}
-
 .content-box{
   padding: 0 40px;
 }
 
-.question-title{
-  display: flex;
-  align-items: center;
-  .fraction{
-    margin: 0 10px 0 0;
-    color: rgb(64, 158, 255);
-  }
-  .title{
-    flex: 1;
-    font-size: 20px;
-  }
-  .collect{
-    color: #999;
-    cursor: pointer;
-  }
-  .collect.check{
-    color: rgba(250, 212, 0, 1);
-  }
-}
 
 .answer-box{
 
@@ -259,6 +276,7 @@ let isShowAnswerSheet = ref(false)
   .el-radio__input.is-checked .el-radio__inner {
     border-color: #67c23a;
     background: #67c23a;
+    color: #fff;
   }
   .el-radio__input.is-checked+.el-radio__label{
     color: #67c23a;
@@ -274,6 +292,7 @@ let isShowAnswerSheet = ref(false)
   .el-radio__input.danger .el-radio__inner {
     border-color: #f56c6c;
     background: #f56c6c;
+    color: #fff;
   }
   .el-radio__input.danger+.el-radio__label{
     color: #f56c6c;
@@ -291,11 +310,6 @@ let isShowAnswerSheet = ref(false)
   margin: 20px 0 30px;
 }
 
-.change-question{
-  margin: 20px 0 30px;
-  display: flex;
-  justify-content: space-between;
-}
 
 .answer-bar{
   display: flex;

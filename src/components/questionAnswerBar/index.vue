@@ -2,7 +2,7 @@
   <!-- 回答错误工具组件 -->
   <div class="answer-bar">
     <div class="default-answer">答案：{{IndexTolLetter[questionAnswerBarObj.okAnswer]}}</div>
-    <div class="user-answer">你的选择：{{IndexTolLetter[questionAnswerBarObj.yourAnswer]}}，用时： {{questionAnswerBarObj.answerTime}}秒</div>
+    <div class="user-answer" v-if="questionAnswerBarObj.yourAnswer && questionAnswerBarObj.answerTime">你的选择：{{IndexTolLetter[questionAnswerBarObj.yourAnswer]}}，用时： {{questionAnswerBarObj.answerTime}}秒</div>
   </div>
 </template>
 

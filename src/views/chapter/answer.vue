@@ -119,7 +119,7 @@
 
             </label>
           </div>
-          <div class="determine-answer">
+          <div class="determine-answer" v-if="questionArr[questionIndex].type === 2">
             <el-button type="primary" @click="checkAnswerSeveralFunc">确认答案</el-button>
           </div>
 
@@ -202,7 +202,7 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
-const questionArr = reactive(severalQuestionData)
+const questionArr = reactive(singleQuestionData)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)

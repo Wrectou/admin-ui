@@ -2,19 +2,19 @@
   <!-- 回答错误工具组件 -->
   <div class="answer-bar">
     <!-- 答案 -->
-    <div class="default-answer" v-if="questionAnswerBarObj.type === 1">答案：{{IndexTolLetter[questionAnswerBarObj.okAnswer]}}</div>
     <div class="default-answer" v-if="questionAnswerBarObj.type === 2">
       答案：
       <span v-for="(item, index) in questionAnswerBarObj.okAnswer" :key="index">{{IndexTolLetter[item]}}</span>
     </div>
+    <div class="default-answer" v-else>答案：{{IndexTolLetter[questionAnswerBarObj.okAnswer]}}</div>
     <div class="user-answer" v-if="questionAnswerBarObj.yourAnswer && questionAnswerBarObj.answerTime">
       <!-- 你的选择 -->
-      <span v-if="questionAnswerBarObj.type === 1">你的选择：{{IndexTolLetter[questionAnswerBarObj.yourAnswer]}}，</span>
       <span v-if="questionAnswerBarObj.type === 2">
         你的选择：
         <span v-for="(item, index) in questionAnswerBarObj.yourAnswer" :key="index">{{IndexTolLetter[item]}}</span>
         ，
       </span>
+      <span v-else>你的选择：{{IndexTolLetter[questionAnswerBarObj.yourAnswer]}}，</span>
       <!-- 用时 -->
       用时： {{questionAnswerBarObj.answerTime}}秒
     </div>

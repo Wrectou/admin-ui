@@ -52,6 +52,34 @@
             @checkAnswerSeveralFunc="checkAnswerSeveralFunc"
           />
 
+          <!-- 判断题 type类型为3 -->
+          <div class="el-radio-group" v-if="questionArr[questionIndex].type === 3">
+
+            <!-- 未选中项目 -->
+            <label class="el-radio" v-for="(item, index) in questionArr[questionIndex].answerList" :key="item.value" @click="checkAnswerJudgeFunc(item)">
+              <!-- 答题模式单选 -->
+              <span v-if="answerQuestion" :class="['el-radio__input', item.isChecked ? 'is-checked' : '', item.isChecked && questionArr[questionIndex].isShowQuestionAnalysis ? 'danger' : '']">
+                <!-- 正确 -->
+                <span v-if="item.isChecked" class="el-radio__inner">
+                  <el-icon v-if="!questionArr[questionIndex].isShowQuestionAnalysis"><check /></el-icon>
+                  <el-icon v-else><close /></el-icon>
+                </span>
+                <!-- 没选中 -->
+                <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
+              </span>
+              <!-- 背题模式单选 -->
+              <span v-else :class="['el-radio__input', questionArr[questionIndex].okAnswer === index+1 ? 'is-checked' : '']">
+                <span v-if="questionArr[questionIndex].okAnswer === index+1" class="el-radio__inner">
+                  <el-icon><check /></el-icon>
+                </span>
+                <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
+              </span>
+              <!-- 选项名字 -->
+              <span class="el-radio__label">{{item.label}}</span>
+            </label>
+
+          </div>
+
 
 
         </div>
@@ -107,7 +135,7 @@ import { getHomeData, getEnum } from '@/api'
 
 import { IndexTolLetter } from '@/utils'
 
-import { singleQuestionData, severalQuestionData } from '@/utils/question'
+import { singleQuestionData, severalQuestionData, judgeQuestionData } from '@/utils/question'
 
 import { ElMessage } from 'element-plus'
 import QuestionModel from '@/components/questionModel/index'
@@ -134,7 +162,7 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
-const questionArr = reactive(singleQuestionData)
+const questionArr = reactive(judgeQuestionData)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
@@ -249,6 +277,35 @@ const checkAnswerSeveralFunc = item => {
     // 答题时间
     let time = Number(((new Date() - answerTime.value)/1000).toFixed())
     questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
+    // 取消loading
+    isLoading.value = false
+  }, 700)
+}
+
+// 判断题选择点击/确定选择
+const checkAnswerJudgeFunc = item => {
+  // 背题模式禁止操作
+  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // 是单选切已经选过答案后点击没操作
+  if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // 此处调接口
+  isLoading.value = true
+  // 答题时间
+  let time = Number(((new Date() - answerTime.value)/1000).toFixed())
+  questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
+  // 模拟接口延迟
+  setTimeout(() => {
+    // 用户选择回答项
+    questionArr[questionIndex.value].yourAnswer = item.value
+    // 此选项已选择
+    item.isChecked = true
+    if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+      // 回答正确去下一题
+      plusQuestionIndex()
+    } else {
+      // 回答错误显示答题解析
+      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    }
     // 取消loading
     isLoading.value = false
   }, 700)

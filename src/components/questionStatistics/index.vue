@@ -11,7 +11,10 @@
     </div>
     <div class="item">
       <span>易错项</span>
-      <div class="num">{{IndexTolLetter[questionStatisticsObj.fallibility]}}</div>
+      <div class="num" v-if="questionStatisticsObj.type === 1">{{IndexTolLetter[questionStatisticsObj.fallibility]}}</div>
+      <div class="num" v-if="questionStatisticsObj.type === 2">
+        <span v-for="(item, index) in questionStatisticsObj.okAnswer" :key="index">{{IndexTolLetter[item]}}</span>
+      </div>
     </div>
   </div>
 </template>

@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script setup name="questionModel">
+<script setup name="QuestionModel">
 
   const props = defineProps({
     answerQuestion: {

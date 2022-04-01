@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<script setup name="questionAnswerSeveral">
+<script setup name="QuestionAnswerSeveral">
 
   import { IndexTolLetter } from '@/utils'
 

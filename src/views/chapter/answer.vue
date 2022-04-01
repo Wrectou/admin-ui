@@ -60,6 +60,39 @@
             @checkAnswerJudgeFunc="checkAnswerJudgeFunc"
           />
 
+          <!-- 论述题 type类型为4 -->
+          <el-collapse>
+            <el-collapse-item>
+              <template #title>
+                <el-button type="primary" round>查看解析</el-button>
+              </template>
+              <div class="content">
+                <div class="tit">答案解析</div>
+                {{questionArr[questionIndex].analysis}}
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+
+          <el-form
+            :inline="true"
+            ref="ruleFormRef"
+            :model="questionArr[questionIndex]"
+            :rules="rules"
+            label-width="80px"
+            class="form"
+          >
+            <el-form-item label="自评分数" prop="yourAnswer">
+              <el-input v-model.number="questionArr[questionIndex].yourAnswer" :disabled="String(questionArr[questionIndex].answerTime).length > 0" type="number" placeholder="请输入0~20之间的自评分数" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+            </el-form-item>
+          </el-form>
+
+
+
+
+          
           <!-- 判断题 type类型为3 -->
           <!-- <div class="el-radio-group" v-if="questionArr[questionIndex].type === 3"> -->
 
@@ -87,6 +120,8 @@
             </label>
 
           </div> -->
+
+
 
 
 
@@ -143,7 +178,7 @@ import { getHomeData, getEnum } from '@/api'
 
 import { IndexTolLetter } from '@/utils'
 
-import { singleQuestionData, severalQuestionData, judgeQuestionData } from '@/utils/question'
+import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData } from '@/utils/question'
 
 import { ElMessage } from 'element-plus'
 import QuestionModel from '@/components/questionModel/index'
@@ -171,7 +206,7 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
-const questionArr = reactive(judgeQuestionData)
+const questionArr = reactive(discussQuestionData)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
@@ -321,6 +356,40 @@ const checkAnswerJudgeFunc = item => {
 }
 
 
+// 论述题
+const ruleFormRef = ref()
+const rules = reactive({
+  yourAnswer: [
+    { required: true, message: '请输入0~20之间的自评分数', trigger: 'blur' },
+    { type: 'number', min: 0, max: 20, message: '请输入0~20之间的自评分数', trigger: 'blur' },
+  ],
+})
+const submitForm = (formEl) => {
+  if (!formEl) return
+  formEl.validate((valid, fields) => {
+    if (valid) {
+      // 背题模式禁止操作
+      if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+      // 是单选切已经选过答案后点击没操作
+      if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+      // 此处调接口
+      isLoading.value = true
+      // 答题时间
+      let time = Number(((new Date() - answerTime.value)/1000).toFixed())
+      questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
+      // 模拟接口延迟
+      setTimeout(() => {
+        plusQuestionIndex()
+        // 取消loading
+        isLoading.value = false
+  }, 700)
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+
+
 </script>
 
 <style scoped lang="scss">
@@ -416,6 +485,31 @@ const checkAnswerJudgeFunc = item => {
   width: 4px;
   height: 20px;
   background: rgb(64, 158, 255);
+}
+
+.form{
+  margin: 20px 0;
+}
+::v-deep(.el-collapse){
+  border: none;
+  .el-collapse-item__header{
+    border: none;
+    background: #f9f9f9;
+  }
+  .el-collapse-item__wrap{
+    border: none;
+    background: #f9f9f9;
+  }
+  .content{
+    font-size: 15px;
+    color: #666;
+    .tit{
+      margin: 10px 0;
+    }
+    .tit:before{
+      top: 7px;
+    }
+  }
 }
 
 </style>

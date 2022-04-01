@@ -61,7 +61,15 @@
           />
 
           <!-- 论述题 type类型为4 -->
-          <el-collapse>
+          <QuestionAnswerDiscuss 
+            v-if="questionArr[questionIndex].type === 4"
+            :answerQuestion="answerQuestion"
+            :questionObj="questionArr[questionIndex]"
+            @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
+          />
+
+          <!-- 论述题 type类型为4 -->
+          <!-- <el-collapse>
             <el-collapse-item>
               <template #title>
                 <el-button type="primary" round>查看解析</el-button>
@@ -85,43 +93,9 @@
               <el-input v-model.number="questionArr[questionIndex].yourAnswer" :disabled="String(questionArr[questionIndex].answerTime).length > 0" type="number" placeholder="请输入0~20之间的自评分数" />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+              <el-button type="primary" @click="checkAnswerDiscussFunc(ruleFormRef)">确定</el-button>
             </el-form-item>
-          </el-form>
-
-
-
-
-          
-          <!-- 判断题 type类型为3 -->
-          <!-- <div class="el-radio-group" v-if="questionArr[questionIndex].type === 3"> -->
-
-            <!-- 未选中项目 -->
-            <!-- <label class="el-radio" v-for="(item, index) in questionArr[questionIndex].answerList" :key="item.value" @click="checkAnswerJudgeFunc(item)"> -->
-              <!-- 答题模式单选 -->
-              <!-- <span v-if="answerQuestion" :class="['el-radio__input', item.isChecked ? 'is-checked' : '', item.isChecked && questionArr[questionIndex].isShowQuestionAnalysis ? 'danger' : '']"> -->
-                <!-- 正确 -->
-                <!-- <span v-if="item.isChecked" class="el-radio__inner">
-                  <el-icon v-if="!questionArr[questionIndex].isShowQuestionAnalysis"><check /></el-icon>
-                  <el-icon v-else><close /></el-icon>
-                </span> -->
-                <!-- 没选中 -->
-                <!-- <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
-              </span> -->
-              <!-- 背题模式单选 -->
-              <!-- <span v-else :class="['el-radio__input', questionArr[questionIndex].okAnswer === index+1 ? 'is-checked' : '']">
-                <span v-if="questionArr[questionIndex].okAnswer === index+1" class="el-radio__inner">
-                  <el-icon><check /></el-icon>
-                </span>
-                <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
-              </span> -->
-              <!-- 选项名字 -->
-              <!-- <span class="el-radio__label">{{item.label}}</span>
-            </label>
-
-          </div> -->
-
-
+          </el-form> -->
 
 
 
@@ -192,6 +166,7 @@ import QuestionAnswerSheet from '@/components/questionAnswerSheet/index'
 import QuestionAnswerSingle from '@/components/questionAnswerSingle/index'
 import QuestionAnswerSeveral from '@/components/questionAnswerSeveral/index'
 import QuestionAnswerJudge from '@/components/questionAnswerJudge/index'
+import QuestionAnswerDiscuss from '@/components/questionAnswerDiscuss/index'
 
 const { proxy } = getCurrentInstance()
 
@@ -357,14 +332,14 @@ const checkAnswerJudgeFunc = item => {
 
 
 // 论述题
-const ruleFormRef = ref()
-const rules = reactive({
-  yourAnswer: [
-    { required: true, message: '请输入0~20之间的自评分数', trigger: 'blur' },
-    { type: 'number', min: 0, max: 20, message: '请输入0~20之间的自评分数', trigger: 'blur' },
-  ],
-})
-const submitForm = (formEl) => {
+// const ruleFormRef = ref()
+// const rules = reactive({
+//   yourAnswer: [
+//     { required: true, message: '请输入0~20之间的自评分数', trigger: 'blur' },
+//     { type: 'number', min: 0, max: 20, message: '请输入0~20之间的自评分数', trigger: 'blur' },
+//   ],
+// })
+const checkAnswerDiscussFunc = (formEl) => {
   if (!formEl) return
   formEl.validate((valid, fields) => {
     if (valid) {
@@ -486,30 +461,4 @@ const submitForm = (formEl) => {
   height: 20px;
   background: rgb(64, 158, 255);
 }
-
-.form{
-  margin: 20px 0;
-}
-::v-deep(.el-collapse){
-  border: none;
-  .el-collapse-item__header{
-    border: none;
-    background: #f9f9f9;
-  }
-  .el-collapse-item__wrap{
-    border: none;
-    background: #f9f9f9;
-  }
-  .content{
-    font-size: 15px;
-    color: #666;
-    .tit{
-      margin: 10px 0;
-    }
-    .tit:before{
-      top: 7px;
-    }
-  }
-}
-
 </style>

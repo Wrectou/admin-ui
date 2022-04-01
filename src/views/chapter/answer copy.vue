@@ -33,42 +33,33 @@
             element-loading-text="Loading..."
             element-loading-background="rgba(255, 255, 255, 0.3)"
           >
-
           <!-- 单选选项组 type类型为1 -->
-          <QuestionAnswerSingle 
-            v-if="questionArr[questionIndex].type === 1"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerSingleFunc="checkAnswerSingleFunc"
-          />
-
-          <!-- 单选选项组 type类型为1 -->
-          <!-- <div class="el-radio-group" v-if="questionArr[questionIndex].type === 1"> -->
+          <div class="el-radio-group" v-if="questionArr[questionIndex].type === 1">
 
             <!-- 未选中项目 -->
-            <!-- <label class="el-radio" v-for="(item, index) in questionArr[questionIndex].answerList" :key="item.value" @click="checkAnswerSingleFunc(item)"> -->
+            <label class="el-radio" v-for="(item, index) in questionArr[questionIndex].answerList" :key="item.value" @click="checkAnswerFunc(item)">
               <!-- 答题模式单选 -->
-              <!-- <span v-if="answerQuestion" :class="['el-radio__input', item.isChecked ? 'is-checked' : '', item.isChecked && questionArr[questionIndex].isShowQuestionAnalysis ? 'danger' : '']"> -->
+              <span v-if="answerQuestion" :class="['el-radio__input', item.isChecked ? 'is-checked' : '', item.isChecked && questionArr[questionIndex].isShowQuestionAnalysis ? 'danger' : '']">
                 <!-- 正确 -->
-                <!-- <span v-if="item.isChecked" class="el-radio__inner">
+                <span v-if="item.isChecked" class="el-radio__inner">
                   <el-icon v-if="!questionArr[questionIndex].isShowQuestionAnalysis"><check /></el-icon>
                   <el-icon v-else><close /></el-icon>
-                </span> -->
+                </span>
                 <!-- 没选中 -->
-                <!-- <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
-              </span> -->
+                <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
+              </span>
               <!-- 背题模式单选 -->
-              <!-- <span v-else :class="['el-radio__input', questionArr[questionIndex].okAnswer === index+1 ? 'is-checked' : '']">
+              <span v-else :class="['el-radio__input', questionArr[questionIndex].okAnswer === index+1 ? 'is-checked' : '']">
                 <span v-if="questionArr[questionIndex].okAnswer === index+1" class="el-radio__inner">
                   <el-icon><check /></el-icon>
                 </span>
                 <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
-              </span> -->
+              </span>
               <!-- 选项名字 -->
-              <!-- <span class="el-radio__label">{{item.label}}</span>
-            </label> -->
+              <span class="el-radio__label">{{item.label}}</span>
+            </label>
 
-          <!-- </div> -->
+          </div>
 
         </div>
 
@@ -132,7 +123,6 @@ import QuestionAnswerBar from '@/components/questionAnswerBar/index'
 import QuestionStatistics from '@/components/questionStatistics/index'
 import QuestionAnalysis from '@/components/questionAnalysis/index'
 import QuestionAnswerSheet from '@/components/questionAnswerSheet/index'
-import QuestionAnswerSingle from '@/components/questionAnswerSingle/index'
 
 const { proxy } = getCurrentInstance()
 
@@ -256,9 +246,8 @@ watch(questionIndex, (newValue, oldValue) => {
 let answerTime = ref(new Date())
 // 是否显示问题解析界面
 let isLoading = ref(false)
-
 // 单选选择点击/确定选择
-const checkAnswerSingleFunc = item => {
+const checkAnswerFunc = item => {
   // 背题模式禁止操作
   if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
@@ -311,7 +300,7 @@ const checkAnswerSingleFunc = item => {
   transition: transform .5s ease-in-out;
 }
 
-// 单选/多选
+// 单选样式
 ::v-deep(.el-radio-group){
   display: flex;
   margin: 20px 0 0;

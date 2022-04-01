@@ -152,7 +152,7 @@ import { getHomeData, getEnum } from '@/api'
 
 import { IndexTolLetter } from '@/utils'
 
-import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData } from '@/utils/question'
+import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
 import { ElMessage } from 'element-plus'
 import QuestionModel from '@/components/questionModel/index'
@@ -181,7 +181,7 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
-const questionArr = reactive(discussQuestionData)
+const questionArr = reactive(allQuestionData)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
@@ -277,15 +277,20 @@ const checkAnswerSeveralItemFunc = item => {
   questionArr[questionIndex.value].yourAnswer.sort((a, b) => a - b)
 }
 // 多选确定选择
-const checkAnswerSeveralFunc = item => {
+const checkAnswerSeveralFunc = () => {
   // 背题模式禁止操作
   if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
   if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // 是单选切已经选过答案后点击没操作
+  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].yourAnswer.length <= 0) return ElMessage.error('请先选择选项再确认答案！')
   // 此处调接口
   isLoading.value = true
   // 模拟接口延迟
   setTimeout(() => {
+    // 答题时间
+    let time = Number(((new Date() - answerTime.value)/1000).toFixed())
+    questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
     if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
       // 回答正确去下一题
       plusQuestionIndex()
@@ -293,9 +298,6 @@ const checkAnswerSeveralFunc = item => {
       // 回答错误显示答题解析
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
-    // 答题时间
-    let time = Number(((new Date() - answerTime.value)/1000).toFixed())
-    questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
     // 取消loading
     isLoading.value = false
   }, 700)

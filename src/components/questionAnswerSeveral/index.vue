@@ -89,7 +89,7 @@
 
   const checkAnswerItem = item => emit('checkAnswerSeveralItemFunc', item)
 
-  const checkAnswer = item => emit('checkAnswerSeveralFunc', item)
+  const checkAnswer = () => emit('checkAnswerSeveralFunc')
 
 </script>
 

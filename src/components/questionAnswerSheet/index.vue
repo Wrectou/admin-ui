@@ -6,7 +6,7 @@
     :direction="'rtl'"
   >
     <div>
-      <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
+      <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : item.type === 4 || String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
         {{index+1}}
       </el-button>
     </div>

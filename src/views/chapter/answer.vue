@@ -28,6 +28,7 @@
           @changeCollectTitle="changeCollectTitle"
         />
         
+        <!-- 答题选项盒子 -->
         <div class="answer-box"
             v-loading="isLoading"
             element-loading-text="Loading..."
@@ -42,6 +43,7 @@
             @checkAnswerSingleFunc="checkAnswerSingleFunc"
           />
 
+          <!-- 多选选项组 type类型为2 -->
           <QuestionAnswerSeveral 
             v-if="questionArr[questionIndex].type === 2"
             :answerQuestion="answerQuestion"
@@ -51,44 +53,6 @@
           />
 
 
-
-
-
-
-
-
-          <!-- 多选选项组 type类型为2 -->
-          <!-- <div class="el-radio-group" v-if="questionArr[questionIndex].type === 2"> -->
-            <!-- 未选中项目 -->
-            <!-- <label class="el-radio" v-for="(item, index) in questionArr[questionIndex].answerList" :key="item.value" @click="checkAnswerSeveralItemFunc(item)"> -->
-              
-              <!-- 答题模式多选 -->
-              <!-- <span v-if="answerQuestion" :class="answerSeveraClass(item)"> -->
-                <!-- 选中 -->
-                <!-- <span v-if="item.isChecked && questionArr[questionIndex].answerTime" class="el-radio__inner">
-                  <el-icon v-if="item.isChecked && !answerSeveraClass(item).includes('danger')"><check /></el-icon>
-                  <el-icon v-else><close /></el-icon>
-                </span> -->
-                <!-- 没选中 -->
-                <!-- <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
-              </span> -->
-
-              <!-- 背题模式多选 -->
-              <!-- <span v-else :class="['el-radio__input', questionArr[questionIndex].okAnswer.includes(item.value) ? 'is-checked' : '']">
-                <span v-if="questionArr[questionIndex].okAnswer.includes(item.value)" class="el-radio__inner">
-                  <el-icon><check /></el-icon>
-                </span>
-                <span v-else class="el-radio__inner">{{IndexTolLetter[index+1]}}</span>
-              </span> -->
-
-              <!-- 选项名字 -->
-              <!-- <span class="el-radio__label">{{item.label}}</span>
-
-            </label>
-          </div>
-          <div class="determine-answer" v-if="questionArr[questionIndex].type === 2">
-            <el-button type="primary" @click="checkAnswerSeveralFunc">确认答案</el-button>
-          </div> -->
 
         </div>
 
@@ -265,74 +229,6 @@ const checkAnswerSeveralItemFunc = item => {
   // 选中项目数组排序用户对比正确与否
   questionArr[questionIndex.value].yourAnswer.sort((a, b) => a - b)
 }
-// // 答题模式下多选样式的计算属性
-// let answerSeveraClass = computed(item => {
-//   return item => {
-//     let str = 'el-radio__input'
-
-//     // if (item.isChecked) str = 'el-radio__input is-checked'
-//     if (questionArr[questionIndex.value].isShowQuestionAnalysis) {
-
-//       // 交集 正确数据
-//       let successArr = [...new Set(questionArr[questionIndex.value].okAnswer)].filter(item => new Set(questionArr[questionIndex.value].yourAnswer).has(item))
-//       console.log('successArr: ',successArr);
-//       successArr.forEach(i => {
-//         if (item.value === i) str = 'el-radio__input is-checked'
-//       })
-
-//       // 差集 错误数据
-//       let errorArr = [...new Set(questionArr[questionIndex.value].yourAnswer)].filter(item => !new Set(questionArr[questionIndex.value].okAnswer).has(item))
-//       console.log('errorArr: ',errorArr);
-//       errorArr.forEach(i => {
-//         if (item.value === i) str = 'el-radio__input is-checked danger'
-//       })
-
-//       // 差集 没有选数据
-//       let primaryArr = [...new Set(questionArr[questionIndex.value].okAnswer)].filter(item => !new Set(successArr).has(item))
-//       primaryArr.forEach(i => {
-//         console.log(item.value, i);
-//         if (item.value === i) str = 'el-radio__input is-checked primary'
-//       })
-
-//     } else {
-//       if (item.isChecked) str = 'el-radio__input is-checked'
-//     }
-
-
-
-
-//     // if (questionArr[questionIndex.value].isShowQuestionAnalysis) {
-//     //   questionArr[questionIndex.value].yourAnswer.forEach(i => {
-//     //     console.log('item.value: ', item.value);
-//     //     console.log('i: ', i);
-//     //     console.log('item.value === i: ', item.value === i);
-//     //     console.log('questionArr[questionIndex.value].okAnswer.includes(i): ',questionArr[questionIndex.value].okAnswer.includes(i));
-//     //     console.log('questionArr[questionIndex.value].okAnswer.includes(i) && item.value === i: ', questionArr[questionIndex.value].okAnswer.includes(i) && item.value === i);
-//     //     if (questionArr[questionIndex.value].okAnswer.includes(i)) {
-//     //       if (item.value === i) str = 'el-radio__input is-checked'
-//     //       else str = 'el-radio__input is-checked danger'
-//     //     } 
-//     //   })
-//     //   questionArr[questionIndex.value].okAnswer.forEach(i => {
-//     //     if (!questionArr[questionIndex.value].yourAnswer.includes(i) && item.value === i) {
-//     //       str = 'el-radio__input is-checked primary'
-//     //     }
-//     //   })
-//     // }
-//     // 未选中项目
-//     // el-radio__input
-//     // 多选正确项但是没选
-//     // el-radio__input is-checked primary
-//     // 正确
-//     // el-radio__input is-checked
-//     // 错误
-//     // el-radio__input is-checked danger
-
-//     // console.log(item);
-
-//     return str
-//   }
-// })
 // 多选确定选择
 const checkAnswerSeveralFunc = item => {
   // 背题模式禁止操作

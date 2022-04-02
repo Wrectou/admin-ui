@@ -146,11 +146,11 @@
   </div>
 </template>
 
-<script setup name="chapterAnswer">
+<script setup name="questionTypeAnswer">
 
 import { getHomeData, getEnum } from '@/api'
 
-import { IndexTolLetter } from '@/utils'
+import { IndexTolLetter, questionType } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
@@ -168,6 +168,8 @@ import QuestionAnswerSeveral from '@/components/questionAnswerSeveral/index'
 import QuestionAnswerJudge from '@/components/questionAnswerJudge/index'
 import QuestionAnswerDiscuss from '@/components/questionAnswerDiscuss/index'
 
+const route = useRoute()
+
 const { proxy } = getCurrentInstance()
 
 // 模式切换组件 属性/方法
@@ -180,15 +182,37 @@ let questionIndex = ref(0)
 const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.value -- }
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
+// 模拟题目类型 ---------------------
+let questionDataTypeObj = {
+  'all': allQuestionData,
+  'single': singleQuestionData,
+  'several': severalQuestionData,
+  'judge': judgeQuestionData,
+  'discuss': discussQuestionData,
+}
+let questionDataType = questionDataTypeObj.all
+let questionDataTypeCn = '全部题型'
+if (route.query) {
+  let type = route.query.type
+  if (questionType[type]) {
+    console.log(type);
+    console.log(questionType[type]);
+    questionDataType = questionDataTypeObj[questionType[type].type] || questionDataType
+    questionDataTypeCn = questionType[type].cn || questionDataTypeCn
+  }
+}
+// 模拟题目类型 --------------------------
+
+
 // 题目数组
-const questionArr = reactive(allQuestionData)
+const questionArr = reactive(questionDataType)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
 // 题目工具条 属性/方法
 let toolbarObj = reactive({
-  type: '单项选择题',
-  chapter: '社会主义法制理念',
+  type: questionDataTypeCn,
+  chapter: '',
   number: {
     min: questionIndex,
     max: questionArr.length

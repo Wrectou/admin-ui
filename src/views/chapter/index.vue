@@ -58,6 +58,11 @@ const goLink = item => router.push({ name: item.url, query: { type: item.type } 
     justify-content: space-between;
     align-items: center;
   }
+  .card-header{
+    span{
+      margin: 0 6px 0 0;
+    }
+  }
   .num{
     color: #A8ABB2;
   }

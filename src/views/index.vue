@@ -2,7 +2,7 @@
   <div class="container home">
 
     <div class="tit">日常学习</div>
-    <el-row>
+    <el-row class="menu-row">
       <el-col :span="3" class="menu-box" v-for="item in menuList" :key="item.name">
         <div class="menu" @click="goLink(item.linkName)">
           <img class="logo" :src="item.logo" />
@@ -112,33 +112,38 @@ function goTarget(url) {
   min-height: 100vh;
 }
 
+.menu-row{
+  height: 120px;
+}
 .menu-box{
+  height: 120px;
   flex: 1;
   margin: 0 10px;
   padding: 0;
-}
-.menu{
-  padding: 20px 0;
-  height: 100%;
-  background: #ffffff;
-  text-align: center;
-  transition: transform .3s;
-  border-radius: 6px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, .04);
-  .logo{
-    width: 48px;
-    height: 48px;
+  .menu{
+    padding: 20px 0;
+    height: 100%;
+    background: #ffffff;
+    text-align: center;
+    border-radius: 6px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, .04);
+    transition: transform .3s;
+    transition: transform .3s ease-in-out;
+    .logo{
+      width: 48px;
+      height: 48px;
+    }
+    .title{
+      margin: 6px 0 0;
+      font-size: 18px;
+    }
   }
-  .title{
-    margin: 6px 0 0;
-    font-size: 18px;
+  .menu:hover{
+    transform: scale(1.1);
+    transition: transform .3s ease-in-out;
+    border: solid 1px #f4f4f4;
+    cursor: pointer;
   }
-}
-.menu:hover{
-  transform: scale(1.1);
-  transition: transform .3s;
-  border: solid 1px #f4f4f4;
-  cursor: pointer;
 }
 
 .table-box{

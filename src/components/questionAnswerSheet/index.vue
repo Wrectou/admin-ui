@@ -5,6 +5,7 @@
       v-model="isShowAnswerSheet"
       title="答题卡"
       :direction="'rtl'"
+      :before-close="handleClose"
     >
       <div>
         <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : item.type === 4 || String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
@@ -28,22 +29,23 @@
     }
   })
 
-  const emit = defineEmits(['changeQuestion'])
+  const emit = defineEmits(['changeQuestion', 'changeAnswerSheet'])
+
+  const handleClose = () => emit('changeAnswerSheet')
 
   const changeQuestionIndex = index => emit('changeQuestion', index)
 
 </script>
 
 <style lang="scss" scoped>
-
 ::v-deep(.el-drawer__body) {
   padding: 6px;
   .el-button{
-    margin: 6px 8px;
+    margin: 6px;
     min-width: 66px;
   }
   +.el-button{
-    margin: 6px 8px;
+    margin: 6px;
   }
 }
 </style>

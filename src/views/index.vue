@@ -62,8 +62,8 @@ const { proxy } = getCurrentInstance()
 const menuList = reactive([
   { name: '章节练习', linkName: 'chapter', logo: icon1, },
   { name: '题型练习', linkName: 'questionType', logo: icon2, },
-  { name: '每日练习', linkName: 'chapter', logo: icon3, },
-  { name: '历年真题', linkName: 'chapter', logo: icon4, },
+  { name: '每日练习', linkName: 'today', logo: icon3, },
+  { name: '历年真题', linkName: 'realQuestion', logo: icon4, },
   { name: '模拟考试', linkName: 'chapter', logo: icon5, },
   { name: '错题巩固', linkName: 'chapter', logo: icon6, },
   { name: '我的收藏', linkName: 'chapter', logo: icon7, },

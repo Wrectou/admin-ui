@@ -68,37 +68,6 @@
             @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
           />
 
-          <!-- 论述题 type类型为4 -->
-          <!-- <el-collapse>
-            <el-collapse-item>
-              <template #title>
-                <el-button type="primary" round>查看解析</el-button>
-              </template>
-              <div class="content">
-                <div class="tit">答案解析</div>
-                {{questionArr[questionIndex].analysis}}
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-
-          <el-form
-            :inline="true"
-            ref="ruleFormRef"
-            :model="questionArr[questionIndex]"
-            :rules="rules"
-            label-width="80px"
-            class="form"
-          >
-            <el-form-item label="自评分数" prop="yourAnswer">
-              <el-input v-model.number="questionArr[questionIndex].yourAnswer" :disabled="String(questionArr[questionIndex].answerTime).length > 0" type="number" placeholder="请输入0~20之间的自评分数" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="checkAnswerDiscussFunc(ruleFormRef)">确定</el-button>
-            </el-form-item>
-          </el-form> -->
-
-
-
         </div>
 
       </div>
@@ -141,13 +110,12 @@
       :isShowAnswerSheet="isShowAnswerSheet"
       :questionArr="questionArr"
       @changeQuestion="changeQuestionIndex"
-      @changeAnswerSheet="changeAnswerSheet"
     />
 
   </div>
 </template>
 
-<script setup name="questionTypeAnswer">
+<script setup name="today">
 
 import { getHomeData, getEnum } from '@/api'
 
@@ -359,13 +327,6 @@ const checkAnswerJudgeFunc = item => {
 
 
 // 论述题
-// const ruleFormRef = ref()
-// const rules = reactive({
-//   yourAnswer: [
-//     { required: true, message: '请输入0~20之间的自评分数', trigger: 'blur' },
-//     { type: 'number', min: 0, max: 20, message: '请输入0~20之间的自评分数', trigger: 'blur' },
-//   ],
-// })
 const checkAnswerDiscussFunc = (formEl) => {
   if (!formEl) return
   formEl.validate((valid, fields) => {

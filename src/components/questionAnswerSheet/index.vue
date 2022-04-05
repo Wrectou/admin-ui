@@ -8,9 +8,18 @@
       :before-close="handleClose"
     >
       <div>
-        <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : item.type === 4 || String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
-          {{index+1}}
-        </el-button>
+        <!-- 学习模式 -->
+        <div v-if="answerSheetModel === 'learn'">
+          <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : item.type === 4 || String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
+            {{index+1}}
+          </el-button>
+        </div>
+        <!-- 考试模式 -->
+        <div v-if="answerSheetModel === 'test'">
+          <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : 'primary'">
+            {{index+1}}
+          </el-button>
+        </div>
       </div>
     </el-drawer>
   </div>
@@ -22,6 +31,11 @@
     isShowAnswerSheet: {
       type: Boolean,
       default: false
+    },
+    // 答题卡模式：learn 学习  /  test 考试
+    answerSheetModel: {
+      type: String,
+      default: 'learn'
     },
     questionArr: {
       type: Array,

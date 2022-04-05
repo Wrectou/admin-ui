@@ -51,6 +51,7 @@ export const routes = [{
         component: () => import ("@/views/error/401"),
         hidden: true,
     },
+
     {
         path: "",
         component: Layout,
@@ -108,6 +109,69 @@ export const routes = [{
             },
         ],
     },
+    {
+        path: "/today",
+        component: Layout,
+        meta: { title: "每日练习", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/today/index"),
+                name: "today",
+                meta: { title: "每日练习", icon: "tree" },
+            },
+        ],
+    },
+    {
+        path: "/realQuestion",
+        component: Layout,
+        meta: { title: "历年真题", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/realQuestion/index"),
+                name: "realQuestion",
+                meta: { title: "历年真题", icon: "tree" },
+            },
+            {
+                path: "detail",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/realQuestion/detail"),
+                name: "realQuestionDetail",
+                meta: { title: "历年真题", icon: "tree" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/realQuestion/answer"),
+                name: "realQuestionAnswer",
+                meta: { title: "历年真题", icon: "tree" },
+            },
+        ],
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
         path: "/product",
         component: Layout,

@@ -153,6 +153,36 @@ export const routes = [{
             },
         ],
     },
+    {
+        path: "/imitateQuestion",
+        component: Layout,
+        meta: { title: "模拟考试", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/imitateQuestion/index"),
+                name: "imitateQuestion",
+                meta: { title: "模拟考试", icon: "tree" },
+            },
+            {
+                path: "detail",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/imitateQuestion/detail"),
+                name: "imitateQuestionDetail",
+                meta: { title: "模拟考试", icon: "tree" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/imitateQuestion/answer"),
+                name: "imitateQuestionAnswer",
+                meta: { title: "模拟考试", icon: "tree" },
+            },
+        ],
+    },
     
 
 

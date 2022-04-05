@@ -64,7 +64,7 @@ const menuList = reactive([
   { name: '题型练习', linkName: 'questionType', logo: icon2, },
   { name: '每日练习', linkName: 'today', logo: icon3, },
   { name: '历年真题', linkName: 'realQuestion', logo: icon4, },
-  { name: '模拟考试', linkName: 'chapter', logo: icon5, },
+  { name: '模拟考试', linkName: 'imitateQuestion', logo: icon5, },
   { name: '错题巩固', linkName: 'chapter', logo: icon6, },
   { name: '我的收藏', linkName: 'chapter', logo: icon7, },
   { name: '学习报告', linkName: 'chapter', logo: icon8, },

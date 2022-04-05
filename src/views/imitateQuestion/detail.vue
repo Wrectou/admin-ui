@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script setup name="realQuestionDetail">
+<script setup name="imitateQuestionDetail">
 
 import { getHomeData, getEnum } from '@/api'
 
@@ -42,8 +42,8 @@ const data = reactive([
 ])
 
 const goLink = item => {
-  router.push({ name: 'realQuestionAnswer' })
-  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + .3*60*1000))
+  router.push({ name: 'imitateQuestionAnswer' })
+  proxy.$cache.session.setJSON('endImitateQuestionTime', (new Date().getTime() + .3*60*1000))
 }
 
 

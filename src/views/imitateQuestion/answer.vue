@@ -117,7 +117,7 @@
   </div>
 </template>
 
-<script setup name="realQuestionAnswer">
+<script setup name="imitateQuestionAnswer">
 
 import { getHomeData, getEnum } from '@/api'
 
@@ -186,7 +186,7 @@ const countDown = () => {
   clearInterval(timer)
   timer = setInterval(() => {
     var nowtimeGetTime = new Date().getTime(),
-        endtimeGetTime = proxy.$cache.session.getJSON('endRealQuestionTime');
+        endtimeGetTime = proxy.$cache.session.getJSON('endImitateQuestionTime');
     var lefttime = endtimeGetTime - nowtimeGetTime,
         lefth = '0' + Math.floor(lefttime/(1000*60*60)%24),
         leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),

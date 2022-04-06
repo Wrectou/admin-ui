@@ -2,11 +2,11 @@
   <!-- 题目工具条 -->
   <div class="question-toolbar">
     <div class="type-box">
-      <div class="type">{{props.toolbarObj.type}}</div>
-      <div class="chapter" v-if="props.toolbarObj.chapter">当前章节：{{props.toolbarObj.chapter}}</div>
+      <div class="type">{{toolbarObj.type}}</div>
+      <div class="chapter" v-if="toolbarObj.chapter">当前章节：{{toolbarObj.chapter}}</div>
     </div>
     <div class="number" @click="changeSheet">
-      <div><span>{{props.toolbarObj.number.min+1}}</span>/{{props.toolbarObj.number.max}}</div>
+      <div><span>{{toolbarObj.number.max < 1 ? 0 : toolbarObj.number.min+1}}</span>/{{toolbarObj.number.max}}</div>
       <el-button type="text">答题卡</el-button>
     </div>
   </div>

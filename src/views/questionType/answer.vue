@@ -30,10 +30,11 @@
         
         <!-- 答题选项盒子 -->
         <div class="answer-box"
-            v-loading="isLoading"
-            element-loading-text="Loading..."
-            element-loading-background="rgba(255, 255, 255, 0.3)"
-          >
+          v-if="questionArr.length > 0"
+          v-loading="isLoading"
+          element-loading-text="Loading..."
+          element-loading-background="rgba(255, 255, 255, 0.3)"
+        >
 
           <!-- 单选选项组 type类型为1 -->
           <QuestionAnswerSingle 
@@ -68,38 +69,10 @@
             @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
           />
 
-          <!-- 论述题 type类型为4 -->
-          <!-- <el-collapse>
-            <el-collapse-item>
-              <template #title>
-                <el-button type="primary" round>查看解析</el-button>
-              </template>
-              <div class="content">
-                <div class="tit">答案解析</div>
-                {{questionArr[questionIndex].analysis}}
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-
-          <el-form
-            :inline="true"
-            ref="ruleFormRef"
-            :model="questionArr[questionIndex]"
-            :rules="rules"
-            label-width="80px"
-            class="form"
-          >
-            <el-form-item label="自评分数" prop="yourAnswer">
-              <el-input v-model.number="questionArr[questionIndex].yourAnswer" :disabled="String(questionArr[questionIndex].answerTime).length > 0" type="number" placeholder="请输入0~20之间的自评分数" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="checkAnswerDiscussFunc(ruleFormRef)">确定</el-button>
-            </el-form-item>
-          </el-form> -->
-
-
-
         </div>
+
+        <!-- 没有题目数据 -->
+        <QuestionNotFound v-else />
 
       </div>
 
@@ -113,7 +86,7 @@
       />
 
       <!-- 回答错误的错题解析 -->
-      <div :class="switchQuestionClass" v-if="!answerQuestion || questionArr[questionIndex].isShowQuestionAnalysis">
+      <div :class="switchQuestionClass" v-if="(questionArr.length > 0 && !answerQuestion) || (questionArr.length > 0 && questionArr[questionIndex].isShowQuestionAnalysis)">
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
@@ -168,6 +141,7 @@ import QuestionAnswerSingle from '@/components/questionAnswerSingle/index'
 import QuestionAnswerSeveral from '@/components/questionAnswerSeveral/index'
 import QuestionAnswerJudge from '@/components/questionAnswerJudge/index'
 import QuestionAnswerDiscuss from '@/components/questionAnswerDiscuss/index'
+import QuestionNotFound from '@/components/questionNotFound/index'
 
 const route = useRoute()
 

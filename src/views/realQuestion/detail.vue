@@ -43,7 +43,7 @@ const data = reactive([
 
 const goLink = item => {
   router.push({ name: 'realQuestionAnswer' })
-  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + .3*60*1000))
+  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + 150*60*1000))
 }
 
 
@@ -68,7 +68,7 @@ const goLink = item => {
   align-items: center;
   padding: 8px 10px;
   .key {
-    flex: 0 0 5vw;
+    flex: 0 0 100px;
     color: #333;
   }
   .value{

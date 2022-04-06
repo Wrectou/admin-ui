@@ -30,10 +30,11 @@
         
         <!-- 答题选项盒子 -->
         <div class="answer-box"
-            v-loading="isLoading"
-            element-loading-text="Loading..."
-            element-loading-background="rgba(255, 255, 255, 0.3)"
-          >
+          v-if="questionArr.length > 0"
+          v-loading="isLoading"
+          element-loading-text="Loading..."
+          element-loading-background="rgba(255, 255, 255, 0.3)"
+        >
 
           <!-- 单选选项组 type类型为1 -->
           <QuestionAnswerSingle 
@@ -70,6 +71,9 @@
 
         </div>
 
+        <!-- 没有题目数据 -->
+        <QuestionNotFound v-else />
+
       </div>
 
 
@@ -82,7 +86,7 @@
       />
 
       <!-- 回答错误的错题解析 -->
-      <div :class="switchQuestionClass" v-if="!answerQuestion || questionArr[questionIndex].isShowQuestionAnalysis">
+      <div :class="switchQuestionClass" v-if="(questionArr.length > 0 && !answerQuestion) || (questionArr.length > 0 && questionArr[questionIndex].isShowQuestionAnalysis)">
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
@@ -110,6 +114,7 @@
       :isShowAnswerSheet="isShowAnswerSheet"
       :questionArr="questionArr"
       @changeQuestion="changeQuestionIndex"
+      @changeAnswerSheet="changeAnswerSheet"
     />
 
   </div>
@@ -136,6 +141,7 @@ import QuestionAnswerSingle from '@/components/questionAnswerSingle/index'
 import QuestionAnswerSeveral from '@/components/questionAnswerSeveral/index'
 import QuestionAnswerJudge from '@/components/questionAnswerJudge/index'
 import QuestionAnswerDiscuss from '@/components/questionAnswerDiscuss/index'
+import QuestionNotFound from '@/components/questionNotFound/index'
 
 const route = useRoute()
 

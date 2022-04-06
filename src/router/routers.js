@@ -183,6 +183,28 @@ export const routes = [{
             },
         ],
     },
+    {
+        path: "/errorQuestion",
+        component: Layout,
+        meta: { title: "错题巩固", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/errorQuestion/index"),
+                name: "errorQuestion",
+                meta: { title: "错题巩固", icon: "tree" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/errorQuestion/answer"),
+                name: "errorQuestionAnswer",
+                meta: { title: "错题巩固", icon: "tree" },
+            },
+        ],
+    },
     
 
 
@@ -393,50 +415,4 @@ export const routes = [{
             },
         ],
     },
-    {
-        path: "/order",
-        component: Layout,
-        meta: { title: "订单管理", icon: "tree", noCache: true },
-        children: [{
-                path: "index",
-                noCache: true,
-                component: () =>
-                    import ("@/views/order/index"),
-                name: "orderindex",
-                meta: { title: "订单管理", icon: "tree" },
-            },
-            {
-                path: "particulars",
-                hidden: true,
-                component: () =>
-                    import ("@/views/order/particulars"),
-                name: "orderparticulars",
-                meta: { title: "订单详情", icon: "tree" },
-            }
-
-        ],
-    }, {
-        path: "/solution",
-        component: Layout,
-        meta: { title: "资金解决方案", icon: "tree", noCache: true },
-        children: [{
-                path: "index",
-                noCache: true,
-                component: () =>
-                    import ("@/views/solution/index"),
-                name: "solutionindex",
-                meta: { title: "资金解决方案", icon: "tree" },
-            }, {
-                path: "cityconfiguration",
-                hidden: true,
-                component: () =>
-                    import ("@/views/solution/cityconfiguration"),
-                name: "cityconfiguration",
-                meta: { title: "城市配置", icon: "tree" },
-            }
-
-
-        ],
-    },
-
 ]

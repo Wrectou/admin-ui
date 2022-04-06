@@ -1,6 +1,6 @@
 <template>
   <!-- 标题组件 -->
-  <p class="question-title">
+  <p class="question-title" v-if="questionTitleObj.title">
     <span class="fraction" v-if="questionTitleObj.fraction">({{questionTitleObj.fraction}}分)</span>
     <div class="title">{{questionTitleObj.title}}</div>
     <div :class="['collect', questionTitleObj.isCollect?'check':'']" @click="changeCollect">

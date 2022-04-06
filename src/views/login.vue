@@ -3,9 +3,9 @@
 
     <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form">
       <h3 class="title">业务站管理系统</h3>
-      <el-form-item prop="loginName">
+      <el-form-item prop="username">
         <el-input
-          v-model="loginParams.loginName"
+          v-model="loginParams.username"
           type="text"
           size="large"
           auto-complete="off"
@@ -50,12 +50,12 @@
   const { proxy } = getCurrentInstance()
 
   const loginParams = reactive({
-    loginName: "t0008",
-    password: "Aa111111",
+    username: "admin",
+    password: "admin123",
   })
 
   const loginRules = {
-    loginName: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
+    username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
     password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
   }
 

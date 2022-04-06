@@ -3,11 +3,47 @@ import request from '@/utils/request'
 // 登录
 export const login = data => {
     return request({
-        url: '/v1/user/login',
+        url: '/login',
         method: 'post',
         data
     })
 }
+
+// 获取个人章节列表
+export const getSelflist = params => {
+    return request({
+        url: '/business/section/getSelflist',
+        method: 'get',
+        params
+    })
+}
+
+// 获取章节最后答题问题ID
+export const getSelfLastQuestionId = id => {
+    return request({
+        url: `/business/section/getSelfLastQuestionId/${id}`,
+        method: 'get',
+    })
+}
+
+// 查询章节列表
+export const getSectionList = params => {
+    return request({
+        url: '/business/section/list',
+        method: 'get',
+        params
+    })
+}
+
+
+
+
+
+
+
+
+
+
 
 // 枚举数据
 export const getEnum = () => {

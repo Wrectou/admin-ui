@@ -2,17 +2,17 @@
   <div class="container chapter">
     <el-row>
 
-      <el-col :span="6" v-for="item in data" :key="item.name">
+      <el-col :span="6" v-for="item in selflist.data" :key="item.id">
         <el-card class="box-card">
           <template #header>
             <div class="card-header">
-              <span>{{item.name}}</span>
-              <el-button class="button" :type="item.isStudy ? 'primary' : 'danger'" @click="goLink(item)">{{item.isStudy ? '继续答题' : '未开始'}}</el-button>
+              <span>{{item.title}}</span>
+              <el-button class="button" :type="item.answerNum > 0 ? 'danger' : 'primary'" @click="goLink(item)">{{item.answerNum > 0 ? '继续答题' : '未开始'}}</el-button>
             </div>
           </template>
           <div class="card-cont">
-            <el-rate v-model="item.rate" disabled show-score text-color="#ff9900" :score-template="item.rate+'星'" />
-            <div class="num">{{item.studyChapter}} / {{item.allChapter}} 题</div>
+            <el-rate v-model="item.difficulty" disabled show-score text-color="#ff9900" :score-template="item.difficulty+'星'" />
+            <div class="num">{{item.answerNum}} / {{item.quesionNum}} 题</div>
           </div>
         </el-card>
       </el-col>
@@ -23,23 +23,38 @@
 
 <script setup name="chapter">
 
-import { getHomeData, getEnum } from '@/api'
+import { getSelflist } from '@/api'
 
 const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
-const data = reactive([
-  { name: '社会主义法制理念', type: 1, isStudy: false, rate: 3, allChapter: 50, studyChapter: 0, url: 'chapterAnswer' },
-  { name: '刑法', type: 2, isStudy: true, rate: 4, allChapter: 100, studyChapter: 4, url: 'chapterAnswer' },
-  { name: '办案行政案件程序', type: 3, isStudy: false, rate: 2, allChapter: 60, studyChapter: 0, url: 'chapterAnswer' },
-  { name: '人民警察使用警械和武器条例', type: 4, isStudy: false, rate: 3, allChapter: 50, studyChapter: 0, url: 'chapterAnswer' },
-  { name: '宪法', type: 5, isStudy: true, rate: 4, allChapter: 100, studyChapter: 4, url: 'chapterAnswer' },
-  { name: '办案刑事案件程序', type: 6, isStudy: false, rate: 2, allChapter: 60, studyChapter: 0, url: 'chapterAnswer' },
-])
+const getSelflistFunc = () => {
+  let params = {
+    level: proxy.$cache.session.getJSON('level')
+  }
+  getSelflist(params)
+    .then(res => {
+      console.log('getSelflist: ',res);
+      selflist.data = res.rows
+    })
+}
+getSelflistFunc()
 
-const goLink = item => router.push({ name: item.url, query: { type: item.type } })
+const selflist = reactive({
+  data: []
+})
 
+// const data = reactive([
+//   { name: '社会主义法制理念', type: 1, isStudy: false, difficulty: 3, quesionNum: 50, answerNum: 0, url: 'chapterAnswer' },
+//   { name: '刑法', type: 2, isStudy: true, difficulty: 4, quesionNum: 100, answerNum: 4, url: 'chapterAnswer' },
+//   { name: '办案行政案件程序', type: 3, isStudy: false, difficulty: 2, quesionNum: 60, answerNum: 0, url: 'chapterAnswer' },
+//   { name: '人民警察使用警械和武器条例', type: 4, isStudy: false, difficulty: 3, quesionNum: 50, answerNum: 0, url: 'chapterAnswer' },
+//   { name: '宪法', type: 5, isStudy: true, difficulty: 4, quesionNum: 100, answerNum: 4, url: 'chapterAnswer' },
+//   { name: '办案刑事案件程序', type: 6, isStudy: false, difficulty: 2, quesionNum: 60, answerNum: 0, url: 'chapterAnswer' },
+// ])
+
+const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.answerNum } })
 
 </script>
 
@@ -61,6 +76,7 @@ const goLink = item => router.push({ name: item.url, query: { type: item.type } 
   .card-header{
     span{
       margin: 0 6px 0 0;
+      text-align: left;
     }
   }
   .num{

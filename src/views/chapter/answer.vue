@@ -122,7 +122,7 @@
 
 <script setup name="chapterAnswer">
 
-import { getHomeData, getEnum } from '@/api'
+import { getSelfLastQuestionId, getEnum } from '@/api'
 
 import { IndexTolLetter } from '@/utils'
 
@@ -143,6 +143,8 @@ import QuestionAnswerJudge from '@/components/questionAnswerJudge/index'
 import QuestionAnswerDiscuss from '@/components/questionAnswerDiscuss/index'
 import QuestionNotFound from '@/components/questionNotFound/index'
 
+const route = useRoute()
+
 const { proxy } = getCurrentInstance()
 
 // 模式切换组件 属性/方法
@@ -156,6 +158,14 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
+function getSelfLastQuestionIdFunc() {
+  getSelfLastQuestionId(route.query.id)
+    .then(res => {
+      console.log('getSelfLastQuestionId: ',res);
+    })
+}
+getSelfLastQuestionIdFunc()
+
 const questionArr = reactive(allQuestionData)
 
 // 是否显示右侧答题卡侧边栏

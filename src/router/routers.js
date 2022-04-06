@@ -205,6 +205,29 @@ export const routes = [{
             },
         ],
     },
+
+    {
+        path: "/questionAdmin/chapter",
+        component: Layout,
+        meta: { title: "章节练习管理", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "list",
+                noCache: true,
+                component: () => import ("@/views/questionAdmin/chapter/list"),
+                name: "questionAdminChapterList",
+                meta: { title: "章节练习管理", icon: "tree" },
+            },
+            {
+                path: "detail",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/questionAdmin/chapter/detail"),
+                name: "errorQuestionAnswer",
+                meta: { title: "章节练习管理", icon: "tree" },
+            },
+        ],
+    },
     
 
 

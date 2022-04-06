@@ -34,21 +34,17 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      // return new Promise((resolve, reject) => {
-      //   login(userInfo)
-      //     .then(res => {
-            let res = {"msg":"操作成功","code":200,"token":"eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6Ijg4Mjg0MGQ5LTRhZGQtNDFmNi04M2FjLTNkODVjYmUxYzhjMiJ9.MGHxMzvJSUQiNK0q9csWNx2Wcd0kpw97socMd86-LnPFeDzLTcZ1kESA_oAe2f5XYJ3ZNq_mVDnEekxZ9bYTIA"}
+      return new Promise((resolve, reject) => {
+        login(userInfo)
+          .then(res => {
+            // let res = {"msg":"操作成功","code":200,"token":"eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6Ijg4Mjg0MGQ5LTRhZGQtNDFmNi04M2FjLTNkODVjYmUxYzhjMiJ9.MGHxMzvJSUQiNK0q9csWNx2Wcd0kpw97socMd86-LnPFeDzLTcZ1kESA_oAe2f5XYJ3ZNq_mVDnEekxZ9bYTIA"}
+            // setToken(res.token)
+            // commit('SET_TOKEN', res.token)
             setToken(res.token)
             commit('SET_TOKEN', res.token)
-      //       console.log(res);
-      //       if (!res.status) return reject(res.message)
-      //       else {
-      //         setToken(res.data.token)
-      //         commit('SET_TOKEN', res.data.token)
-      //         resolve()
-      //       }
-      //     }, err => reject(err) )
-      // })
+            resolve()
+          }, err => reject(err) )
+      })
     },
 
     // 获取用户信息

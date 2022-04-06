@@ -1,6 +1,15 @@
 <template>
   <div class="container home">
 
+    <div class="tit">考试等级</div>
+    <div class="level-box">
+      <el-radio-group v-model="level" @change="levelChange">
+        <el-radio :label="0">基本级执法资格考试</el-radio>
+        <el-radio :label="1">高级执法资格考试</el-radio>
+      </el-radio-group>
+    </div>
+
+
     <div class="tit">日常学习</div>
     <el-row class="menu-row">
       <el-col :span="3" class="menu-box" v-for="item in menuList" :key="item.name">
@@ -59,6 +68,20 @@ const router = useRouter()
 
 const { proxy } = getCurrentInstance()
 
+let level = ref('')
+
+if (proxy.$cache.session.getJSON('level')) level.value = proxy.$cache.session.getJSON('level')
+else {
+  level.value = 0
+  proxy.$cache.session.setJSON('level', level.value)
+}
+
+const levelChange = e => {
+  level.value = e
+  proxy.$cache.session.setJSON('level', level.value)
+}
+
+
 const menuList = reactive([
   { name: '章节练习', linkName: 'chapter', logo: icon1, },
   { name: '题型练习', linkName: 'questionType', logo: icon2, },
@@ -110,6 +133,10 @@ function goTarget(url) {
 .home {
   padding: 40px;
   min-height: 100vh;
+}
+
+.level-box{
+  padding: 0 10px;
 }
 
 .menu-row{

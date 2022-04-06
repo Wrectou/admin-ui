@@ -144,7 +144,7 @@
   </div>
 </template>
 
-<script setup name="addCity">
+<script setup name="questionAdminAddQuestion">
 
   import { getChannelAreaList, getProductTag, addProductCity, getProductCityDetail, getChannelList, getSchemeList, editProductCity } from "@/api"
   import { ElMessage } from 'element-plus'

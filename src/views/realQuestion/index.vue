@@ -23,11 +23,23 @@
 
 <script setup name="realQuestion">
 
-import { getHomeData, getEnum } from '@/api'
+import { getEpaperList, getEnum } from '@/api'
+
+const router = useRouter()
 
 const { proxy } = getCurrentInstance()
 
-const router = useRouter()
+function getEpaperListFunc() {
+  let params = {
+    etype: 0,
+    level: proxy.$cache.session.getJSON('level'),
+  }
+  getEpaperList(params)
+    .then(res => {
+      console.log('getEpaperList: ', res);
+    })
+}
+getEpaperListFunc()
 
 const data = reactive([
   { name: '2020年高级执法资格考试真题', canDo: 100, rate: 3, url: 'realQuestionDetail' },

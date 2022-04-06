@@ -122,7 +122,7 @@
 
 <script setup name="today">
 
-import { getHomeData, getEnum } from '@/api'
+import { getTodayQuestion, getEnum } from '@/api'
 
 import { IndexTolLetter, questionType } from '@/utils'
 
@@ -146,6 +146,14 @@ import QuestionNotFound from '@/components/questionNotFound/index'
 const route = useRoute()
 
 const { proxy } = getCurrentInstance()
+
+function getTodayQuestionFunc() {
+  getTodayQuestion({level: proxy.$cache.session.getJSON('level'), qtype: 0})
+    .then(res => {
+      console.log('getTodayQuestion: ', res);
+    })
+}
+getTodayQuestionFunc()
 
 // 模式切换组件 属性/方法
 let answerQuestion = ref(true)

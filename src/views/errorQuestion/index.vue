@@ -1,23 +1,33 @@
 <template>
   <div class="container chapter">
+    
+    <div class="radio-box">
+      <el-radio-group v-model="type" @change="typeType">
+        <el-radio-button :label="0">练习</el-radio-button>
+        <el-radio-button :label="1">试题</el-radio-button>
+      </el-radio-group>
+    </div>
+
     <el-row>
 
       <el-col :span="6" v-for="item in data" :key="item.name">
-        <el-card class="box-card">
-          <template #header>
-            <div class="card-header">
+        <el-card shadow="hover" @click="goLink(item)">
+          <div class="card-header">
+            <p class="title">
               <p>{{item.name}}</p>
-              <p class="rate gray">难度<el-rate v-model="item.rate" disabled show-score text-color="#ff9900" :score-template="item.rate+'星'" /></p>
-              <p class="can-do gray">{{item.canDo}}人做过</p>
-            </div>
-          </template>
-          <div class="card-cont">
-            <el-button class="button" type="primary" @click="goLink(item)">做题</el-button>
+              <el-icon><arrow-right /></el-icon>
+            </p>
+            <p class="can-do gray">{{item.canDo}}题</p>
           </div>
         </el-card>
       </el-col>
 
     </el-row>
+
+    <div class="button-box">
+      <el-button type="primary">练习全部错题</el-button>
+    </div>
+
   </div>
 </template>
 
@@ -29,12 +39,15 @@ const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
+let type = ref(0)
+const typeType = e => type.value = e
+
 const data = reactive([
-  { name: '2020年高级执法资格考试真题', canDo: 100, rate: 3, url: 'realQuestionDetail' },
-  { name: '2019年高级执法资格考试真题', canDo: 99, rate: 4, url: 'realQuestionDetail' },
-  { name: '2018年高级执法资格考试真题', canDo: 56, rate: 5, url: 'realQuestionDetail' },
-  { name: '2017年高级执法资格考试真题', canDo: 30, rate: 2, url: 'realQuestionDetail' },
-  { name: '2016年高级执法资格考试真题', canDo: 80, rate: 1, url: 'realQuestionDetail' },
+  { name: '2020年高级执法资格考试真题', canDo: 100, rate: 3, url: 'errorQuestionAnswer' },
+  { name: '2019年高级执法资格考试真题', canDo: 99, rate: 4, url: 'errorQuestionAnswer' },
+  { name: '2018年高级执法资格考试真题', canDo: 56, rate: 5, url: 'errorQuestionAnswer' },
+  { name: '2017年高级执法资格考试真题', canDo: 30, rate: 2, url: 'errorQuestionAnswer' },
+  { name: '2016年高级执法资格考试真题', canDo: 80, rate: 1, url: 'errorQuestionAnswer' },
 ])
 
 const goLink = item => router.push({ name: item.url, query: { type: item.type } })
@@ -49,44 +62,56 @@ const goLink = item => router.push({ name: item.url, query: { type: item.type } 
   text-align: center;
 }
 
-.box-card {
-  margin: 10px;
-  ::v-deep(.el-card__header){
-    padding: 14px 15px !important;
+.radio-box{
+  margin: 0 0 20px;
+  padding: 10px;
+  text-align: left;
+}
+
+::v-deep(.el-col) {
+  .el-card{
+    margin: 10px;
+    cursor: pointer;
   }
-  ::v-deep(.el-card__body) {
-    padding: 10px 14px !important;
+}
+
+.card-header,
+.card-cont {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.card-header{
+  p{
+    margin: 0;
+    flex: 1;
   }
-  .card-header,
-  .card-cont {
+  .title{
     display: flex;
-    flex-direction: column;
-    align-items: start;
-  }
-  .card-header{
-    p{
-      margin: 0;
+    align-items: center;
+    width: 100%;
+    >p{
       flex: 1;
-    }
-    .rate{
-      display: flex;
-      align-items: center;
-      .el-rate{
-        margin: 2px 0 0 13px;
-      }
-    }
-    .can-do{
-      font-size: 13px;
-    }
-    .gray{
-      color: #999;
+      text-align: left;
     }
   }
-  .card-cont{
-    align-items: end;
+  .can-do{
+    font-size: 13px;
   }
-  .num{
-    color: #A8ABB2;
+  .gray{
+    margin: 10px 0 0;
+    color: #999;
   }
+}
+.card-cont{
+  align-items: end;
+}
+.num{
+  color: #A8ABB2;
+}
+
+.button-box{
+  margin: 10px 0;
+  text-align: right;
 }
 </style>

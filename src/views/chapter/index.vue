@@ -1,7 +1,6 @@
 <template>
   <div class="container chapter">
     <el-row>
-
       <el-col :span="6" v-for="item in selflist.data" :key="item.id">
         <el-card class="box-card">
           <template #header>
@@ -16,28 +15,33 @@
           </div>
         </el-card>
       </el-col>
-
     </el-row>
+    <QuestionNotFound v-if="!isLoading && selflist.data.length < 1" />
   </div>
 </template>
 
 <script setup name="chapter">
 
 import { getSelflist } from '@/api'
+import QuestionNotFound from '@/components/questionNotFound/index'
 
 const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
+let isLoading = ref(false)
+
 const getSelflistFunc = () => {
   let params = {
     level: proxy.$cache.session.getJSON('level')
   }
+  isLoading.value = true
   getSelflist(params)
     .then(res => {
       console.log('getSelflist: ',res);
+      isLoading.value = false
       selflist.data = res.rows
-    })
+    }, err => isLoading.value = false )
 }
 getSelflistFunc()
 
@@ -54,7 +58,7 @@ const selflist = reactive({
 //   { name: '办案刑事案件程序', type: 6, isStudy: false, difficulty: 2, quesionNum: 60, answerNum: 0, url: 'chapterAnswer' },
 // ])
 
-const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.answerNum } })
+const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id } })
 
 </script>
 

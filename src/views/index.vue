@@ -1,7 +1,7 @@
 <template>
   <div class="container home">
 
-    <div class="tit">考试等级</div>
+    <div class="tit">考试类型</div>
     <div class="level-box">
       <el-radio-group v-model="level" @change="levelChange">
         <el-radio :label="0">基本级执法资格考试</el-radio>

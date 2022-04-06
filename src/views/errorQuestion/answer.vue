@@ -1,11 +1,11 @@
 <template>
   <div class="container answer">
-
-    <!-- 倒计时 -->
-    <div class="count-down">
-      <div :class="['time', dangerCountDown]">倒计时：{{countTime}}</div>
-      <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">提前交卷</el-button></div>
-    </div>
+    
+    <!-- 模式切换组件 -->
+    <QuestionModel 
+      :answerQuestion="answerQuestion" 
+      @changeQuestionModel="changeQuestionModel" 
+    />
 
     <!-- 题目工具条 -->
     <QuestionToolBar 
@@ -112,7 +112,6 @@
     <!-- 答题卡组件 -->
     <QuestionAnswerSheet 
       :isShowAnswerSheet="isShowAnswerSheet"
-      :answerSheetModel="'test'"
       :questionArr="questionArr"
       @changeQuestion="changeQuestionIndex"
       @changeAnswerSheet="changeAnswerSheet"
@@ -123,16 +122,13 @@
 
 <script setup name="errorQuestionAnswer">
 
-import { getHomeData, getEnum } from '@/api'
+import { getSelfLastQuestionId, getEnum } from '@/api'
 
-import { IndexTolLetter, questionType } from '@/utils'
+import { IndexTolLetter } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
-import { ElMessage, ElMessageBox } from 'element-plus'
-
-import { useRouter, useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
-
+import { ElMessage } from 'element-plus'
 import QuestionModel from '@/components/questionModel/index'
 import QuestionToolBar from '@/components/questionToolBar/index'
 import QuestionTitle from '@/components/questionTitle/index'
@@ -153,6 +149,7 @@ const { proxy } = getCurrentInstance()
 
 // 模式切换组件 属性/方法
 let answerQuestion = ref(true)
+const changeQuestionModel = () => answerQuestion.value = !answerQuestion.value
 
 // 正在显示的题目下标
 let questionIndex = ref(0)
@@ -160,72 +157,23 @@ let questionIndex = ref(0)
 const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.value -- }
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
-// 模拟题目类型 ---------------------
-let questionDataTypeObj = {
-  'all': allQuestionData,
-  'single': singleQuestionData,
-  'several': severalQuestionData,
-  'judge': judgeQuestionData,
-  'discuss': discussQuestionData,
-}
-let questionDataType = questionDataTypeObj.all
-let questionDataTypeCn = '全部题型'
-if (route.query) {
-  let type = route.query.type
-  if (questionType[type]) {
-    console.log(type);
-    console.log(questionType[type]);
-    questionDataType = questionDataTypeObj[questionType[type].type] || questionDataType
-    questionDataTypeCn = questionType[type].cn || questionDataTypeCn
-  }
-}
-// 模拟题目类型 --------------------------
-
-// 倒计时
-let countTime = ref('')
-let timer = null
-let dangerCountDown = ref('')
-let isShowElMessageBox = false
-const countDown = () => {
-  clearInterval(timer)
-  timer = setInterval(() => {
-    var nowtimeGetTime = new Date().getTime(),
-        endtimeGetTime = proxy.$cache.session.getJSON('endRealQuestionTime');
-    var lefttime = endtimeGetTime - nowtimeGetTime,
-        lefth = '0' + Math.floor(lefttime/(1000*60*60)%24),
-        leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),
-        lefts = Math.floor(lefttime/1000%60) < 10 ? '0'+Math.floor(lefttime/1000%60) : Math.floor(lefttime/1000%60);
-    if ((lefttime/1000).toFixed() < 900) dangerCountDown.value = 'danger-count-down'
-    if ((lefttime/1000).toFixed() >= 1) {
-      countTime.value = lefth + ":" + leftm + ":" + lefts
-    } else {
-      countTime.value = "00:00:00"
-      if (!isShowElMessageBox) {
-        isShowElMessageBox = true
-        ElMessageBox.alert('考试时间结束，请交卷！', '提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            console.log('action: ',action);
-            isShowElMessageBox = false
-            isCompleteTest.value = true
-          }
-        })
-      }
-    }
-  }, 1000)
-}
-countDown()
-
 // 题目数组
-// const questionArr = reactive(questionDataType)
-const questionArr = reactive([])
+function getSelfLastQuestionIdFunc() {
+  getSelfLastQuestionId(route.query.id)
+    .then(res => {
+      console.log('getSelfLastQuestionId: ',res);
+    })
+}
+getSelfLastQuestionIdFunc()
+
+const questionArr = reactive(allQuestionData)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
 // 题目工具条 属性/方法
 let toolbarObj = reactive({
-  type: questionDataTypeCn,
-  chapter: '',
+  type: '单项选择题',
+  chapter: '社会主义法制理念',
   number: {
     min: questionIndex,
     max: questionArr.length
@@ -270,9 +218,9 @@ let isLoading = ref(false)
 // 单选选择点击/确定选择
 const checkAnswerSingleFunc = item => {
   // 背题模式禁止操作
-  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  // if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 此处调接口
   isLoading.value = true
   // 答题时间
@@ -280,18 +228,17 @@ const checkAnswerSingleFunc = item => {
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
   setTimeout(() => {
-    questionArr[questionIndex.value].answerList.forEach( item => item.isChecked = false )
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
-    // if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+    if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
       // 回答正确去下一题
       plusQuestionIndex()
-    // } else {
-    //   // 回答错误显示答题解析
-    //   questionArr[questionIndex.value].isShowQuestionAnalysis = true
-    // }
+    } else {
+      // 回答错误显示答题解析
+      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    }
     // 取消loading
     isLoading.value = false
   }, 700)
@@ -300,9 +247,9 @@ const checkAnswerSingleFunc = item => {
 // 多选点击选项
 const checkAnswerSeveralItemFunc = item => {
   // 背题模式禁止操作
-  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  // if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 选中/反选 增加删除选中项数组
   if (!item.isChecked) questionArr[questionIndex.value].yourAnswer.push(item.value)
   else {
@@ -317,9 +264,9 @@ const checkAnswerSeveralItemFunc = item => {
 // 多选确定选择
 const checkAnswerSeveralFunc = () => {
   // 背题模式禁止操作
-  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  // if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 是单选切已经选过答案后点击没操作
   if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].yourAnswer.length <= 0) return ElMessage.error('请先选择选项再确认答案！')
   // 此处调接口
@@ -329,13 +276,13 @@ const checkAnswerSeveralFunc = () => {
     // 答题时间
     let time = Number(((new Date() - answerTime.value)/1000).toFixed())
     questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
-    // if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
+    if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
       // 回答正确去下一题
       plusQuestionIndex()
-    // } else {
-    //   // 回答错误显示答题解析
-    //   questionArr[questionIndex.value].isShowQuestionAnalysis = true
-    // }
+    } else {
+      // 回答错误显示答题解析
+      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    }
     // 取消loading
     isLoading.value = false
   }, 700)
@@ -344,9 +291,9 @@ const checkAnswerSeveralFunc = () => {
 // 判断题选择点击/确定选择
 const checkAnswerJudgeFunc = item => {
   // 背题模式禁止操作
-  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  // if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 此处调接口
   isLoading.value = true
   // 答题时间
@@ -354,33 +301,31 @@ const checkAnswerJudgeFunc = item => {
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
   setTimeout(() => {
-    questionArr[questionIndex.value].answerList.forEach( item => item.isChecked = false )
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
-    // if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+    if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
       // 回答正确去下一题
       plusQuestionIndex()
-    // } else {
-    //   // 回答错误显示答题解析
-    //   questionArr[questionIndex.value].isShowQuestionAnalysis = true
-    // }
+    } else {
+      // 回答错误显示答题解析
+      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    }
     // 取消loading
     isLoading.value = false
   }, 700)
 }
 
-
-// 论述题
+// 论述题确定分数
 const checkAnswerDiscussFunc = (formEl) => {
   if (!formEl) return
   formEl.validate((valid, fields) => {
     if (valid) {
       // 背题模式禁止操作
-      // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+      if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
       // 是单选切已经选过答案后点击没操作
-      // if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+      if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
       // 此处调接口
       isLoading.value = true
       // 答题时间
@@ -398,39 +343,6 @@ const checkAnswerDiscussFunc = (formEl) => {
   })
 }
 
-let isCompleteTest = ref(false)
-// 提前交卷按钮
-const haveTimeCompleteTest = () => {
-  let nodo = 0
-  questionArr.forEach(item => {
-    if (item.answerTime == '') nodo ++
-  })
-  ElMessageBox.confirm(`还有${nodo}题未完成，确定提前交卷吗？`, '提前交卷', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning', 
-    })
-      .then(() => {
-        ElMessage({
-          type: 'success',
-          message: '提前交卷',
-        })
-        isCompleteTest.value = true
-      })
-      .catch(() => {
-        console.log('取消提前交卷');
-      })
-}
-
-// 离开导航守卫
-onBeforeRouteLeave(() => {
-  if (!isCompleteTest.value) {
-    const answer = window.confirm('必须交卷才可离开本页面!')
-    return false
-  }
-  clearInterval(timer)
-})
-
 
 </script>
 
@@ -442,33 +354,6 @@ onBeforeRouteLeave(() => {
 
 .content-box{
   padding: 0 40px;
-}
-
-// 倒计时
-.count-down{
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  margin: 0 0 40px;
-  .time{
-    font-size: 18px;
-    color: #333;
-  }
-  .danger-count-down{
-    color: #f56c6c;
-    animation: Flash 1s infinite;
-  }
-}
-@keyframes Flash {
-  0%{
-    transform: scale(1);
-  }
-  50%{
-    transform: scale(1.07);
-  }
-  100%{
-    transform: scale(1);
-  }
 }
 
 // 题目切换样式

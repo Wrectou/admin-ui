@@ -1,8 +1,11 @@
 <template>
   <div class="container product-list">
 
-    <!-- 控制栏 -->
-    <el-form :model="sectionListParams" ref="queryRef" :inline="true">
+    <el-form 
+      :model="sectionListParams" 
+      ref="queryRef" 
+      :inline="true"
+    >
       <el-row class="control-bar">
         <el-col :span="20" class="control-left">
           <el-col :span="5">
@@ -30,7 +33,7 @@
           </el-col>
         </el-col>
         <el-col :span="4" class="control-right">
-          <el-button icon="circle-plus" type="primary" @click="addProduct">添加章节</el-button>
+          <el-button icon="circle-plus" type="primary" @click="addChapter">添加章节</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -52,21 +55,20 @@
       <el-table-column label="操作" align="center" width="320">
         <template #default="scope">
           <el-button type="primary" @click="editProduct(scope.row)">编辑</el-button>
-          <el-button type="danger" @click="setProductCity(scope.row)">题目配置</el-button>
+          <el-button type="danger" @click="setProductCity(scope.row)">题目管理</el-button>
           <el-button type="info" @click="deleteProductFunc(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     
-    <pagination @pagination="searchSections" v-show="productListData.meta.total > 0" :total="productListData.meta.total" v-model:page="sectionListParams.page" v-model:limit="sectionListParams.perPage" />
+    <pagination @pagination="searchSections" v-show="productListData.total > 0" :total="productListData.total" v-model:page="sectionListParams.pageNum" v-model:limit="sectionListParams.pageSize" />
 
   </div>
 </template>
 
 <script setup name="questionAdminChapterList">
 
-  import { getAreaList, getSectionList, deleteProduct } from "@/api"
-  import getEnumKeyArr from "@/hooks/getEnumKeyArr"
+  import { getSectionList, deleteBusinessSection } from "@/api"
 
   const router = useRouter()
   
@@ -90,8 +92,8 @@
   
   // 产品列表参数
   const sectionListParams = reactive({
-    page: 1,
-    perPage: 10,
+    pageNum: 1,
+    pageSize: 10,
     level: '',
     difficulty: '',
     title: '',
@@ -101,12 +103,7 @@
 
   // 产品列表接口返回数据
   const productListData = reactive({
-    meta: {
-      currentPage: 0,
-      total: 0,
-      perPage: 0,
-      lastPage: 0
-    },
+    total: 0,
     items: []
   })
 
@@ -117,7 +114,7 @@
       .then(res => {
         console.log('getSectionList: ',res);
         isLoading.value = false
-        // productListData.meta = res.data.meta
+        productListData.total = res.total
         productListData.items = res.rows
       }, err => isLoading.value = false )
   }
@@ -131,31 +128,29 @@
 
   // 编辑
   const editProduct = row => {
-    console.log(row);
-    router.push({name: 'addProduct', query: {id: row.id, isEdit: true }})
+    router.push({name: 'questionAdminAddChapter', query: {id: row.id, isEdit: true }})
   }
   
-  // 城市配置
+  // 题目管理
   const setProductCity = row => {
-    router.push({name: 'cityList', query: {id: row.id, productName: row.productName, channelId: row.channelId }})
+    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, title: row.title, id: row.id }})
   }
   
   // 删除
   const deleteProductFunc = row => {
-    console.log(row);
-    proxy.$modal.confirm(`确认删除产品${row.productName}吗？`)
+    proxy.$modal.confirm(`确认删除章节《${row.title}》吗？`)
       .then(() => {
-        deleteProduct(row.id)
+        deleteBusinessSection(row.id)
           .then(res => {
-            console.log('deleteProduct: ', res);
-            if (res.status) proxy.$modal.msgSuccess("删除成功")
+            console.log('deleteBusinessSection: ', res);
+            if (res.code === 200) proxy.$modal.msgSuccess("删除成功")
             searchSections()
           })
       }, err => {})
   }
 
   // 添加产品
-  const addProduct = () => router.push({name: 'addProduct'})
+  const addChapter = () => router.push({name: 'questionAdminAddChapter'})
 
   // 根据id返回指定的的lebel
   const returnTargetOptionsLabel = (key, target) => target.filter(item => item.value === key )[0].label

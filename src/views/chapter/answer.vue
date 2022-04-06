@@ -122,7 +122,7 @@
 
 <script setup name="chapterAnswer">
 
-import { getSelfLastQuestionId, getEnum } from '@/api'
+import { getSelfLastQuestionId, getQuestionList, getQuestionItem } from '@/api'
 
 import { IndexTolLetter } from '@/utils'
 
@@ -165,6 +165,27 @@ function getSelfLastQuestionIdFunc() {
     })
 }
 getSelfLastQuestionIdFunc()
+
+function getQuestionListFunc() {
+  let params = {
+    level: proxy.$cache.session.getJSON('level'),
+    practiceId: route.query.id,
+    qtype: 0,
+  }
+  getQuestionList(params)
+    .then(res => {
+      console.log('getQuestionList: ',res);
+      getQuestionItemFunc(res.rows[0].id)
+    })
+}
+getQuestionListFunc()
+
+function getQuestionItemFunc(id) {
+  getQuestionItem(id)
+    .then(res => {
+      console.log('getQuestionItem: ',res);
+    })
+}
 
 const questionArr = reactive(allQuestionData)
 

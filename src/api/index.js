@@ -35,6 +35,78 @@ export const getSectionList = params => {
     })
 }
 
+// 新增章节
+export const addBusinessSection = data => {
+    return request({
+        url: '/business/section',
+        method: 'post',
+        data
+    })
+}
+
+// 获取章节详细信息
+export const getBusinessSectionDetail = id => {
+    return request({
+        url: `/business/section/${id}`,
+        method: 'get',
+    })
+}
+
+// 编辑章节
+export const editBusinessSection = data => {
+    return request({
+        url: "/business/section",
+        method: 'put',
+        data
+    })
+}
+
+// 删除章节
+export const deleteBusinessSection = id => {
+    return request({
+        url: `/business/section/${id}`,
+        method: 'delete',
+    })
+}
+
+// 获取每日练习题目
+export const getTodayQuestion = params => {
+    return request({
+        url: '/business/question/todayQuestion',
+        method: 'get',
+        params
+    })
+}
+
+// 查询考试试卷列表
+export const getEpaperList = params => {
+    return request({
+        url: '/business/epaper/list',
+        method: 'get',
+        params
+    })
+}
+
+// 查询问题列表
+export const getQuestionList = params => {
+    return request({
+        url: '/business/question/list',
+        method: 'get',
+        params
+    })
+}
+
+// 获取题目的选项
+export const getQuestionItem = id => {
+    return request({
+        url: `/business/question/questionItem/${id}`,
+        method: 'get',
+    })
+}
+
+
+
+
 
 
 

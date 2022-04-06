@@ -171,7 +171,16 @@ export default {
             xhr.onreadystatechange = function(){
                 if (this.readyState == 4 && this.status == 200){
                   console.log('response: ',this.response);
-                    upload(this.response);
+                  // upload(this.response);
+                  let formdata = new FormData()
+                  let uploadFileUrl =  `${import.meta.env.VITE_APP_BASE_API}/common/upload`
+                  formdata.set('file', this.response)
+                  axios.post(uploadFileUrl, formdata).then(res => {
+                    console.log('images_upload_handler: ',res);
+                  }).catch(res => {
+                    failure('error')
+                  })
+
                 }
             };
             xhr.open('GET', args.content.split('"')[3]);

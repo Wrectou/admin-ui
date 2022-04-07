@@ -71,8 +71,11 @@
 
         </div>
 
+        <!-- 加载题目骨架屏 -->
+        <el-skeleton :rows="5" animated :loading="isLoadingData" />
+
         <!-- 没有题目数据 -->
-        <QuestionNotFound v-else />
+        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
 
       </div>
 
@@ -90,6 +93,7 @@
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
+          v-if="questionArr[questionIndex].type !== 4"
           :questionAnswerBarObj="questionArr[questionIndex]"
         />
 
@@ -162,8 +166,12 @@ const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1
 // const questionArr = reactive(allQuestionData)
 const questionArr = reactive([])
 
+// 加载题目数据
+let isLoadingData = ref(false)
+
 // 每日练习题目
 function getTodayQuestionFunc() {
+  isLoadingData.value = true
   getTodayQuestion({level: proxy.$cache.session.getJSON('level')})
     .then(res => {
       console.log('getTodayQuestion: ', res);
@@ -202,9 +210,10 @@ function getTodayQuestionFunc() {
           obj.type = 4
         }
         questionArr.push(obj)
+        isLoadingData.value = false
       })
       getQuestionItemFunc(0, res.data[0].id)
-    })
+    }, err => isLoadingData.value = false )
 }
 getTodayQuestionFunc()
 
@@ -407,21 +416,24 @@ const checkAnswerJudgeFunc = item => {
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  setTimeout(() => {
+  // setTimeout(() => {
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
+      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
+      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
     // 取消loading
     isLoading.value = false
-  }, 700)
+  // }, 700)
 }
 
 // 论述题确定分数
@@ -439,11 +451,12 @@ const checkAnswerDiscussFunc = (formEl) => {
       let time = Number(((new Date() - answerTime.value)/1000).toFixed())
       questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
       // 模拟接口延迟
-      setTimeout(() => {
+      // setTimeout(() => {
+        addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
         plusQuestionIndex()
         // 取消loading
         isLoading.value = false
-      }, 700)
+      // }, 700)
     } else {
       console.log('error submit!', fields)
     }

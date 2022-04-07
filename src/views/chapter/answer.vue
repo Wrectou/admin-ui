@@ -71,8 +71,11 @@
 
         </div>
 
+        <!-- 加载题目骨架屏 -->
+        <el-skeleton :rows="5" animated :loading="isLoadingData" />
+
         <!-- 没有题目数据 -->
-        <QuestionNotFound v-else />
+        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
 
       </div>
 
@@ -159,22 +162,12 @@ let questionIndex = ref(0)
 const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.value -- }
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
-// 做到哪一题
-function getSelfLastQuestionIdFunc() {
-  getSelfLastQuestionId(route.query.id)
-    .then(res => {
-      console.log('getSelfLastQuestionId: ',res);
-      if (res.data) {
-        questionArr.forEach((item, i) => {
-          if (item.id === res.data) questionIndex.value = i
-        })
-      }
-    })
-}
-
 // 题目数组
 // const questionArr = reactive(allQuestionData)
 const questionArr = reactive([])
+
+// 加载题目数据
+let isLoadingData = ref(false)
 
 // 获取本章节所有题目
 function getQuestionListFunc() {
@@ -183,8 +176,9 @@ function getQuestionListFunc() {
     practiceId: route.query.id,
     qtype: 0,
   }
+  isLoadingData.value = true
   getQuestionList(params)
-    .then(res => {
+    .then(async res => {
       console.log('getQuestionList: ',res);
       res.rows.forEach(item => {
         let obj = {
@@ -224,9 +218,24 @@ function getQuestionListFunc() {
       })
       getSelfLastQuestionIdFunc()
       getQuestionItemFunc(0, res.rows[0].id)
-    })
+    }, err => isLoadingData.value = false )
 }
 getQuestionListFunc()
+
+// 获取做到哪一题
+function getSelfLastQuestionIdFunc() {
+  getSelfLastQuestionId(route.query.id)
+    .then(res => {
+      console.log('getSelfLastQuestionId: ',res);
+      isLoadingData.value = false
+      if (res.data) {
+        questionArr.forEach((item, i) => {
+          if (item.id === res.data) questionIndex.value = i
+        })
+      }
+    }, err => isLoadingData.value = false )
+}
+
 // 获取题目选项
 function getQuestionItemFunc(i, id) {
   getQuestionItem(id)

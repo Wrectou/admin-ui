@@ -22,7 +22,7 @@
           </el-col>
         </el-col>
         <el-col :span="4" class="control-right">
-          <el-button icon="circle-plus" type="primary" @click="addCity">添加题目</el-button>
+          <el-button icon="circle-plus" type="primary" @click="addQuestion">添加题目</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -34,7 +34,9 @@
     >
       <el-table-column label="标题" align="center" prop="title"  />
       <el-table-column label="分数" align="center" prop="score" />
-      <el-table-column label="类型" align="center" prop="type" />
+      <el-table-column label="类型" align="center" prop="type">
+        <template #default="scope">{{returnTargetOptionsLabel(scope.row.type, typeOptions)}}</template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="320">
         <template #default="scope">
           <el-button type="primary" @click="editProductCityFunc(scope.row)">编辑</el-button>
@@ -50,23 +52,32 @@
 
 <script setup name="questionAdminChapterQuestionList">
 
-  import { getChannelAreaList, getQuestionList, deleteProductCity } from "@/api"
+  import { getChannelAreaList, getQuestionList, deleteQuestion } from "@/api"
   import getEnumKeyArr from "@/hooks/getEnumKeyArr"
 
   const route = useRoute()
   const router = useRouter()
+  
   const { proxy } = getCurrentInstance()
 
   let isLoading = ref(false)
   
   let routeObj = ref({})
   if (route.query) routeObj.value = route.query
+
+  let typeOptions = [
+    { value: 1, label: '判断题型'},
+    { value: 2, label: '单项选择题型'},
+    { value: 3, label: '不定项选择题型'},
+    { value: 4, label: '多项选择题型'},
+    { value: 5, label: '论述题型'},
+  ]
   
   // 城市列表参数
   const areaListParams = reactive({
     pageNum: 1, 
     pageSize: 10, 
-    level: proxy.$cache.session.getJSON('level'),
+    level: routeObj.value.level,
     practiceId: routeObj.value.id,
     qtype: 0,
     title: ''
@@ -98,25 +109,28 @@
 
   // 编辑
   const editProductCityFunc = row => {
-    router.push({name: 'addCity', query: { isEdit: true, id: routeObj.value.id, productCityId: row.id, productName: row.productName, channelId: routeObj.value.channelId }})
+    router.push({name: 'questionAdminAddQuestion', query: { isEdit: true, id: routeObj.value.id, level: routeObj.value.level, practiceId: row.id, title: routeObj.value.title, }})
   }
   
   // 删除
   const deleteProductCityFunc = row => {
     console.log(row);
-    proxy.$modal.confirm(`确认删除产品${row.productName}配置城市${row.area}吗？`)
+    proxy.$modal.confirm(`确认删除问题《${row.title}》吗？`)
       .then(() => {
-        deleteProductCity(row.id)
+        deleteQuestion(row.id)
           .then(res => {
-            console.log('deleteProductCity: ', res);
-            if (res.status) proxy.$modal.msgSuccess("删除成功")
+            console.log('deleteQuestion: ', res);
+            if (res.code === 200) proxy.$modal.msgSuccess("删除成功")
             getCitylistFunc()
           })
       }, err => {})
   }
 
   // 添加产城市
-  const addCity = () => router.push({name: 'addCity', query: { id: routeObj.value.id, productName: routeObj.value.productName, channelId: routeObj.value.channelId }})
+  const addQuestion = () => router.push({name: 'questionAdminAddQuestion', query: { id: routeObj.value.id, level: routeObj.value.level, title: routeObj.value.title, }})
+  
+  // 根据id返回指定的的lebel
+  const returnTargetOptionsLabel = (key, target) => target.filter(item => item.value === key )[0].label
 
 </script>
 

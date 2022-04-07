@@ -90,10 +90,19 @@
     font-size: 15px;
     color: #666;
     .tit{
+      position: relative;
       margin: 10px 0;
+      padding: 0 0 0 20px;
+      font-size: 20px;
     }
     .tit:before{
+      content: '';
+      position: absolute;
       top: 7px;
+      left: 2px;
+      width: 4px;
+      height: 20px;
+      background: rgb(64, 158, 255);
     }
   }
 }

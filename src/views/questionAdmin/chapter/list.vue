@@ -133,7 +133,7 @@
   
   // 题目管理
   const setProductCity = row => {
-    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, title: row.title, id: row.id }})
+    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, title: row.title, level: row.level }})
   }
   
   // 删除

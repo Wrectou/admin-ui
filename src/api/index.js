@@ -121,6 +121,84 @@ export const addPracticeQuestionAnswer = data => {
     })
 }
 
+// 新增问题
+export const addQuestion = data => {
+    return request({
+        url: '/business/question',
+        method: 'post',
+        data
+    })
+}
+
+// 新增题目选项
+export const addQuestionItem = data => {
+    return request({
+        url: '/business/questionItem',
+        method: 'post',
+        data
+    })
+}
+
+// 删除问题
+export const deleteQuestion = id => {
+    return request({
+        url: `/business/question/${id}`,
+        method: 'delete',
+    })
+}
+
+// 删除题目选项
+export const deleteQuestionItem = id => {
+    return request({
+        url: `/business/questionItem/${id}`,
+        method: 'delete',
+    })
+}
+
+// 获取问题详细信息
+export const getQuestionDetail = id => {
+    return request({
+        url: `/business/question/${id}`,
+        method: 'get',
+    })
+}
+
+// 获取题目选项详细信息
+export const getQuestionItemDetail = id => {
+    return request({
+        url: `/business/questionItem/${id}`,
+        method: 'get',
+    })
+}
+
+// 查询题目选项列表
+export const getQuestionItemList = params => {
+    return request({
+        url: '/business/questionItem/list',
+        method: 'get',
+        params
+    })
+}
+
+// 编辑问题
+export const editBusinessQuestion = data => {
+    return request({
+        url: "/business/question",
+        method: 'put',
+        data
+    })
+}
+
+// 编辑题目选项
+export const editBusinessQuestionItem = data => {
+    return request({
+        url: "/business/questionItem",
+        method: 'put',
+        data
+    })
+}
+
+
 
 
 

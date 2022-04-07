@@ -400,16 +400,25 @@ export const IndexTolLetter = {
   8: 'H',
   9: 'I',
 }
-
 // 下标转字母
-export const questionType = {
-  0: { type: 'all', cn: '全部题型'},
-  1: { type: 'single', cn: '单项选择题型'},
-  2: { type: 'several', cn: '多项选择题型'},
-  3: { type: 'judge', cn: '判断题型'},
-  4: { type: 'discuss', cn: '论述题型'},
-  // 6: 'G',
-  // 7: 'H',
-  // 8: 'I',
+export const LetterToIndex = {
+  'A': 1,
+  'B': 2,
+  'C': 3,
+  'D': 4,
+  'E': 5,
+  'F': 6,
+  'G': 7,
+  'H': 8,
+  'I': 9,
+}
+
+// 题目类型 数字转文字
+export const questionTypeToText = {
+  1: '判断题型',
+  2: '单项选择题型',
+  3: '不定项选择题型',
+  4: '多项选择题型',
+  5: '论述题型',
 }
  

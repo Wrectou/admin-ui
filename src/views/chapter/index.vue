@@ -58,7 +58,7 @@ const selflist = reactive({
 //   { name: '办案刑事案件程序', type: 6, isStudy: false, difficulty: 2, quesionNum: 60, answerNum: 0, url: 'chapterAnswer' },
 // ])
 
-const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id } })
+const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id, title: item.title } })
 
 </script>
 

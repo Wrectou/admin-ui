@@ -104,6 +104,23 @@ export const getQuestionItem = id => {
     })
 }
 
+// 获取题目统计信息
+export const getQuestionStatis = id => {
+    return request({
+        url: `/business/question/statis/${id}`,
+        method: 'get',
+    })
+}
+
+// 新增题目答题
+export const addPracticeQuestionAnswer = data => {
+    return request({
+        url: '/business/practiceQuestionAnswer',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

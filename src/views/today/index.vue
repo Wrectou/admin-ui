@@ -124,7 +124,7 @@
 
 import { getTodayQuestion, getEnum } from '@/api'
 
-import { IndexTolLetter, questionType } from '@/utils'
+import { IndexTolLetter, questionTypeToText } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
@@ -148,7 +148,7 @@ const route = useRoute()
 const { proxy } = getCurrentInstance()
 
 function getTodayQuestionFunc() {
-  getTodayQuestion({level: proxy.$cache.session.getJSON('level'), qtype: 0})
+  getTodayQuestion({level: proxy.$cache.session.getJSON('level')})
     .then(res => {
       console.log('getTodayQuestion: ', res);
     })
@@ -177,12 +177,12 @@ let questionDataType = questionDataTypeObj.all
 let questionDataTypeCn = '全部题型'
 if (route.query) {
   let type = route.query.type
-  if (questionType[type]) {
-    console.log(type);
-    console.log(questionType[type]);
-    questionDataType = questionDataTypeObj[questionType[type].type] || questionDataType
-    questionDataTypeCn = questionType[type].cn || questionDataTypeCn
-  }
+  // if (questionType[type]) {
+  //   console.log(type);
+  //   console.log(questionType[type]);
+  //   questionDataType = questionDataTypeObj[questionType[type].type] || questionDataType
+  //   questionDataTypeCn = questionType[type].cn || questionDataTypeCn
+  // }
 }
 // 模拟题目类型 --------------------------
 

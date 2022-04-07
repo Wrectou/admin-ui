@@ -2,28 +2,26 @@
   <!-- 题目工具条 -->
   <div class="question-toolbar">
     <div class="type-box">
-      <div class="type">{{toolbarObj.type}}</div>
+      <div class="type">{{questionTypeToText[toolbarObj.questionArr[toolbarObj.questionIndex]?.type] || ''}}</div>
       <div class="chapter" v-if="toolbarObj.chapter">当前章节：{{toolbarObj.chapter}}</div>
     </div>
     <div class="number" @click="changeSheet">
-      <div><span>{{toolbarObj.number.max < 1 ? 0 : toolbarObj.number.min+1}}</span>/{{toolbarObj.number.max}}</div>
+      <div><span>{{toolbarObj.questionArr.length < 1 ? 0 : toolbarObj.questionIndex + 1}}</span>/{{toolbarObj.questionArr.length}}</div>
       <el-button type="text">答题卡</el-button>
     </div>
   </div>
 </template>
 
 <script setup name="QuestionToolBar">
+  import { questionTypeToText } from '@/utils'
 
   const props = defineProps({
     toolbarObj: {
       type: Object,
       default: {
-        type: '',
         chapter: '',
-        number: {
-          min: '',
-          max: ''
-        },
+        questionIndex: 0,
+        questionArr: [],
         isShowAnswerSheet: false
       }
     }

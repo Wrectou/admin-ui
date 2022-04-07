@@ -1,6 +1,6 @@
 <template>
   <!-- 答案解析组件 -->
-  <div class="analysis-box">{{questionAnalysisObj.analysis}}</div>
+  <div class="analysis-box">{{!questionAnalysisObj.analysis ? '略' : questionAnalysisObj.analysis}}</div>
 </template>
 
 <script setup name="QuestionAnalysis">

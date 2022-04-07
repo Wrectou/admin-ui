@@ -7,12 +7,12 @@
     </div>
     <div class="item">
       <span>全站正确率</span>
-      <div class="num">{{questionStatisticsObj.allAnswerCorrectRate}}%</div>
+      <div class="num">{{questionStatisticsObj.allAnswerCorrectRate*100}}%</div>
     </div>
     <div class="item">
       <span>易错项</span>
       <div class="num" v-if="questionStatisticsObj.type === 2">
-        <span v-for="(item, index) in questionStatisticsObj.okAnswer" :key="index">{{IndexTolLetter[item]}}</span>
+        <span v-for="(item, index) in questionStatisticsObj.fallibility" :key="index">{{IndexTolLetter[item]}}</span>
       </div>
       <div class="num" v-else>{{IndexTolLetter[questionStatisticsObj.fallibility]}}</div>
     </div>

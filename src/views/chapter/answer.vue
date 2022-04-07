@@ -90,6 +90,7 @@
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
+          v-if="questionArr[questionIndex].type !== 4"
           :questionAnswerBarObj="questionArr[questionIndex]"
         />
 
@@ -163,7 +164,11 @@ function getSelfLastQuestionIdFunc() {
   getSelfLastQuestionId(route.query.id)
     .then(res => {
       console.log('getSelfLastQuestionId: ',res);
-      if (res.data) questionIndex.value = res.data-1
+      if (res.data) {
+        questionArr.forEach((item, i) => {
+          if (item.id === res.data) questionIndex.value = i
+        })
+      }
     })
 }
 
@@ -185,6 +190,7 @@ function getQuestionListFunc() {
         let obj = {
           id: item.id,
           type: item.type,
+          showType: item.type,
           fraction: item.score,
           title: item.title,
           isCollect: false,
@@ -420,21 +426,24 @@ const checkAnswerJudgeFunc = item => {
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  setTimeout(() => {
+  // setTimeout(() => {
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
+      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
+      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
     // 取消loading
     isLoading.value = false
-  }, 700)
+  // }, 700)
 }
 
 // 论述题确定分数
@@ -452,11 +461,12 @@ const checkAnswerDiscussFunc = (formEl) => {
       let time = Number(((new Date() - answerTime.value)/1000).toFixed())
       questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
       // 模拟接口延迟
-      setTimeout(() => {
+      // setTimeout(() => {
+        addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
         plusQuestionIndex()
         // 取消loading
         isLoading.value = false
-      }, 700)
+      // }, 700)
     } else {
       console.log('error submit!', fields)
     }

@@ -22,10 +22,10 @@
       class="form"
     >
       <el-form-item label="自评分数" prop="yourAnswer">
-        <el-input v-model.number="questionObj.yourAnswer" :disabled="String(questionObj.answerTime).length > 0" type="number" placeholder="请输入0~20之间的自评分数" />
+        <el-input v-model.number="questionObj.yourAnswer" :disabled="!answerQuestion || String(questionObj.answerTime).length > 0" type="number" placeholder="请输入0~20之间的自评分数" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="checkAnswer(ruleFormRef)">确定</el-button>
+        <el-button type="primary" :disabled="!answerQuestion" @click="checkAnswer(ruleFormRef)">确定</el-button>
       </el-form-item>
     </el-form>
   </div>

@@ -2,7 +2,7 @@
   <!-- 题目工具条 -->
   <div class="question-toolbar">
     <div class="type-box">
-      <div class="type">{{questionTypeToText[toolbarObj.questionArr[toolbarObj.questionIndex]?.type] || ''}}</div>
+      <div class="type">{{questionTypeToText[toolbarObj.questionArr[toolbarObj.questionIndex]?.showType] || ''}}</div>
       <div class="chapter" v-if="toolbarObj.chapter">当前章节：{{toolbarObj.chapter}}</div>
     </div>
     <div class="number" @click="changeSheet">

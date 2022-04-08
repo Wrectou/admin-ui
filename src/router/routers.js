@@ -87,28 +87,28 @@ export const routes = [{
             },
         ],
     },
-    {
-        path: "/questionType",
-        component: Layout,
-        meta: { title: "题型练习", icon: "tree", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/questionType/index"),
-                name: "questionType",
-                meta: { title: "题型练习", icon: "tree" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionType/answer"),
-                name: "questionTypeAnswer",
-                meta: { title: "题型练习", icon: "tree" },
-            },
-        ],
-    },
+    // {
+    //     path: "/questionType",
+    //     component: Layout,
+    //     meta: { title: "题型练习", icon: "tree", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionType/index"),
+    //             name: "questionType",
+    //             meta: { title: "题型练习", icon: "tree" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionType/answer"),
+    //             name: "questionTypeAnswer",
+    //             meta: { title: "题型练习", icon: "tree" },
+    //         },
+    //     ],
+    // },
     {
         path: "/today",
         component: Layout,
@@ -308,195 +308,195 @@ export const routes = [{
 
 
 
-    {
-        path: "/product",
-        component: Layout,
-        meta: { title: "产品管理", icon: "tree", noCache: true },
-        children: [{
-                path: "list",
-                noCache: true,
-                component: () =>
-                    import ("@/views/product/list"),
-                name: "productList",
-                meta: { title: "产品管理", icon: "tree" },
-            },
-            {
-                path: 'add',
-                hidden: true,
-                component: () =>
-                    import ('@/views/product/add'),
-                name: 'addProduct',
-                meta: { title: '添加产品', icon: 'tree' }
-            },
-            {
-                path: "cityList",
-                hidden: true,
-                component: () =>
-                    import ("@/views/product/cityList"),
-                name: "cityList",
-                meta: { title: "已配置城市列表", icon: "tree" },
-            },
-            {
-                path: "addCity",
-                hidden: true,
-                component: () =>
-                    import ("@/views/product/addCity"),
-                name: "addCity",
-                meta: { title: "产品城市配置", icon: "tree" },
-            },
-        ],
-    },
-    {
-        path: "/productTag",
-        component: Layout,
-        meta: { title: "产品标签管理", icon: "tree", noCache: true },
-        children: [{
-                path: "list",
-                noCache: true,
-                component: () =>
-                    import ("@/views/productTag/list"),
-                name: "productTagList",
-                meta: { title: "产品标签管理", icon: "tree" },
-            },
-            {
-                path: 'add',
-                hidden: true,
-                noCache: true,
-                component: () =>
-                    import ('@/views/productTag/add'),
-                name: 'addProductTag',
-                meta: { title: '添加产品标签', icon: 'tree' }
-            },
-        ],
-    },
-    {
-        path: "/article",
-        component: Layout,
-        alwaysShow: true,
-        meta: { title: "文章管理", icon: "tree", noCache: true },
-        children: [{
-                path: "list",
-                noCache: true,
-                component: () =>
-                    import ("@/views/article/list"),
-                name: "articleList",
-                meta: { title: "文章管理", icon: "tree" },
-            },
-            {
-                path: 'add',
-                hidden: true,
-                component: () =>
-                    import ('@/views/article/add'),
-                name: 'addArticle',
-                meta: { title: '编辑文章', icon: 'tree' }
-            },
-            {
-                path: "syncList",
-                component: () =>
-                    import ("@/views/article/syncList"),
-                name: "syncList",
-                meta: { title: "文章同步列表", icon: "tree" },
-            },
-            {
-                path: "addSync",
-                hidden: true,
-                component: () =>
-                    import ("@/views/article/addSync"),
-                name: "addSync",
-                meta: { title: "文章同步配置", icon: "tree" },
-            },
-        ],
-    },
-    {
-        path: "/channel",
-        component: Layout,
-        meta: { title: "金融机构管理", icon: "tree", noCache: true },
-        children: [{
-                path: "list",
-                noCache: true,
-                component: () =>
-                    import ("@/views/channel/list"),
-                name: "channelList",
-                meta: { title: "金融机构管理", icon: "tree" },
-            },
-            {
-                path: 'add',
-                hidden: true,
-                noCache: true,
-                component: () =>
-                    import ('@/views/channel/add'),
-                name: 'addChannel',
-                meta: { title: '添加金融机构', icon: 'tree' }
-            },
-        ],
-    },
-    {
-        path: "/operateCity",
-        component: Layout,
-        meta: { title: "城市管理", icon: "tree", noCache: true },
-        children: [{
-                path: "list",
-                noCache: true,
-                component: () =>
-                    import ("@/views/operateCity/list"),
-                name: "operateCityList",
-                meta: { title: "城市管理", icon: "tree" },
-            },
-            {
-                path: 'add',
-                hidden: true,
-                noCache: true,
-                component: () =>
-                    import ('@/views/operateCity/add'),
-                name: 'addOperateCity',
-                meta: { title: '添加城市', icon: 'tree' }
-            },
-        ],
-    },
-    {
-        path: "/system",
-        component: Layout,
-        alwaysShow: true,
-        meta: { title: "系统管理", icon: "tree", noCache: true },
-        children: [{
-                path: "index",
-                noCache: true,
-                component: () =>
-                    import ("@/views/system/index"),
-                name: "systemIndex",
-                meta: { title: "平台信息设置", icon: "tree" },
-            },
-            {
-                path: "advertList",
-                noCache: true,
-                component: () =>
-                    import ("@/views/system/advert/list"),
-                name: "advertList",
-                meta: { title: "广告管理", icon: "tree" },
-            },
-            {
-                path: 'addAdvert',
-                hidden: true,
-                component: () =>
-                    import ('@/views/system/advert/add'),
-                name: 'addAdvert',
-                meta: { title: '广告编辑', icon: 'tree' }
-            },
-            {
-                path: "bannerList",
-                component: () =>
-                    import ("@/views/system/banner/list"),
-                name: "bannerList",
-                meta: { title: "首页轮播管理", icon: "tree" },
-            },
-            {
-                path: "addBanner",
-                hidden: true,
-                component: () =>
-                    import ("@/views/system/banner/add"),
-                name: "addBanner",
-                meta: { title: "首页轮播编辑", icon: "tree" },
-            },
-        ],
-    },
+    // {
+    //     path: "/product",
+    //     component: Layout,
+    //     meta: { title: "产品管理", icon: "tree", noCache: true },
+    //     children: [{
+    //             path: "list",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/product/list"),
+    //             name: "productList",
+    //             meta: { title: "产品管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: 'add',
+    //             hidden: true,
+    //             component: () =>
+    //                 import ('@/views/product/add'),
+    //             name: 'addProduct',
+    //             meta: { title: '添加产品', icon: 'tree' }
+    //         },
+    //         {
+    //             path: "cityList",
+    //             hidden: true,
+    //             component: () =>
+    //                 import ("@/views/product/cityList"),
+    //             name: "cityList",
+    //             meta: { title: "已配置城市列表", icon: "tree" },
+    //         },
+    //         {
+    //             path: "addCity",
+    //             hidden: true,
+    //             component: () =>
+    //                 import ("@/views/product/addCity"),
+    //             name: "addCity",
+    //             meta: { title: "产品城市配置", icon: "tree" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/productTag",
+    //     component: Layout,
+    //     meta: { title: "产品标签管理", icon: "tree", noCache: true },
+    //     children: [{
+    //             path: "list",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/productTag/list"),
+    //             name: "productTagList",
+    //             meta: { title: "产品标签管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: 'add',
+    //             hidden: true,
+    //             noCache: true,
+    //             component: () =>
+    //                 import ('@/views/productTag/add'),
+    //             name: 'addProductTag',
+    //             meta: { title: '添加产品标签', icon: 'tree' }
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/article",
+    //     component: Layout,
+    //     alwaysShow: true,
+    //     meta: { title: "文章管理", icon: "tree", noCache: true },
+    //     children: [{
+    //             path: "list",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/article/list"),
+    //             name: "articleList",
+    //             meta: { title: "文章管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: 'add',
+    //             hidden: true,
+    //             component: () =>
+    //                 import ('@/views/article/add'),
+    //             name: 'addArticle',
+    //             meta: { title: '编辑文章', icon: 'tree' }
+    //         },
+    //         {
+    //             path: "syncList",
+    //             component: () =>
+    //                 import ("@/views/article/syncList"),
+    //             name: "syncList",
+    //             meta: { title: "文章同步列表", icon: "tree" },
+    //         },
+    //         {
+    //             path: "addSync",
+    //             hidden: true,
+    //             component: () =>
+    //                 import ("@/views/article/addSync"),
+    //             name: "addSync",
+    //             meta: { title: "文章同步配置", icon: "tree" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/channel",
+    //     component: Layout,
+    //     meta: { title: "金融机构管理", icon: "tree", noCache: true },
+    //     children: [{
+    //             path: "list",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/channel/list"),
+    //             name: "channelList",
+    //             meta: { title: "金融机构管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: 'add',
+    //             hidden: true,
+    //             noCache: true,
+    //             component: () =>
+    //                 import ('@/views/channel/add'),
+    //             name: 'addChannel',
+    //             meta: { title: '添加金融机构', icon: 'tree' }
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/operateCity",
+    //     component: Layout,
+    //     meta: { title: "城市管理", icon: "tree", noCache: true },
+    //     children: [{
+    //             path: "list",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/operateCity/list"),
+    //             name: "operateCityList",
+    //             meta: { title: "城市管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: 'add',
+    //             hidden: true,
+    //             noCache: true,
+    //             component: () =>
+    //                 import ('@/views/operateCity/add'),
+    //             name: 'addOperateCity',
+    //             meta: { title: '添加城市', icon: 'tree' }
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/system",
+    //     component: Layout,
+    //     alwaysShow: true,
+    //     meta: { title: "系统管理", icon: "tree", noCache: true },
+    //     children: [{
+    //             path: "index",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/system/index"),
+    //             name: "systemIndex",
+    //             meta: { title: "平台信息设置", icon: "tree" },
+    //         },
+    //         {
+    //             path: "advertList",
+    //             noCache: true,
+    //             component: () =>
+    //                 import ("@/views/system/advert/list"),
+    //             name: "advertList",
+    //             meta: { title: "广告管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: 'addAdvert',
+    //             hidden: true,
+    //             component: () =>
+    //                 import ('@/views/system/advert/add'),
+    //             name: 'addAdvert',
+    //             meta: { title: '广告编辑', icon: 'tree' }
+    //         },
+    //         {
+    //             path: "bannerList",
+    //             component: () =>
+    //                 import ("@/views/system/banner/list"),
+    //             name: "bannerList",
+    //             meta: { title: "首页轮播管理", icon: "tree" },
+    //         },
+    //         {
+    //             path: "addBanner",
+    //             hidden: true,
+    //             component: () =>
+    //                 import ("@/views/system/banner/add"),
+    //             name: "addBanner",
+    //             meta: { title: "首页轮播编辑", icon: "tree" },
+    //         },
+    //     ],
+    // },
 ]

@@ -12,7 +12,7 @@
             </div>
           </template>
           <div class="card-cont">
-            <el-button class="button" type="primary" @click="goLink(item)">做题</el-button>
+            <el-button plain class="button" type="primary" @click="goLink(item)">做题</el-button>
           </div>
         </el-card>
       </el-col>
@@ -65,9 +65,10 @@ const goLink = item => router.push({ name: item.url, query: { type: item.type } 
   margin: 10px;
   ::v-deep(.el-card__header){
     padding: 14px 15px !important;
+    border-bottom: none;
   }
   ::v-deep(.el-card__body) {
-    padding: 10px 14px !important;
+    padding: 8px 14px !important;
   }
   .card-header,
   .card-cont {

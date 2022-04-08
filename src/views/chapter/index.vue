@@ -1,7 +1,7 @@
 <template>
   <div class="container chapter">
     <el-row>
-      <el-col :span="8" v-for="item in selflist.data" :key="item.id">
+      <el-col :span="6" v-for="item in selflist.data" :key="item.id">
         <el-card class="box-card">
           <template #header>
             <div class="card-header">
@@ -71,6 +71,7 @@ const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id
 
 .box-card {
   margin: 10px 14px;
+  box-shadow: 0 2px 8px 0 rgb(0 0 0 / 4%);
   .card-header,
   .card-cont {
     display: flex;

@@ -17,7 +17,8 @@
       <br />
       <el-form-item label="内容" prop="content">
         <TinymceEditor 
-          ref="editor" 
+          ref="editor"
+          height="600"
           :placeholder="'请输入内容'"
           :modelValue="addProductParams.content"
           v-model="addProductParams.content"
@@ -161,7 +162,7 @@ const resetForm = (formEl) => {
 }
 
 .button-box {
-  margin: 50px 0 0 120px;
+  margin: 20px 0 0 120px;
 }
 </style>
 

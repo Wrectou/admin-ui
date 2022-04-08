@@ -250,11 +250,29 @@ export const addFavorite = data => {
     })
 }
 
-// 删除考试指南
+// 取消收藏
 export const deleteFavorite = id => {
     return request({
         url: `/business/practiceFavorites/${id}`,
         method: 'delete',
+    })
+}
+
+// 获取收藏目录
+export const getFavoritesQuestionSectionList = params => {
+    return request({
+        url: '/business/practiceFavorites/questionSectionList',
+        method: 'get',
+        params
+    })
+}
+
+// 获取收藏题目列表
+export const getFavoritesQuestionList = params => {
+    return request({
+        url: '/business/practiceFavorites/questionList',
+        method: 'get',
+        params
     })
 }
 

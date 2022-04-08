@@ -191,3 +191,7 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.el-button.is-plain {
+  --el-button-bg-color: transparent;
+}

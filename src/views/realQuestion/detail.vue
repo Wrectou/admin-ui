@@ -62,6 +62,7 @@ const goLink = item => {
   font-size: 18px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  background: #fff;
 }
 .item{
   display: flex;

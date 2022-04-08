@@ -2,7 +2,7 @@
   <div class="container chapter">
     
     <div class="radio-box">
-      <el-radio-group v-model="type" @change="typeType">
+      <el-radio-group v-model="qtype" @change="typeType">
         <el-radio-button :label="0">练习</el-radio-button>
         <el-radio-button :label="1">试题</el-radio-button>
       </el-radio-group>
@@ -33,14 +33,14 @@
 
 <script setup name="errorQuestion">
 
-import { getHomeData, getEnum } from '@/api'
+import { getFavoritesQuestionSectionList, getEnum } from '@/api'
 
 const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
-let type = ref(0)
-const typeType = e => type.value = e
+let qtype = ref(0)
+const typeType = e => qtype.value = e
 
 const data = reactive([
   { name: '2020年高级执法资格考试真题', canDo: 100, rate: 3, url: 'errorQuestionAnswer' },
@@ -49,6 +49,20 @@ const data = reactive([
   { name: '2017年高级执法资格考试真题', canDo: 30, rate: 2, url: 'errorQuestionAnswer' },
   { name: '2016年高级执法资格考试真题', canDo: 80, rate: 1, url: 'errorQuestionAnswer' },
 ])
+
+// 获取错题目录
+function getFavoritesQuestionSectionListFunc() {
+  let params = {
+    level: proxy.$cache.session.getJSON('level'),
+    qtype: qtype.value,
+    type: 1,
+  }
+  getFavoritesQuestionSectionList(params)
+    .then(res => {
+      console.log('getFavoritesQuestionSectionList: ', res);
+    })
+}
+getFavoritesQuestionSectionListFunc()
 
 const goLink = item => router.push({ name: item.url, query: { type: item.type } })
 

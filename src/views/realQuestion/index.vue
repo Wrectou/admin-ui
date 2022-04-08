@@ -2,13 +2,13 @@
   <div class="container chapter">
     <el-row>
 
-      <el-col :span="6" v-for="item in data" :key="item.name">
+      <el-col :span="6" v-for="item in epaperList.data" :key="item.name">
         <el-card class="box-card">
           <template #header>
             <div class="card-header">
               <p>{{item.name}}</p>
-              <p class="rate gray">难度<el-rate v-model="item.rate" disabled show-score text-color="#ff9900" :score-template="item.rate+'星'" /></p>
-              <p class="can-do gray">{{item.canDo}}人做过</p>
+              <p class="rate gray">难度<el-rate v-model="item.difficulty" disabled show-score text-color="#ff9900" :score-template="item.difficulty+'星'" /></p>
+              <p class="can-do gray">{{item.totalNum}}人做过</p>
             </div>
           </template>
           <div class="card-cont">
@@ -18,38 +18,41 @@
       </el-col>
 
     </el-row>
+    <QuestionNotFound v-if="!isLoading && epaperList.data.length < 1" />
   </div>
 </template>
 
 <script setup name="realQuestion">
 
 import { getEpaperList, getEnum } from '@/api'
+import QuestionNotFound from '@/components/questionNotFound/index'
 
 const router = useRouter()
 
 const { proxy } = getCurrentInstance()
+
+let isLoading = ref(false)
 
 function getEpaperListFunc() {
   let params = {
     etype: 0,
     level: proxy.$cache.session.getJSON('level'),
   }
+  isLoading.value = true
   getEpaperList(params)
     .then(res => {
       console.log('getEpaperList: ', res);
-    })
+      isLoading.value = false
+      epaperList.data = res.rows
+    }, err => isLoading.value = false )
 }
 getEpaperListFunc()
 
-const data = reactive([
-  { name: '2020年高级执法资格考试真题', canDo: 100, rate: 3, url: 'realQuestionDetail' },
-  { name: '2019年高级执法资格考试真题', canDo: 99, rate: 4, url: 'realQuestionDetail' },
-  { name: '2018年高级执法资格考试真题', canDo: 56, rate: 5, url: 'realQuestionDetail' },
-  { name: '2017年高级执法资格考试真题', canDo: 30, rate: 2, url: 'realQuestionDetail' },
-  { name: '2016年高级执法资格考试真题', canDo: 80, rate: 1, url: 'realQuestionDetail' },
-])
+const epaperList = reactive({
+  data: []
+})
 
-const goLink = item => router.push({ name: item.url, query: { type: item.type } })
+const goLink = item => router.push({ name: 'realQuestionDetail', query: { id: item.id } })
 
 
 </script>

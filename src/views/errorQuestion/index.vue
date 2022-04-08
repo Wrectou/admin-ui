@@ -10,22 +10,23 @@
 
     <el-row>
 
-      <el-col :span="6" v-for="item in data" :key="item.name">
+      <el-col :span="6" v-for="item in favoritesQuestionSectionList.data" :key="item.id">
         <el-card shadow="hover" @click="goLink(item)">
           <div class="card-header">
             <p class="title">
-              <p>{{item.name}}</p>
+              <p>{{item.title}}</p>
               <el-icon><arrow-right /></el-icon>
             </p>
-            <p class="can-do gray">{{item.canDo}}题</p>
+            <p class="can-do gray">{{item.num}}题</p>
           </div>
         </el-card>
       </el-col>
 
     </el-row>
+    <QuestionNotFound v-if="!isLoading && favoritesQuestionSectionList.data.length < 1" />
 
     <div class="button-box">
-      <el-button type="primary">练习全部错题</el-button>
+      <el-button type="primary" v-if="favoritesQuestionSectionList.data.length > 0" @click="answerAll">练习全部错题</el-button>
     </div>
 
   </div>
@@ -33,39 +34,44 @@
 
 <script setup name="errorQuestion">
 
-import { getFavoritesQuestionSectionList, getEnum } from '@/api'
+import { getFavoritesQuestionSectionList } from '@/api'
+import QuestionNotFound from '@/components/questionNotFound/index'
 
 const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
-let qtype = ref(0)
-const typeType = e => qtype.value = e
+let isLoading = ref(false)
 
-const data = reactive([
-  { name: '2020年高级执法资格考试真题', canDo: 100, rate: 3, url: 'errorQuestionAnswer' },
-  { name: '2019年高级执法资格考试真题', canDo: 99, rate: 4, url: 'errorQuestionAnswer' },
-  { name: '2018年高级执法资格考试真题', canDo: 56, rate: 5, url: 'errorQuestionAnswer' },
-  { name: '2017年高级执法资格考试真题', canDo: 30, rate: 2, url: 'errorQuestionAnswer' },
-  { name: '2016年高级执法资格考试真题', canDo: 80, rate: 1, url: 'errorQuestionAnswer' },
-])
+let qtype = ref(0)
+const typeType = e => {
+  qtype.value = e
+  getFavoritesQuestionSectionListFunc()
+}
+
+const favoritesQuestionSectionList = reactive({
+  data: []
+})
 
 // 获取错题目录
 function getFavoritesQuestionSectionListFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
     qtype: qtype.value,
-    type: 1,
+    type: 0,
   }
   getFavoritesQuestionSectionList(params)
     .then(res => {
       console.log('getFavoritesQuestionSectionList: ', res);
+      isLoading.value = false
+      favoritesQuestionSectionList.data = res.data
     })
 }
 getFavoritesQuestionSectionListFunc()
 
-const goLink = item => router.push({ name: item.url, query: { type: item.type } })
+const goLink = item => router.push({ name: 'errorQuestionAnswer', query: { id: item.id, qtype: qtype.value } })
 
+const answerAll = () => router.push({ name: 'errorQuestionAnswer', query: { id: 0, all: 1, qtype: qtype.value } })
 
 </script>
 

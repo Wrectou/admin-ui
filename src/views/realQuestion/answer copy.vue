@@ -1,11 +1,11 @@
 <template>
   <div class="container answer">
-    
-    <!-- 模式切换组件 -->
-    <QuestionModel 
-      :answerQuestion="answerQuestion" 
-      @changeQuestionModel="changeQuestionModel" 
-    />
+
+    <!-- 倒计时 -->
+    <div class="count-down">
+      <div :class="['time', dangerCountDown]">倒计时：{{countTime}}</div>
+      <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">提前交卷</el-button></div>
+    </div>
 
     <!-- 题目工具条 -->
     <QuestionToolBar 
@@ -71,11 +71,8 @@
 
         </div>
 
-        <!-- 加载题目骨架屏 -->
-        <el-skeleton :rows="5" animated :loading="isLoadingData" />
-
         <!-- 没有题目数据 -->
-        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
+        <QuestionNotFound v-else />
 
       </div>
 
@@ -93,14 +90,12 @@
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
-          v-if="questionArr[questionIndex].type !== 4"
           :questionAnswerBarObj="questionArr[questionIndex]"
         />
 
-        <div class="tit" v-if="answerQuestion">统计</div>
+        <div class="tit">统计</div>
         <!-- 答案统计组件 -->
         <QuestionStatistics 
-          v-if="answerQuestion"
           :questionStatisticsObj="questionArr[questionIndex]"
         />
 
@@ -117,6 +112,7 @@
     <!-- 答题卡组件 -->
     <QuestionAnswerSheet 
       :isShowAnswerSheet="isShowAnswerSheet"
+      :answerSheetModel="'test'"
       :questionArr="questionArr"
       @changeQuestion="changeQuestionIndex"
       @changeAnswerSheet="changeAnswerSheet"
@@ -127,13 +123,16 @@
 
 <script setup name="realQuestionAnswer">
 
-import { getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite  } from '@/api'
+import { getHomeData, getEnum } from '@/api'
 
-import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
+import { IndexTolLetter, questionType } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+import { useRouter, useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+
 import QuestionModel from '@/components/questionModel/index'
 import QuestionToolBar from '@/components/questionToolBar/index'
 import QuestionTitle from '@/components/questionTitle/index'
@@ -154,7 +153,6 @@ const { proxy } = getCurrentInstance()
 
 // 模式切换组件 属性/方法
 let answerQuestion = ref(true)
-const changeQuestionModel = () => answerQuestion.value = !answerQuestion.value
 
 // 正在显示的题目下标
 let questionIndex = ref(0)
@@ -162,135 +160,75 @@ let questionIndex = ref(0)
 const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.value -- }
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
-// 题目数组
-// const questionArr = reactive(allQuestionData)
-const questionArr = reactive([])
-
-// 加载题目数据
-let isLoadingData = ref(false)
-
-// 获取本章节所有题目
-function getQuestionListFunc() {
-  let params = {
-    level: proxy.$cache.session.getJSON('level'),
-    practiceId: route.query.id,
-    qtype: 1,
-  }
-  isLoadingData.value = true
-  getQuestionList(params)
-    .then(async res => {
-      console.log('getQuestionList: ',res);
-      res.rows.forEach(item => {
-        let obj = {
-          id: item.id,
-          type: item.type,
-          showType: item.type,
-          fraction: item.score,
-          title: item.title,
-          isCollect: item.favorite === 1 ? true : false,
-          answerList: [],
-          yourAnswer: '',
-          answerTime: '',
-          okAnswer: '',
-          allAnswerNum: '',
-          allAnswerCorrectRate: '',
-          fallibility: '',
-          analysis: item.explanation,
-          isShowQuestionAnalysis: false,
-        }
-        if (item.type === 1) {
-          obj.type = 3
-          obj.okAnswer = LetterToIndex[item.correctAnswers]
-        } else if (item.type === 2) {
-          obj.type = 1
-          obj.okAnswer = LetterToIndex[item.correctAnswers]
-        } else if (item.type === 3 || item.type === 4) {
-          obj.type = 2
-          obj.okAnswer = []
-          obj.yourAnswer = []
-          let correctAnswersArr = item.correctAnswers.split('')
-          correctAnswersArr = correctAnswersArr.map(item => item = LetterToIndex[item])
-          obj.okAnswer = correctAnswersArr
-        } else if (item.type === 5) {
-          obj.type = 4
-        }
-        questionArr.push(obj)
-      })
-      getSelfLastQuestionIdFunc()
-      getQuestionItemFunc(0, res.rows[0].id)
-    }, err => isLoadingData.value = false )
+// 模拟题目类型 ---------------------
+let questionDataTypeObj = {
+  'all': allQuestionData,
+  'single': singleQuestionData,
+  'several': severalQuestionData,
+  'judge': judgeQuestionData,
+  'discuss': discussQuestionData,
 }
-getQuestionListFunc()
+let questionDataType = questionDataTypeObj.all
+let questionDataTypeCn = '全部题型'
+if (route.query) {
+  let type = route.query.type
+  if (questionType[type]) {
+    console.log(type);
+    console.log(questionType[type]);
+    questionDataType = questionDataTypeObj[questionType[type].type] || questionDataType
+    questionDataTypeCn = questionType[type].cn || questionDataTypeCn
+  }
+}
+// 模拟题目类型 --------------------------
 
-// 获取做到哪一题
-function getSelfLastQuestionIdFunc() {
-  getSelfLastQuestionId(route.query.id)
-    .then(res => {
-      console.log('getSelfLastQuestionId: ',res);
-      isLoadingData.value = false
-      if (res.data) {
-        questionArr.forEach((item, i) => {
-          if (item.id === res.data) questionIndex.value = i
+// 倒计时
+let countTime = ref('')
+let timer = null
+let dangerCountDown = ref('')
+let isShowElMessageBox = false
+const countDown = () => {
+  clearInterval(timer)
+  timer = setInterval(() => {
+    var nowtimeGetTime = new Date().getTime(),
+        endtimeGetTime = proxy.$cache.session.getJSON('endRealQuestionTime');
+    var lefttime = endtimeGetTime - nowtimeGetTime,
+        lefth = '0' + Math.floor(lefttime/(1000*60*60)%24),
+        leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),
+        lefts = Math.floor(lefttime/1000%60) < 10 ? '0'+Math.floor(lefttime/1000%60) : Math.floor(lefttime/1000%60);
+    if ((lefttime/1000).toFixed() < 900) dangerCountDown.value = 'danger-count-down'
+    if ((lefttime/1000).toFixed() >= 1) {
+      countTime.value = lefth + ":" + leftm + ":" + lefts
+    } else {
+      countTime.value = "00:00:00"
+      if (!isShowElMessageBox) {
+        isShowElMessageBox = true
+        ElMessageBox.alert('考试时间结束，请交卷！', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            console.log('action: ',action);
+            isShowElMessageBox = false
+            isCompleteTest.value = true
+          }
         })
       }
-    }, err => isLoadingData.value = false )
+    }
+  }, 1000)
 }
+countDown()
 
-// 获取题目选项
-function getQuestionItemFunc(i, id) {
-  getQuestionItem(id)
-    .then(res => {
-      console.log('getQuestionItem: ',res);
-      res.data.forEach(item => {
-        let obj = {
-          value: LetterToIndex[item.identifier], label: item.title, isChecked: false
-        }
-        questionArr[i].answerList.push(obj)
-      })
-    })
-}
-
-// 获取题目统计信息 错题用
-function getQuestionStatisFunc(i, id) {
-  console.log(i);
-  getQuestionStatis(id)
-    .then(res => {
-      console.log('getQuestionStatis: ',res);
-      questionArr[i].allAnswerNum = res.data.answerNum
-      questionArr[i].allAnswerCorrectRate = res.data.correct
-      if (questionArr[i].type === 2) {
-        let fallibilityArr = res.data.easyWrong.split('')
-        fallibilityArr = fallibilityArr.map(item => item = LetterToIndex[item])
-        questionArr[i].fallibility = fallibilityArr
-      } else {
-        questionArr[i].fallibility = LetterToIndex[res.data.easyWrong]
-      }
-    })
-  favoriteErrQuestionFunc()
-}
-
-// 错题自动收藏
-function favoriteErrQuestionFunc() {
-  let params = {
-    level: proxy.$cache.session.getJSON('level'),
-    practiceId: route.query.id,
-    qtype: 0,
-    questionId: questionArr[questionIndex.value].id,
-    type: 0,
-  }
-  addFavorite(params)
-    .then(res => {
-      console.log('addFavorite: ', res);
-    })
-}
+// 题目数组
+const questionArr = reactive(questionDataType)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
 // 题目工具条 属性/方法
 let toolbarObj = reactive({
-  chapter: route.query.title,
-  questionIndex,
-  questionArr,
+  type: questionDataTypeCn,
+  chapter: '',
+  number: {
+    min: questionIndex,
+    max: questionArr.length
+  },
   isShowAnswerSheet
 })
 // 开启/关闭选项卡
@@ -304,42 +242,19 @@ const changeQuestionIndex = index => {
 
 // 标题组件 属性/方法
 const changeCollectTitle = () => {
-  if (!questionArr[questionIndex.value].isCollect) {
-    let params = {
-      level: proxy.$cache.session.getJSON('level'),
-      practiceId: route.query.id,
-      qtype: 0,
-      questionId: questionArr[questionIndex.value].id,
-      type: 1,
-    }
-    addFavorite(params)
-      .then(res => {
-        console.log('addFavorite: ', res);
-        if (res.code === 200) {
-          ElMessage.success('收藏成功！')
-          questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
-        }
-        else ElMessage.error('收藏出错，请稍后再试！')
-      })
-  } else {
-    deleteFavorite(questionArr[questionIndex.value].id)
-      .then(res => {
-        console.log('deleteFavorite: ', res);
-        if (res.code === 200) {
-          ElMessage.success('取消收藏成功！')
-          questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
-        }
-        else ElMessage.error('取消收藏出错，请稍后再试！')
-      })
-  }
+  // 此处需要调借口
+  setTimeout(() => {
+    questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
+    if (questionArr[questionIndex.value].isCollect) ElMessage.success('收藏成功！')
+    else ElMessage.success('取消收藏成功！')
+  }, 300)
 }
 
-// 控制题目切换动画 / 获取下标对应id的答案选项
+// 控制题目切换动画
 let switchQuestionClass = ref('')
 watch(questionIndex, (newValue, oldValue) => {
   if (newValue > oldValue) switchQuestionClass.value = 'tramsform-form'
   else switchQuestionClass.value = 'tramsform-to'
-  if (questionArr[newValue].answerList.length < 1) getQuestionItemFunc(newValue, questionArr[newValue].id)
   setTimeout(() => {
     switchQuestionClass.value = ''
     answerTime.value = new Date()
@@ -348,77 +263,45 @@ watch(questionIndex, (newValue, oldValue) => {
 
 // 答题开始时间，每开始一题设置为开始时间
 let answerTime = ref(new Date())
-
-// 回答问题接口
-function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
-  console.log(questionArr[i]);
-  let params = {
-    correctAnswers: questionArr[i].okAnswer,
-    isCorrect,
-    practiceId: route.query.id,
-    qtype: 0,
-    questionId: id,
-    reply: questionArr[i].yourAnswer,
-    score: questionArr[i].fraction
-  }
-  // 多选
-  if (questionArr[i].type === 2) {
-    let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
-    let correctAnswersStr = ''
-    correctAnswersArr.forEach(item => correctAnswersStr+=item)
-    params.correctAnswers = correctAnswersStr
-    let replyArr = params.reply.map(item => item = IndexTolLetter[item])
-    let replyStr = ''
-    replyArr.forEach(item => replyStr+=item)
-    params.reply = replyStr
-  } 
-  addPracticeQuestionAnswer(params)
-    .then(res => {
-      console.log('addPracticeQuestionAnswer: ', res);
-    })
-}
-
 // 是否显示问题解析界面
 let isLoading = ref(false)
 
 // 单选选择点击/确定选择
 const checkAnswerSingleFunc = item => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 此处调接口
   isLoading.value = true
   // 答题时间
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  // setTimeout(() => {
+  setTimeout(() => {
+    questionArr[questionIndex.value].answerList.forEach( item => item.isChecked = false )
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
-    if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
-      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
+    // if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
       // 回答正确去下一题
       plusQuestionIndex()
-    } else {
-      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
-      // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
-      questionArr[questionIndex.value].isShowQuestionAnalysis = true
-    }
+    // } else {
+    //   // 回答错误显示答题解析
+    //   questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    // }
     // 取消loading
     isLoading.value = false
-  // }, 700)
+  }, 700)
 }
 
 // 多选点击选项
 const checkAnswerSeveralItemFunc = item => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 选中/反选 增加删除选中项数组
   if (!item.isChecked) questionArr[questionIndex.value].yourAnswer.push(item.value)
   else {
@@ -433,92 +316,119 @@ const checkAnswerSeveralItemFunc = item => {
 // 多选确定选择
 const checkAnswerSeveralFunc = () => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 是单选切已经选过答案后点击没操作
   if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].yourAnswer.length <= 0) return ElMessage.error('请先选择选项再确认答案！')
   // 此处调接口
   isLoading.value = true
   // 模拟接口延迟
-  // setTimeout(() => {
+  setTimeout(() => {
     // 答题时间
     let time = Number(((new Date() - answerTime.value)/1000).toFixed())
     questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
-    if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
-      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
+    // if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
       // 回答正确去下一题
       plusQuestionIndex()
-    } else {
-      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
-      // 回答错误显示答题解析
-      questionArr[questionIndex.value].isShowQuestionAnalysis = true
-      // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
-    }
+    // } else {
+    //   // 回答错误显示答题解析
+    //   questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    // }
     // 取消loading
     isLoading.value = false
-  // }, 700)
+  }, 700)
 }
 
 // 判断题选择点击/确定选择
 const checkAnswerJudgeFunc = item => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 此处调接口
   isLoading.value = true
   // 答题时间
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  // setTimeout(() => {
+  setTimeout(() => {
+    questionArr[questionIndex.value].answerList.forEach( item => item.isChecked = false )
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
-    if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
-      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
+    // if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
       // 回答正确去下一题
       plusQuestionIndex()
-    } else {
-      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
-      // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
-      questionArr[questionIndex.value].isShowQuestionAnalysis = true
-    }
+    // } else {
+    //   // 回答错误显示答题解析
+    //   questionArr[questionIndex.value].isShowQuestionAnalysis = true
+    // }
     // 取消loading
     isLoading.value = false
-  // }, 700)
+  }, 700)
 }
 
-// 论述题确定分数
+
+// 论述题
 const checkAnswerDiscussFunc = (formEl) => {
   if (!formEl) return
   formEl.validate((valid, fields) => {
     if (valid) {
       // 背题模式禁止操作
-      if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+      // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
       // 是单选切已经选过答案后点击没操作
-      if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+      // if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
       // 此处调接口
       isLoading.value = true
       // 答题时间
       let time = Number(((new Date() - answerTime.value)/1000).toFixed())
       questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
       // 模拟接口延迟
-      // setTimeout(() => {
-        addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
+      setTimeout(() => {
         plusQuestionIndex()
         // 取消loading
         isLoading.value = false
-      // }, 700)
+      }, 700)
     } else {
       console.log('error submit!', fields)
     }
   })
 }
+
+let isCompleteTest = ref(false)
+// 提前交卷按钮
+const haveTimeCompleteTest = () => {
+  let nodo = 0
+  questionArr.forEach(item => {
+    if (item.answerTime == '') nodo ++
+  })
+  ElMessageBox.confirm(`还有${nodo}题未完成，确定提前交卷吗？`, '提前交卷', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning', 
+    })
+      .then(() => {
+        ElMessage({
+          type: 'success',
+          message: '提前交卷',
+        })
+        isCompleteTest.value = true
+      })
+      .catch(() => {
+        console.log('取消提前交卷');
+      })
+}
+
+// 离开导航守卫
+onBeforeRouteLeave(() => {
+  if (!isCompleteTest.value) {
+    const answer = window.confirm('必须交卷才可离开本页面!')
+    return false
+  }
+  clearInterval(timer)
+})
 
 
 </script>
@@ -531,6 +441,33 @@ const checkAnswerDiscussFunc = (formEl) => {
 
 .content-box{
   padding: 0 40px;
+}
+
+// 倒计时
+.count-down{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0 0 40px;
+  .time{
+    font-size: 18px;
+    color: #333;
+  }
+  .danger-count-down{
+    color: #f56c6c;
+    animation: Flash 1s infinite;
+  }
+}
+@keyframes Flash {
+  0%{
+    transform: scale(1);
+  }
+  50%{
+    transform: scale(1.07);
+  }
+  100%{
+    transform: scale(1);
+  }
 }
 
 // 题目切换样式

@@ -25,6 +25,7 @@
         <!-- 标题组件 -->
         <QuestionTitle 
           :questionTitleObj="questionArr[questionIndex]"
+          :isShowCollect=false
           @changeCollectTitle="changeCollectTitle"
         />
         
@@ -71,8 +72,11 @@
 
         </div>
 
+        <!-- 加载题目骨架屏 -->
+        <el-skeleton :rows="5" animated :loading="isLoadingData" />
+
         <!-- 没有题目数据 -->
-        <QuestionNotFound v-else />
+        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
 
       </div>
 
@@ -90,12 +94,14 @@
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
+          v-if="questionArr[questionIndex].type !== 4"
           :questionAnswerBarObj="questionArr[questionIndex]"
         />
 
-        <div class="tit">统计</div>
+        <div class="tit" v-if="answerQuestion">统计</div>
         <!-- 答案统计组件 -->
         <QuestionStatistics 
+          v-if="answerQuestion"
           :questionStatisticsObj="questionArr[questionIndex]"
         />
 
@@ -122,9 +128,9 @@
 
 <script setup name="errorQuestionAnswer">
 
-import { getSelfLastQuestionId, getEnum } from '@/api'
+import { getFavoritesQuestionList, getSelfLastQuestionId, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, getErrQuestionAllList } from '@/api'
 
-import { IndexTolLetter } from '@/utils'
+import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
@@ -158,26 +164,189 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
+// const questionArr = reactive(allQuestionData)
+const questionArr = reactive([])
+
+// 加载题目数据
+let isLoadingData = ref(false)
+
+// 获取本章节所有题目
+function getFavoritesQuestionListFunc() {
+  let params = {
+    level: proxy.$cache.session.getJSON('level'),
+    practiceId: route.query.id,
+    qtype: route.query.qtype,
+    type: 0,
+  }
+  isLoadingData.value = true
+  getFavoritesQuestionList(params)
+    .then(async res => {
+      console.log('getFavoritesQuestionList: ',res);
+      res.rows.forEach(item => {
+        let obj = {
+          id: item.id,
+          type: item.type,
+          showType: item.type,
+          fraction: item.score,
+          title: item.title,
+          isCollect: item.favorite === 1 ? true : false,
+          answerList: [],
+          yourAnswer: '',
+          answerTime: '',
+          okAnswer: '',
+          allAnswerNum: '',
+          allAnswerCorrectRate: '',
+          fallibility: '',
+          analysis: item.explanation,
+          isShowQuestionAnalysis: false,
+        }
+        if (item.type === 1) {
+          obj.type = 3
+          obj.okAnswer = LetterToIndex[item.correctAnswers]
+        } else if (item.type === 2) {
+          obj.type = 1
+          obj.okAnswer = LetterToIndex[item.correctAnswers]
+        } else if (item.type === 3 || item.type === 4) {
+          obj.type = 2
+          obj.okAnswer = []
+          obj.yourAnswer = []
+          let correctAnswersArr = item.correctAnswers.split('')
+          correctAnswersArr = correctAnswersArr.map(item => item = LetterToIndex[item])
+          obj.okAnswer = correctAnswersArr
+        } else if (item.type === 5) {
+          obj.type = 4
+        }
+        questionArr.push(obj)
+      })
+      getSelfLastQuestionIdFunc()
+      getQuestionItemFunc(0, res.rows[0].id)
+    }, err => isLoadingData.value = false )
+}
+
+// 获取所有错题
+function getErrQuestionAllListFunc() {
+  let params = {
+    level: proxy.$cache.session.getJSON('level'),
+    qtype: route.query.qtype,
+    type: 0,
+  }
+  isLoadingData.value = true
+  getErrQuestionAllList(params)
+    .then(async res => {
+      console.log('getErrQuestionAllList: ',res);
+      res.rows.forEach(item => {
+        let obj = {
+          id: item.id,
+          type: item.type,
+          showType: item.type,
+          fraction: item.score,
+          title: item.title,
+          isCollect: item.favorite === 1 ? true : false,
+          answerList: [],
+          yourAnswer: '',
+          answerTime: '',
+          okAnswer: '',
+          allAnswerNum: '',
+          allAnswerCorrectRate: '',
+          fallibility: '',
+          analysis: item.explanation,
+          isShowQuestionAnalysis: false,
+        }
+        if (item.type === 1) {
+          obj.type = 3
+          obj.okAnswer = LetterToIndex[item.correctAnswers]
+        } else if (item.type === 2) {
+          obj.type = 1
+          obj.okAnswer = LetterToIndex[item.correctAnswers]
+        } else if (item.type === 3 || item.type === 4) {
+          obj.type = 2
+          obj.okAnswer = []
+          obj.yourAnswer = []
+          let correctAnswersArr = item.correctAnswers.split('')
+          correctAnswersArr = correctAnswersArr.map(item => item = LetterToIndex[item])
+          obj.okAnswer = correctAnswersArr
+        } else if (item.type === 5) {
+          obj.type = 4
+        }
+        questionArr.push(obj)
+      })
+      getSelfLastQuestionIdFunc()
+      getQuestionItemFunc(0, res.rows[0].id)
+    }, err => isLoadingData.value = false )
+}
+
+if (route.query.all) getErrQuestionAllListFunc()
+else getFavoritesQuestionListFunc()
+
+// 获取做到哪一题
 function getSelfLastQuestionIdFunc() {
   getSelfLastQuestionId(route.query.id)
     .then(res => {
       console.log('getSelfLastQuestionId: ',res);
+      isLoadingData.value = false
+      if (res.data) {
+        questionArr.forEach((item, i) => {
+          if (item.id === res.data) questionIndex.value = i
+        })
+      }
+    }, err => isLoadingData.value = false )
+}
+
+// 获取题目选项
+function getQuestionItemFunc(i, id) {
+  getQuestionItem(id)
+    .then(res => {
+      console.log('getQuestionItem: ',res);
+      res.data.forEach(item => {
+        let obj = {
+          value: LetterToIndex[item.identifier], label: item.title, isChecked: false
+        }
+        questionArr[i].answerList.push(obj)
+      })
     })
 }
-getSelfLastQuestionIdFunc()
 
-const questionArr = reactive(allQuestionData)
+// 获取题目统计信息 错题用
+function getQuestionStatisFunc(i, id) {
+  console.log(i);
+  getQuestionStatis(id)
+    .then(res => {
+      console.log('getQuestionStatis: ',res);
+      questionArr[i].allAnswerNum = res.data.answerNum
+      questionArr[i].allAnswerCorrectRate = res.data.correct
+      if (questionArr[i].type === 2) {
+        let fallibilityArr = res.data.easyWrong.split('')
+        fallibilityArr = fallibilityArr.map(item => item = LetterToIndex[item])
+        questionArr[i].fallibility = fallibilityArr
+      } else {
+        questionArr[i].fallibility = LetterToIndex[res.data.easyWrong]
+      }
+    })
+  // favoriteErrQuestionFunc()
+}
+
+// 错题自动收藏
+function favoriteErrQuestionFunc() {
+  let params = {
+    level: proxy.$cache.session.getJSON('level'),
+    practiceId: route.query.id,
+    qtype: 0,
+    questionId: questionArr[questionIndex.value].id,
+    type: 0,
+  }
+  addFavorite(params)
+    .then(res => {
+      console.log('addFavorite: ', res);
+    })
+}
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
 // 题目工具条 属性/方法
 let toolbarObj = reactive({
-  type: '单项选择题',
-  chapter: '社会主义法制理念',
-  number: {
-    min: questionIndex,
-    max: questionArr.length
-  },
+  chapter: route.query.title,
+  questionIndex,
+  questionArr,
   isShowAnswerSheet
 })
 // 开启/关闭选项卡
@@ -191,19 +360,42 @@ const changeQuestionIndex = index => {
 
 // 标题组件 属性/方法
 const changeCollectTitle = () => {
-  // 此处需要调借口
-  setTimeout(() => {
-    questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
-    if (questionArr[questionIndex.value].isCollect) ElMessage.success('收藏成功！')
-    else ElMessage.success('取消收藏成功！')
-  }, 300)
+  if (!questionArr[questionIndex.value].isCollect) {
+    let params = {
+      level: proxy.$cache.session.getJSON('level'),
+      practiceId: route.query.id,
+      qtype: 0,
+      questionId: questionArr[questionIndex.value].id,
+      type: 1,
+    }
+    addFavorite(params)
+      .then(res => {
+        console.log('addFavorite: ', res);
+        if (res.code === 200) {
+          ElMessage.success('收藏成功！')
+          questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
+        }
+        else ElMessage.error('收藏出错，请稍后再试！')
+      })
+  } else {
+    deleteFavorite(questionArr[questionIndex.value].id)
+      .then(res => {
+        console.log('deleteFavorite: ', res);
+        if (res.code === 200) {
+          ElMessage.success('取消收藏成功！')
+          questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
+        }
+        else ElMessage.error('取消收藏出错，请稍后再试！')
+      })
+  }
 }
 
-// 控制题目切换动画
+// 控制题目切换动画 / 获取下标对应id的答案选项
 let switchQuestionClass = ref('')
 watch(questionIndex, (newValue, oldValue) => {
   if (newValue > oldValue) switchQuestionClass.value = 'tramsform-form'
   else switchQuestionClass.value = 'tramsform-to'
+  if (questionArr[newValue].answerList.length < 1) getQuestionItemFunc(newValue, questionArr[newValue].id)
   setTimeout(() => {
     switchQuestionClass.value = ''
     answerTime.value = new Date()
@@ -212,6 +404,36 @@ watch(questionIndex, (newValue, oldValue) => {
 
 // 答题开始时间，每开始一题设置为开始时间
 let answerTime = ref(new Date())
+
+// 回答问题接口
+function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
+  console.log(questionArr[i]);
+  let params = {
+    correctAnswers: questionArr[i].okAnswer,
+    isCorrect,
+    practiceId: route.query.id,
+    qtype: 0,
+    questionId: id,
+    reply: questionArr[i].yourAnswer,
+    score: questionArr[i].fraction
+  }
+  // 多选
+  if (questionArr[i].type === 2) {
+    let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
+    let correctAnswersStr = ''
+    correctAnswersArr.forEach(item => correctAnswersStr+=item)
+    params.correctAnswers = correctAnswersStr
+    let replyArr = params.reply.map(item => item = IndexTolLetter[item])
+    let replyStr = ''
+    replyArr.forEach(item => replyStr+=item)
+    params.reply = replyStr
+  } 
+  addPracticeQuestionAnswer(params)
+    .then(res => {
+      console.log('addPracticeQuestionAnswer: ', res);
+    })
+}
+
 // 是否显示问题解析界面
 let isLoading = ref(false)
 
@@ -227,21 +449,24 @@ const checkAnswerSingleFunc = item => {
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  setTimeout(() => {
+  // setTimeout(() => {
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
+      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
+      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
     // 取消loading
     isLoading.value = false
-  }, 700)
+  // }, 700)
 }
 
 // 多选点击选项
@@ -272,20 +497,24 @@ const checkAnswerSeveralFunc = () => {
   // 此处调接口
   isLoading.value = true
   // 模拟接口延迟
-  setTimeout(() => {
+  // setTimeout(() => {
     // 答题时间
     let time = Number(((new Date() - answerTime.value)/1000).toFixed())
     questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
     if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
+      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
+      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
+      // 回答错误显示答题解析
+      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
     }
     // 取消loading
     isLoading.value = false
-  }, 700)
+  // }, 700)
 }
 
 // 判断题选择点击/确定选择
@@ -300,21 +529,24 @@ const checkAnswerJudgeFunc = item => {
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  setTimeout(() => {
+  // setTimeout(() => {
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
+      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
+      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
+      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
     // 取消loading
     isLoading.value = false
-  }, 700)
+  // }, 700)
 }
 
 // 论述题确定分数
@@ -332,11 +564,12 @@ const checkAnswerDiscussFunc = (formEl) => {
       let time = Number(((new Date() - answerTime.value)/1000).toFixed())
       questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
       // 模拟接口延迟
-      setTimeout(() => {
+      // setTimeout(() => {
+        addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
         plusQuestionIndex()
         // 取消loading
         isLoading.value = false
-      }, 700)
+      // }, 700)
     } else {
       console.log('error submit!', fields)
     }

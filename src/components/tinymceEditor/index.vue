@@ -14,6 +14,7 @@
 <script>
 
 import axios from 'axios'
+import { getToken } from '@/utils/auth'
 // 引入tinymce编辑器
 import Editor from "@tinymce/tinymce-vue"
 
@@ -175,15 +176,22 @@ export default {
                   let formdata = new FormData()
                   let uploadFileUrl =  `${import.meta.env.VITE_APP_BASE_API}/common/upload`
                   formdata.set('file', this.response)
-                  axios.post(uploadFileUrl, formdata).then(res => {
-                    console.log('images_upload_handler: ',res);
-                  }).catch(res => {
-                    failure('error')
-                  })
+                  axios.post(uploadFileUrl, formdata, {
+                      headers:
+                        {
+                          'Authorization': 'Bearer ' + getToken()
+                        }
+                    }).then(res => {
+                      console.log('images_upload_handler: ',res);
+                    }).catch(res => {
+                      failure('error')
+                    })
 
                 }
             };
-            xhr.open('GET', args.content.split('"')[3]);
+            console.log('args.c: ', args.content.split('"'))
+            // xhr.open('GET', args.content.split('"')[0]);   // 图片地址
+            xhr.open('GET', args.content.split('"')[3]);    // 图片 
             xhr.responseType = 'blob';
             xhr.send();
  
@@ -216,9 +224,14 @@ export default {
       },
       images_upload_handler(blobInfo, success, failure) {
         let formdata = new FormData()
-        let uploadFileUrl = 'https://gateway-test.moerlong.com/mdm/api/oss/qiniu/uploadHttps'
+        let uploadFileUrl = `${import.meta.env.VITE_APP_BASE_API}/common/upload`
         formdata.set('file', blobInfo.blob())
-        axios.post(uploadFileUrl, formdata).then(res => {
+        axios.post(uploadFileUrl, formdata, {
+                      headers:
+                        {
+                          'Authorization': 'Bearer ' + getToken()
+                        }
+                    }).then(res => {
           console.log('images_upload_handler: ',res);
           success(res.data.data.url)
         }).catch(res => {

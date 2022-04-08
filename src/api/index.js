@@ -276,6 +276,23 @@ export const getFavoritesQuestionList = params => {
     })
 }
 
+// 获取考试试卷详细信息
+export const getEpaperDetail = id => {
+    return request({
+        url: `/business/epaper/${id}`,
+        method: 'get',
+    })
+}
+
+// 获取收藏所有题目列表
+export const getErrQuestionAllList = params => {
+    return request({
+        url: '/business/practiceFavorites/questionAllList',
+        method: 'get',
+        params
+    })
+}
+
 
 
 

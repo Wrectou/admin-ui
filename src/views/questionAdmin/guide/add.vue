@@ -18,7 +18,7 @@
       <el-form-item label="内容" prop="content">
         <TinymceEditor 
           ref="editor"
-          height="600"
+          :height=600
           :placeholder="'请输入内容'"
           :modelValue="addProductParams.content"
           v-model="addProductParams.content"

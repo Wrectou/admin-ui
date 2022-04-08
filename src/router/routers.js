@@ -68,14 +68,14 @@ export const routes = [{
     {
         path: "/chapter",
         component: Layout,
-        meta: { title: "章节练习", icon: "tree", noCache: true },
+        meta: { title: "章节练习", icon: "swagger", noCache: true },
         children: [
             {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/chapter/index"),
                 name: "chapter",
-                meta: { title: "章节练习", icon: "tree" },
+                meta: { title: "章节练习", icon: "swagger" },
             },
             {
                 path: "answer",
@@ -83,7 +83,7 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/chapter/answer"),
                 name: "chapterAnswer",
-                meta: { title: "章节练习", icon: "tree" },
+                meta: { title: "章节练习", icon: "swagger" },
             },
         ],
     },
@@ -112,28 +112,28 @@ export const routes = [{
     {
         path: "/today",
         component: Layout,
-        meta: { title: "每日练习", icon: "tree", noCache: true },
+        meta: { title: "每日练习", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/today/index"),
                 name: "today",
-                meta: { title: "每日练习", icon: "tree" },
+                meta: { title: "每日练习", icon: "edit" },
             },
         ],
     },
     {
         path: "/realQuestion",
         component: Layout,
-        meta: { title: "历年真题", icon: "tree", noCache: true },
+        meta: { title: "历年真题", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/realQuestion/index"),
                 name: "realQuestion",
-                meta: { title: "历年真题", icon: "tree" },
+                meta: { title: "历年真题", icon: "edit" },
             },
             {
                 path: "detail",
@@ -141,7 +141,7 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/realQuestion/detail"),
                 name: "realQuestionDetail",
-                meta: { title: "历年真题", icon: "tree" },
+                meta: { title: "历年真题", icon: "edit" },
             },
             {
                 path: "answer",
@@ -149,21 +149,21 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/realQuestion/answer"),
                 name: "realQuestionAnswer",
-                meta: { title: "历年真题", icon: "tree" },
+                meta: { title: "历年真题", icon: "edit" },
             },
         ],
     },
     {
         path: "/imitateQuestion",
         component: Layout,
-        meta: { title: "模拟考试", icon: "tree", noCache: true },
+        meta: { title: "模拟考试", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/imitateQuestion/index"),
                 name: "imitateQuestion",
-                meta: { title: "模拟考试", icon: "tree" },
+                meta: { title: "模拟考试", icon: "edit" },
             },
             {
                 path: "detail",
@@ -171,7 +171,7 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/imitateQuestion/detail"),
                 name: "imitateQuestionDetail",
-                meta: { title: "模拟考试", icon: "tree" },
+                meta: { title: "模拟考试", icon: "edit" },
             },
             {
                 path: "answer",
@@ -179,21 +179,21 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/imitateQuestion/answer"),
                 name: "imitateQuestionAnswer",
-                meta: { title: "模拟考试", icon: "tree" },
+                meta: { title: "模拟考试", icon: "edit" },
             },
         ],
     },
     {
         path: "/errorQuestion",
         component: Layout,
-        meta: { title: "错题巩固", icon: "tree", noCache: true },
+        meta: { title: "错题巩固", icon: "log", noCache: true },
         children: [
             {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/errorQuestion/index"),
                 name: "errorQuestion",
-                meta: { title: "错题巩固", icon: "tree" },
+                meta: { title: "错题巩固", icon: "log" },
             },
             {
                 path: "answer",
@@ -201,21 +201,21 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/errorQuestion/answer"),
                 name: "errorQuestionAnswer",
-                meta: { title: "错题巩固", icon: "tree" },
+                meta: { title: "错题巩固", icon: "log" },
             },
         ],
     },
     {
         path: "/questionGuide",
         component: Layout,
-        meta: { title: "考试指南", icon: "tree", noCache: true },
+        meta: { title: "考试指南", icon: "education", noCache: true },
         children: [
             {
                 path: "index",
                 noCache: true,
                 component: () => import ("@/views/questionGuide/index"),
                 name: "guide",
-                meta: { title: "考试指南", icon: "tree" },
+                meta: { title: "考试指南", icon: "education" },
             },
             {
                 path: "detail",
@@ -223,23 +223,24 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/questionGuide/detail"),
                 name: "guideDetail",
-                meta: { title: "考试指南", icon: "tree" },
+                meta: { title: "考试指南", icon: "education" },
             },
         ],
     },
 
 
+
     {
         path: "/questionAdmin/chapter",
         component: Layout,
-        meta: { title: "章节练习管理", icon: "tree", noCache: true },
+        meta: { title: "章节练习管理", icon: "dict", noCache: true },
         children: [
             {
                 path: "list",
                 noCache: true,
                 component: () => import ("@/views/questionAdmin/chapter/list"),
                 name: "questionAdminChapterList",
-                meta: { title: "章节练习管理", icon: "tree" },
+                meta: { title: "章节练习管理", icon: "dict" },
             },
             {
                 path: "add",
@@ -247,7 +248,7 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/questionAdmin/chapter/add"),
                 name: "questionAdminAddChapter",
-                meta: { title: "添加章节", icon: "tree" },
+                meta: { title: "添加章节", icon: "dict" },
             },
             {
                 path: "questionList",
@@ -255,7 +256,7 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/questionAdmin/chapter/questionList"),
                 name: "questionAdminChapterQuestionList",
-                meta: { title: "章节题目管理", icon: "tree" },
+                meta: { title: "章节题目管理", icon: "dict" },
             },
             {
                 path: "addQuestion",
@@ -263,21 +264,21 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/questionAdmin/chapter/addQuestion"),
                 name: "questionAdminAddQuestion",
-                meta: { title: "添加题目", icon: "tree" },
+                meta: { title: "添加题目", icon: "dict" },
             },
         ],
     },
     {
         path: "/questionAdmin/guide",
         component: Layout,
-        meta: { title: "考试指南管理", icon: "tree", noCache: true },
+        meta: { title: "考试指南管理", icon: "dict", noCache: true },
         children: [
             {
                 path: "list",
                 noCache: true,
                 component: () => import ("@/views/questionAdmin/guide/list"),
                 name: "questionAdminGuideList",
-                meta: { title: "考试指南管理", icon: "tree" },
+                meta: { title: "考试指南管理", icon: "dict" },
             },
             {
                 path: "add",
@@ -285,7 +286,7 @@ export const routes = [{
                 hidden: true,
                 component: () => import ("@/views/questionAdmin/guide/add"),
                 name: "questionAdminAddGuide",
-                meta: { title: "添加考试指南", icon: "tree" },
+                meta: { title: "添加考试指南", icon: "dict" },
             },
         ],
     },

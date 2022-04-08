@@ -3,7 +3,7 @@
   <p class="question-title" v-if="questionTitleObj.title">
     <span class="fraction" v-if="questionTitleObj.fraction">({{questionTitleObj.fraction}}分)</span>
     <div class="title">{{questionTitleObj.title}}</div>
-    <div :class="['collect', questionTitleObj.isCollect?'check':'']" @click="changeCollect">
+    <div v-if="isShowCollect" :class="['collect', questionTitleObj.isCollect?'check':'']" @click="changeCollect">
       <el-icon :size="24"><star-filled /></el-icon>
     </div>
   </p>
@@ -19,6 +19,10 @@
         title: '',
         isCollect: false
       }
+    },
+    isShowCollect: {
+      type: Boolean,
+      default: true
     }
   })
 

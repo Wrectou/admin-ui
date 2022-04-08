@@ -1,6 +1,6 @@
 import { logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import defAva from '@/assets/logo/logo.png'
+import defAva from '@/assets/logo/user.jpg'
 
 import { login } from "@/api"
 

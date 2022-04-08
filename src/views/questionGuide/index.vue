@@ -15,6 +15,10 @@
         </el-card>
       </el-col>
 
+      <el-skeleton :rows="5" animated :loading="isLoading" />
+
+      <QuestionNotFound v-if="!isLoading && guideListData.length < 1" />
+
     </el-row>
 
   </div>
@@ -24,17 +28,23 @@
 
 import { getGuideList } from '@/api'
 
+import QuestionNotFound from '@/components/questionNotFound/index'
+
 const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
+let isLoading = ref(false)
+
 const guideListData = reactive([])
 
 function getGuideListFunc() {
+  isLoading.value = true
   getGuideList()
     .then(res => {
       console.log('getGuideList: ', res);
       if (res.code === 200) {
+        isLoading.value = false
         res.rows.forEach(item => {
           let obj = {
             id: item.id,
@@ -43,11 +53,11 @@ function getGuideListFunc() {
           guideListData.push(obj)
         })
       }
-    })
+    }, err => isLoading.value = false )
 }
 getGuideListFunc()
 
-const goLink = item => router.push({ name: item.url, query: { type: item.type } })
+const goLink = item => router.push({ name: 'guideDetail', query: { id: item.id } })
 
 
 </script>
@@ -86,6 +96,7 @@ const goLink = item => router.push({ name: item.url, query: { type: item.type } 
   .el-card{
     margin: 10px;
     cursor: pointer;
+    min-height: 75px;
   }
 }
 

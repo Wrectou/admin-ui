@@ -218,7 +218,7 @@ export const routes = [{
                 meta: { title: "考试指南", icon: "tree" },
             },
             {
-                path: "answer",
+                path: "detail",
                 noCache: true,
                 hidden: true,
                 component: () => import ("@/views/questionGuide/detail"),
@@ -264,6 +264,28 @@ export const routes = [{
                 component: () => import ("@/views/questionAdmin/chapter/addQuestion"),
                 name: "questionAdminAddQuestion",
                 meta: { title: "添加题目", icon: "tree" },
+            },
+        ],
+    },
+    {
+        path: "/questionAdmin/guide",
+        component: Layout,
+        meta: { title: "考试指南管理", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "list",
+                noCache: true,
+                component: () => import ("@/views/questionAdmin/guide/list"),
+                name: "questionAdminGuideList",
+                meta: { title: "考试指南管理", icon: "tree" },
+            },
+            {
+                path: "add",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/questionAdmin/guide/add"),
+                name: "questionAdminAddGuide",
+                meta: { title: "添加考试指南", icon: "tree" },
             },
         ],
     },

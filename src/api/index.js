@@ -207,6 +207,39 @@ export const getGuideList = params => {
     })
 }
 
+// 获取考试指南详细信息
+export const getGuideDetail = id => {
+    return request({
+        url: `/business/guide/${id}`,
+        method: 'get',
+    })
+}
+
+// 删除考试指南
+export const deleteGuide = id => {
+    return request({
+        url: `/business/guide/${id}`,
+        method: 'delete',
+    })
+}
+
+// 新增考试指南
+export const addGuidem = data => {
+    return request({
+        url: '/business/guide',
+        method: 'post',
+        data
+    })
+}
+
+// 修改考试指南
+export const editGuide = data => {
+    return request({
+        url: "/business/guide",
+        method: 'put',
+        data
+    })
+}
 
 
 

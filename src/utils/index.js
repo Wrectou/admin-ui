@@ -413,6 +413,18 @@ export const LetterToIndex = {
   'I': 9,
 }
 
+// 下标转字母
+export const questionType = {
+  0: { type: 'all', cn: '全部题型'},
+  1: { type: 'single', cn: '单项选择题型'},
+  2: { type: 'several', cn: '多项选择题型'},
+  3: { type: 'judge', cn: '判断题型'},
+  4: { type: 'discuss', cn: '论述题型'},
+  // 6: 'G',
+  // 7: 'H',
+  // 8: 'I',
+}
+
 // 题目类型 数字转文字
 export const questionTypeToText = {
   1: '判断题型',

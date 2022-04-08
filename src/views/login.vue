@@ -2,7 +2,7 @@
   <div class="login">
 
     <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form">
-      <h3 class="title">业务站管理系统</h3>
+      <h3 class="title">学法综合应用系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginParams.username"

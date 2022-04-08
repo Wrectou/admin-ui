@@ -24,7 +24,7 @@ defineProps({
   }
 })
 
-const title = ref('业务站管理系统');
+const title = ref('学法综合应用系统');
 const store = useStore();
 const sideTheme = computed(() => store.state.settings.sideTheme);
 </script>

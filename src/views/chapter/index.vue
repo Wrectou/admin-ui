@@ -1,12 +1,12 @@
 <template>
   <div class="container chapter">
     <el-row>
-      <el-col :span="6" v-for="item in selflist.data" :key="item.id">
+      <el-col :span="8" v-for="item in selflist.data" :key="item.id">
         <el-card class="box-card">
           <template #header>
             <div class="card-header">
               <span>{{item.title}}</span>
-              <el-button class="button" :type="item.answerNum > 0 ? 'danger' : 'primary'" @click="goLink(item)">{{item.answerNum > 0 ? '继续答题' : '未开始'}}</el-button>
+              <el-button plain class="button" :type="item.answerNum > 0 ? 'danger' : 'primary'" @click="goLink(item)">{{item.answerNum > 0 ? '继续答题' : '未开始'}}</el-button>
             </div>
           </template>
           <div class="card-cont">
@@ -70,7 +70,7 @@ const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id
 }
 
 .box-card {
-  margin: 10px;
+  margin: 10px 14px;
   .card-header,
   .card-cont {
     display: flex;

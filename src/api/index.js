@@ -241,6 +241,23 @@ export const editGuide = data => {
     })
 }
 
+// 收藏
+export const addFavorite = data => {
+    return request({
+        url: '/business/practiceFavorites',
+        method: 'post',
+        data
+    })
+}
+
+// 删除考试指南
+export const deleteFavorite = id => {
+    return request({
+        url: `/business/practiceFavorites/${id}`,
+        method: 'delete',
+    })
+}
+
 
 
 

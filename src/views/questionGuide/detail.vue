@@ -62,7 +62,7 @@ getGuideDetailFunc()
 // 标题
 .tit{
   position: relative;
-  margin: 26px 0 10px;
+  margin: 26px 0;
   padding: 0 0 0 14px;
   font-size: 20px;
   max-width: 75%;

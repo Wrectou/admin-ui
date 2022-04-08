@@ -73,6 +73,7 @@ async function getProductDetailFunc() {
   getBusinessSectionDetail(productId.value)
     .then(res => {
       console.log("getBusinessSectionDetail: ", res);
+      addProductParams.id = res.data.id
       addProductParams.title = res.data.title
       addProductParams.level = res.data.level
       addProductParams.difficulty = res.data.difficulty

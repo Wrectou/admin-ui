@@ -8,7 +8,7 @@
     >
       <el-row class="control-bar">
         <el-col :span="20" class="control-left">
-          <el-col :span="5">
+          <el-col :span="7">
             <el-form-item label="当前章节" prop="operateCityId"> <div>{{routeObj.title}}</div> </el-form-item>
           </el-col>
           <el-col :span="4">

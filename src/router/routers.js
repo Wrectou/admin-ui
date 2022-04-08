@@ -205,6 +205,29 @@ export const routes = [{
             },
         ],
     },
+    {
+        path: "/questionGuide",
+        component: Layout,
+        meta: { title: "考试指南", icon: "tree", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/questionGuide/index"),
+                name: "guide",
+                meta: { title: "考试指南", icon: "tree" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/questionGuide/detail"),
+                name: "guideDetail",
+                meta: { title: "考试指南", icon: "tree" },
+            },
+        ],
+    },
+
 
     {
         path: "/questionAdmin/chapter",
@@ -229,6 +252,7 @@ export const routes = [{
             {
                 path: "questionList",
                 noCache: true,
+                hidden: true,
                 component: () => import ("@/views/questionAdmin/chapter/questionList"),
                 name: "questionAdminChapterQuestionList",
                 meta: { title: "章节题目管理", icon: "tree" },

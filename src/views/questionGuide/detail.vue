@@ -71,11 +71,8 @@
 
         </div>
 
-        <!-- 加载题目骨架屏 -->
-        <el-skeleton :rows="5" animated :loading="isLoadingData" />
-
         <!-- 没有题目数据 -->
-        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
+        <QuestionNotFound v-else />
 
       </div>
 
@@ -93,14 +90,12 @@
 
         <!-- 回答错误工具组件 -->
         <QuestionAnswerBar
-          v-if="questionArr[questionIndex].type !== 4"
           :questionAnswerBarObj="questionArr[questionIndex]"
         />
 
-        <div class="tit" v-if="answerQuestion">统计</div>
+        <div class="tit">统计</div>
         <!-- 答案统计组件 -->
         <QuestionStatistics 
-          v-if="answerQuestion"
           :questionStatisticsObj="questionArr[questionIndex]"
         />
 
@@ -125,11 +120,11 @@
   </div>
 </template>
 
-<script setup name="today">
+<script setup name="guideDetail">
 
-import { getTodayQuestion, getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer } from '@/api'
+import { getSelfLastQuestionId, getEnum } from '@/api'
 
-import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
+import { IndexTolLetter } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
@@ -163,101 +158,26 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
-// const questionArr = reactive(allQuestionData)
-const questionArr = reactive([])
-
-// 加载题目数据
-let isLoadingData = ref(false)
-
-// 每日练习题目
-function getTodayQuestionFunc() {
-  isLoadingData.value = true
-  getTodayQuestion({level: proxy.$cache.session.getJSON('level')})
+function getSelfLastQuestionIdFunc() {
+  getSelfLastQuestionId(route.query.id)
     .then(res => {
-      console.log('getTodayQuestion: ', res);
-      toolbarObj.chapter = res.data.title
-      res.data.questionList.forEach(item => {
-        let obj = {
-          id: item.id,
-          type: item.type,
-          showType: item.type,
-          fraction: item.score,
-          title: item.title,
-          practiceId: item.practiceId,
-          isCollect: false,
-          answerList: [],
-          yourAnswer: '',
-          answerTime: '',
-          okAnswer: '',
-          allAnswerNum: '',
-          allAnswerCorrectRate: '',
-          fallibility: '',
-          analysis: item.explanation,
-          isShowQuestionAnalysis: false,
-        }
-        if (item.type === 1) {
-          obj.type = 3
-          obj.okAnswer = LetterToIndex[item.correctAnswers]
-        } else if (item.type === 2) {
-          obj.type = 1
-          obj.okAnswer = LetterToIndex[item.correctAnswers]
-        } else if (item.type === 3 || item.type === 4) {
-          obj.type = 2
-          obj.okAnswer = []
-          obj.yourAnswer = []
-          let correctAnswersArr = item.correctAnswers.split('')
-          correctAnswersArr = correctAnswersArr.map(item => item = LetterToIndex[item])
-          obj.okAnswer = correctAnswersArr
-        } else if (item.type === 5) {
-          obj.type = 4
-        }
-        questionArr.push(obj)
-        isLoadingData.value = false
-      })
-      getQuestionItemFunc(0, res.data.questionList[0].id)
-    }, err => isLoadingData.value = false )
-}
-getTodayQuestionFunc()
-
-// 获取题目选项
-function getQuestionItemFunc(i, id) {
-  getQuestionItem(id)
-    .then(res => {
-      console.log('getQuestionItem: ',res);
-      res.data.forEach(item => {
-        let obj = {
-          value: LetterToIndex[item.identifier], label: item.title, isChecked: false
-        }
-        questionArr[i].answerList.push(obj)
-      })
+      console.log('getSelfLastQuestionId: ',res);
     })
 }
+getSelfLastQuestionIdFunc()
 
-// 获取题目统计信息 错题用
-function getQuestionStatisFunc(i, id) {
-  console.log(i);
-  getQuestionStatis(id)
-    .then(res => {
-      console.log('getQuestionStatis: ',res);
-      questionArr[i].allAnswerNum = res.data.answerNum
-      questionArr[i].allAnswerCorrectRate = res.data.correct
-      if (questionArr[i].type === 2) {
-        let fallibilityArr = res.data.easyWrong.split('')
-        fallibilityArr = fallibilityArr.map(item => item = LetterToIndex[item])
-        questionArr[i].fallibility = fallibilityArr
-      } else {
-        questionArr[i].fallibility = LetterToIndex[res.data.easyWrong]
-      }
-    })
-}
+const questionArr = reactive(allQuestionData)
 
 // 是否显示右侧答题卡侧边栏
 let isShowAnswerSheet = ref(false)
 // 题目工具条 属性/方法
 let toolbarObj = reactive({
-  chapter: route.query.title,
-  questionIndex,
-  questionArr,
+  type: '单项选择题',
+  chapter: '社会主义法制理念',
+  number: {
+    min: questionIndex,
+    max: questionArr.length
+  },
   isShowAnswerSheet
 })
 // 开启/关闭选项卡
@@ -279,12 +199,11 @@ const changeCollectTitle = () => {
   }, 300)
 }
 
-// 控制题目切换动画 / 获取下标对应id的答案选项
+// 控制题目切换动画
 let switchQuestionClass = ref('')
 watch(questionIndex, (newValue, oldValue) => {
   if (newValue > oldValue) switchQuestionClass.value = 'tramsform-form'
   else switchQuestionClass.value = 'tramsform-to'
-  if (questionArr[newValue].answerList.length < 1) getQuestionItemFunc(newValue, questionArr[newValue].id)
   setTimeout(() => {
     switchQuestionClass.value = ''
     answerTime.value = new Date()
@@ -293,36 +212,6 @@ watch(questionIndex, (newValue, oldValue) => {
 
 // 答题开始时间，每开始一题设置为开始时间
 let answerTime = ref(new Date())
-
-// 回答问题接口
-function addPracticeQuestionAnswerFunc(isCorrect, i, id, practiceId) {
-  console.log(questionArr[i]);
-  let params = {
-    correctAnswers: questionArr[i].okAnswer,
-    isCorrect,
-    practiceId,
-    qtype: 2,
-    questionId: id,
-    reply: questionArr[i].yourAnswer,
-    score: questionArr[i].fraction
-  }
-  // 多选
-  if (questionArr[i].type === 2) {
-    let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
-    let correctAnswersStr = ''
-    correctAnswersArr.forEach(item => correctAnswersStr+=item)
-    params.correctAnswers = correctAnswersStr
-    let replyArr = params.reply.map(item => item = IndexTolLetter[item])
-    let replyStr = ''
-    replyArr.forEach(item => replyStr+=item)
-    params.reply = replyStr
-  } 
-  addPracticeQuestionAnswer(params)
-    .then(res => {
-      console.log('addPracticeQuestionAnswer: ', res);
-    })
-}
-
 // 是否显示问题解析界面
 let isLoading = ref(false)
 
@@ -338,24 +227,21 @@ const checkAnswerSingleFunc = item => {
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  // setTimeout(() => {
+  setTimeout(() => {
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
-      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
-      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
       // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
     // 取消loading
     isLoading.value = false
-  // }, 700)
+  }, 700)
 }
 
 // 多选点击选项
@@ -386,24 +272,20 @@ const checkAnswerSeveralFunc = () => {
   // 此处调接口
   isLoading.value = true
   // 模拟接口延迟
-  // setTimeout(() => {
+  setTimeout(() => {
     // 答题时间
     let time = Number(((new Date() - answerTime.value)/1000).toFixed())
     questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
     if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
-      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
-      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
       // 回答错误显示答题解析
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
-      // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
     }
     // 取消loading
     isLoading.value = false
-  // }, 700)
+  }, 700)
 }
 
 // 判断题选择点击/确定选择
@@ -418,24 +300,21 @@ const checkAnswerJudgeFunc = item => {
   let time = Number(((new Date() - answerTime.value)/1000).toFixed())
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
-  // setTimeout(() => {
+  setTimeout(() => {
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
     item.isChecked = true
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
-      addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
       // 回答正确去下一题
       plusQuestionIndex()
     } else {
-      addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
       // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
     // 取消loading
     isLoading.value = false
-  // }, 700)
+  }, 700)
 }
 
 // 论述题确定分数
@@ -453,12 +332,11 @@ const checkAnswerDiscussFunc = (formEl) => {
       let time = Number(((new Date() - answerTime.value)/1000).toFixed())
       questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
       // 模拟接口延迟
-      // setTimeout(() => {
-        addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id, questionArr[questionIndex.value].practiceId)
+      setTimeout(() => {
         plusQuestionIndex()
         // 取消loading
         isLoading.value = false
-      // }, 700)
+      }, 700)
     } else {
       console.log('error submit!', fields)
     }

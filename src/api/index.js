@@ -198,6 +198,15 @@ export const editBusinessQuestionItem = data => {
     })
 }
 
+// 查询考试指南列表
+export const getGuideList = params => {
+    return request({
+        url: '/business/guide/list',
+        method: 'get',
+        params
+    })
+}
+
 
 
 

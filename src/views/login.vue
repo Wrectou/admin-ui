@@ -87,7 +87,14 @@
   align-items: center;
   height: 100%;
   background-image: url("../assets/images/login-background.jpg");
-  background-size: cover;
+  // background-image: url("../assets/images/login-background.webp");
+  // background-image: url("../assets/images/00001.jpg");
+  // background-image: url("../assets/logo/police1.png");
+  // background-image: url("../assets/logo/111.png");
+  // background-color: #2053af;
+  // background-size: 800px;
+  // background-repeat: no-repeat;
+  // background-position: center;
 }
 .title {
   margin: 0px auto 30px auto;

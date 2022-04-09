@@ -25,7 +25,6 @@
         <!-- 标题组件 -->
         <QuestionTitle 
           :questionTitleObj="questionArr[questionIndex]"
-          :isShowCollect=false
           @changeCollectTitle="changeCollectTitle"
         />
         
@@ -126,7 +125,7 @@
   </div>
 </template>
 
-<script setup name="errorQuestionAnswer">
+<script setup name="myCollectAnswer">
 
 import { getFavoritesQuestionList, getSelfLastQuestionId, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, getErrQuestionAllList } from '@/api'
 
@@ -176,7 +175,7 @@ function getFavoritesQuestionListFunc() {
     level: proxy.$cache.session.getJSON('level'),
     practiceId: route.query.id,
     qtype: route.query.qtype,
-    type: 0,
+    type: 1,
   }
   isLoadingData.value = true
   getFavoritesQuestionList(params)
@@ -228,7 +227,7 @@ function getErrQuestionAllListFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
     qtype: route.query.qtype,
-    type: 0,
+    type: 1,
   }
   isLoadingData.value = true
   getErrQuestionAllList(params)
@@ -322,7 +321,7 @@ function getQuestionStatisFunc(i, id) {
         questionArr[i].fallibility = LetterToIndex[res.data.easyWrong]
       }
     })
-  // favoriteErrQuestionFunc()
+  favoriteErrQuestionFunc()
 }
 
 // 错题自动收藏
@@ -330,7 +329,7 @@ function favoriteErrQuestionFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
     practiceId: route.query.id,
-    qtype: 0,
+    qtype: route.query.qtype,
     questionId: questionArr[questionIndex.value].id,
     type: 0,
   }
@@ -364,7 +363,7 @@ const changeCollectTitle = () => {
     let params = {
       level: proxy.$cache.session.getJSON('level'),
       practiceId: route.query.id,
-      qtype: 0,
+      qtype: route.query.qtype,
       questionId: questionArr[questionIndex.value].id,
       type: 1,
     }

@@ -127,7 +127,7 @@
 
 <script setup name="today">
 
-import { getTodayQuestion, getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer } from '@/api'
+import { getTodayQuestion, getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite } from '@/api'
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
@@ -249,6 +249,22 @@ function getQuestionStatisFunc(i, id) {
         questionArr[i].fallibility = LetterToIndex[res.data.easyWrong]
       }
     })
+  favoriteErrQuestionFunc()
+}
+
+// 错题自动收藏
+function favoriteErrQuestionFunc() {
+  let params = {
+    level: proxy.$cache.session.getJSON('level'),
+    practiceId: route.query.id,
+    qtype: 2,
+    questionId: questionArr[questionIndex.value].id,
+    type: 0,
+  }
+  addFavorite(params)
+    .then(res => {
+      console.log('addFavorite: ', res);
+    })
 }
 
 // 是否显示右侧答题卡侧边栏
@@ -271,12 +287,38 @@ const changeQuestionIndex = index => {
 
 // 标题组件 属性/方法
 const changeCollectTitle = () => {
-  // 此处需要调借口
-  setTimeout(() => {
-    questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
-    if (questionArr[questionIndex.value].isCollect) ElMessage.success('收藏成功！')
-    else ElMessage.success('取消收藏成功！')
-  }, 300)
+  if (!questionArr[questionIndex.value].isCollect) {
+    let params = {
+      level: proxy.$cache.session.getJSON('level'),
+      practiceId: route.query.id,
+      qtype: 2,
+      questionId: questionArr[questionIndex.value].id,
+      type: 1,
+    }
+    addFavorite(params)
+      .then(res => {
+        console.log('addFavorite: ', res);
+        if (res.code === 200) {
+          ElMessage.success('收藏成功！')
+          questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
+        }
+        else ElMessage.error('收藏出错，请稍后再试！')
+      })
+  } else {
+    let params = {
+      questionId: questionArr[questionIndex.value].id,
+      type: 1,
+    }
+    deleteFavorite(params)
+      .then(res => {
+        console.log('deleteFavorite: ', res);
+        if (res.code === 200) {
+          ElMessage.success('取消收藏成功！')
+          questionArr[questionIndex.value].isCollect = !questionArr[questionIndex.value].isCollect
+        }
+        else ElMessage.error('取消收藏出错，请稍后再试！')
+      })
+  }
 }
 
 // 控制题目切换动画 / 获取下标对应id的答案选项

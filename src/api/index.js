@@ -251,10 +251,11 @@ export const addFavorite = data => {
 }
 
 // 取消收藏
-export const deleteFavorite = id => {
+export const deleteFavorite = data => {
     return request({
-        url: `/business/practiceFavorites/${id}`,
+        url: `/business/practiceFavorites/del`,
         method: 'delete',
+        data
     })
 }
 

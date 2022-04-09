@@ -206,6 +206,28 @@ export const routes = [{
         ],
     },
     {
+        path: "/myCollect",
+        component: Layout,
+        meta: { title: "我的收藏", icon: "rate", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/myCollect/index"),
+                name: "myCollect",
+                meta: { title: "我的收藏", icon: "rate" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/myCollect/answer"),
+                name: "myCollectAnswer",
+                meta: { title: "我的收藏", icon: "rate" },
+            },
+        ],
+    },
+    {
         path: "/questionGuide",
         component: Layout,
         meta: { title: "考试指南", icon: "education", noCache: true },

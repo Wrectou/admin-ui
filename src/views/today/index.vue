@@ -184,7 +184,7 @@ function getTodayQuestionFunc() {
           fraction: item.score,
           title: item.title,
           practiceId: item.practiceId,
-          isCollect: false,
+          isCollect: item.favorite === 1 ? true : false,
           answerList: [],
           yourAnswer: '',
           answerTime: '',

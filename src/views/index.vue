@@ -34,7 +34,8 @@
     <div class="tit">专题学习</div>
     <el-row>
       <el-col :span="6" class="special-box" v-for="item in specialList" :key="item.name">
-        <div class="special" @click="goLink(item.linkName)">
+        <div class="special">
+        <!-- <div class="special" @click="goLink(item.linkName)"> -->
           <img class="logo" :src="item.logo" />
           <p class="title"> {{item.name}} </p>
         </div>
@@ -84,13 +85,13 @@ const levelChange = e => {
 
 const menuList = reactive([
   { name: '章节练习', linkName: 'chapter', logo: icon1, },
-  { name: '题型练习', linkName: 'questionType', logo: icon2, },
+  // { name: '题型练习', linkName: 'questionType', logo: icon2, },
   { name: '每日练习', linkName: 'today', logo: icon3, },
   { name: '历年真题', linkName: 'realQuestion', logo: icon4, },
   { name: '模拟考试', linkName: 'imitateQuestion', logo: icon5, },
-  { name: '错题巩固', linkName: 'chapter', logo: icon6, },
-  { name: '我的收藏', linkName: 'chapter', logo: icon7, },
-  { name: '学习报告', linkName: 'chapter', logo: icon8, },
+  { name: '错题巩固', linkName: 'errorQuestion', logo: icon6, },
+  { name: '我的收藏', linkName: 'myCollect', logo: icon7, },
+  // { name: '学习报告', linkName: 'chapter', logo: icon8, },
 ])
 
 const tableList = reactive([
@@ -131,7 +132,7 @@ function goTarget(url) {
 <style scoped lang="scss">
 
 .home {
-  padding: 40px;
+  padding: 20px 40px;
   min-height: 100vh;
 }
 

@@ -2,13 +2,13 @@
   <div class="container chapter">
     <el-row>
 
-      <el-col :span="6" v-for="item in data" :key="item.name">
+      <el-col :span="6" v-for="item in epaperList.data" :key="item.name">
         <el-card class="box-card">
           <template #header>
             <div class="card-header">
               <p>{{item.name}}</p>
-              <p class="rate gray">难度<el-rate v-model="item.rate" disabled show-score text-color="#ff9900" :score-template="item.rate+'星'" /></p>
-              <p class="can-do gray">{{item.canDo}}人做过</p>
+              <p class="rate gray">难度<el-rate v-model="item.difficulty" disabled show-score text-color="#ff9900" :score-template="item.difficulty+'星'" /></p>
+              <p class="can-do gray">{{item.totalNum}}人做过</p>
             </div>
           </template>
           <div class="card-cont">
@@ -18,22 +18,41 @@
       </el-col>
 
     </el-row>
+    <QuestionNotFound v-if="!isLoading && epaperList.data.length < 1" />
   </div>
 </template>
 
 <script setup name="imitateQuestion">
 
-import { getHomeData, getEnum } from '@/api'
-
-const { proxy } = getCurrentInstance()
+import { getEpaperList, getEnum } from '@/api'
+import QuestionNotFound from '@/components/questionNotFound/index'
 
 const router = useRouter()
 
-const data = reactive([
-  { name: '高级执法资格考试模拟考试', canDo: 100, rate: 3, url: 'imitateQuestionDetail' },
-])
+const { proxy } = getCurrentInstance()
 
-const goLink = item => router.push({ name: item.url, query: { type: item.type } })
+let isLoading = ref(false)
+
+function getEpaperListFunc() {
+  let params = {
+    etype: 1,
+    level: proxy.$cache.session.getJSON('level'),
+  }
+  isLoading.value = true
+  getEpaperList(params)
+    .then(res => {
+      console.log('getEpaperList: ', res);
+      isLoading.value = false
+      epaperList.data = res.rows
+    }, err => isLoading.value = false )
+}
+getEpaperListFunc()
+
+const epaperList = reactive({
+  data: []
+})
+
+const goLink = item => router.push({ name: 'imitateQuestionDetail', query: { id: item.id } })
 
 
 </script>

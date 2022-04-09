@@ -3,7 +3,7 @@
     <div class="cont">
       <div class="item">
         <span class="key">考试名称：</span>
-        <span class="value">2020年年高级执法资格考试真题</span>
+        <span class="value">{{epaperDetail.data.name}}</span>
       </div>
       <div class="item">
         <span class="key">考试类型：</span>
@@ -11,15 +11,15 @@
       </div>
       <div class="item">
         <span class="key">总题数：</span>
-        <span class="value">34题</span>
+        <span class="value">{{epaperDetail.data.questionNum}}题</span>
       </div>
       <div class="item">
         <span class="key">考试时间：</span>
-        <span class="value">150分钟</span>
+        <span class="value">{{epaperDetail.data.duration}}分钟</span>
       </div>
       <div class="item">
         <span class="key">合格标准：</span>
-        <span class="value">满分100分，合格：60分</span>
+        <span class="value">满分{{epaperDetail.data.totalScore}}分，合格：{{epaperDetail.data.qualifiedScore}}分</span>
       </div>
       <div class="button-box">
         <el-button class="button" type="primary" @click="goLink(item)">开始考试</el-button>
@@ -30,20 +30,29 @@
 
 <script setup name="imitateQuestionDetail">
 
-import { getHomeData, getEnum } from '@/api'
+import { getEpaperDetail, getEnum } from '@/api'
 
 const { proxy } = getCurrentInstance()
 
+const route = useRoute()
 const router = useRouter()
 
-const data = reactive([
-  { name: '全部题型', type: 0, isStudy: false, allChapter: 50, studyChapter: 0, url: 'questionTypeAnswer' },
-  
-])
+function getEpaperDetailFunc() {
+  getEpaperDetail(route.query.id)
+    .then(res => {
+      console.log('getEpaperDetail: ',res);
+      epaperDetail.data = res.data
+    })
+}
+getEpaperDetailFunc()
+
+const epaperDetail = reactive({
+  data: {}
+})
 
 const goLink = item => {
-  router.push({ name: 'imitateQuestionAnswer' })
-  proxy.$cache.session.setJSON('endImitateQuestionTime', (new Date().getTime() + 150*60*1000))
+  router.push({ name: 'imitateQuestionAnswer', query: { id: route.query.id } })
+  proxy.$cache.session.setJSON('endImitateQuestionTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
 }
 
 

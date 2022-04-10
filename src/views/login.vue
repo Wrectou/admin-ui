@@ -1,44 +1,60 @@
 <template>
-  <div class="login">
+  <div class="container">
 
-    <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form">
-      <h3 class="title">学法综合应用系统</h3>
-      <el-form-item prop="username">
-        <el-input
-          v-model="loginParams.username"
-          type="text"
-          size="large"
-          auto-complete="off"
-          placeholder="账号"
-        >
-          <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input
-          v-model="loginParams.password"
-          type="password"
-          size="large"
-          auto-complete="off"
-          placeholder="密码"
-          @keyup.enter="handleLogin"
-        >
-          <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
-        </el-input>
-      </el-form-item>
-      <el-form-item style="width:100%;">
-        <el-button
-          :loading="isLoading"
-          size="large"
-          type="primary"
-          style="width:100%;"
-          @click.prevent="handleLogin"
-        >
-          <span v-if="!isLoading">登 录</span>
-          <span v-else>登 录 中...</span>
-        </el-button>
-      </el-form-item>
-    </el-form>
+    <el-row class="login-box">
+      <el-col :span="12">
+        <div class="back">
+          <h2 class="title">法度易学法</h2>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <div class="login">
+
+          <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form">
+            <h3 class="title">学法综合应用系统</h3>
+            <el-form-item prop="username">
+              <el-input
+                v-model="loginParams.username"
+                type="text"
+                size="large"
+                auto-complete="off"
+                placeholder="账号"
+              >
+                <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input
+                v-model="loginParams.password"
+                type="password"
+                size="large"
+                auto-complete="off"
+                placeholder="密码"
+                @keyup.enter="handleLogin"
+              >
+                <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
+              </el-input>
+            </el-form-item>
+            <el-form-item style="width:100%;">
+              <el-button
+                round
+                :loading="isLoading"
+                size="large"
+                type="primary"
+                style="width:100%;"
+                @click.prevent="handleLogin"
+              >
+                <span v-if="!isLoading">登 录</span>
+                <span v-else>登 录 中...</span>
+              </el-button>
+            </el-form-item>
+          </el-form>
+          
+        </div>
+
+      
+      </el-col>
+    </el-row>
 
   </div>
 </template>
@@ -81,42 +97,69 @@
 </script>
 
 <style lang='scss' scoped>
-.login {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.container {
+  margin-bottom: 100px;
+  background: #5490e6 url("../assets/images/login-background.png") center bottom no-repeat;
+  background-size: cover;
   height: 100%;
-  background-image: url("../assets/images/login-background.jpg");
-  // background-image: url("../assets/images/login-background.webp");
-  // background-image: url("../assets/images/00001.jpg");
-  // background-image: url("../assets/logo/police1.png");
-  // background-image: url("../assets/logo/111.png");
-  // background-color: #2053af;
-  // background-size: 800px;
-  // background-repeat: no-repeat;
-  // background-position: center;
+  .login-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 1030px;
+    height: 100%;
+  }
 }
-.title {
-  margin: 0px auto 30px auto;
-  text-align: center;
-  color: #707070;
+
+.back{
+  padding: 180px 0 0;
+  height: 500px;
+  background: rgba(255,255,255,.2);
+  .title{
+    color: #fff;
+    font-size: 44px;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 25%);
+    text-align: center;
+  }
 }
+
+.login{
+  height: 500px;
+  background: #fff;
+}
+
 
 .login-form {
   border-radius: 6px;
   background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
+  padding: 120px 40px 40px 40px;
+  .title {
+    margin: 0px auto 30px auto;
+    text-align: center;
+    color: #707070;
+  }
   .el-input {
-    height: 40px;
-    input {
-      height: 40px;
+    margin: 0 0 16px 0;
+    height: 42px;
+    ::v-deep(.el-input__inner) {
+      padding-left: calc(5px + 20px + 16px);
+      height: 42px;
+      font-size: 16px;
+      box-shadow: none;
+      border-bottom: 1px solid #ccc;
+      border-radius: 0;
     }
   }
   .input-icon {
     height: 39px;
     width: 14px;
     margin-left: 0px;
+  }
+  ::v-deep(.el-button){
+    margin: 14px 0 0;
+    height: 46px;
+    font-size: 20px;
   }
 }
 .login-tip {

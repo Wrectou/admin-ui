@@ -312,6 +312,44 @@ export const routes = [{
             },
         ],
     },
+    {
+        path: "/questionAdmin/special",
+        component: Layout,
+        meta: { title: "专题学习管理", icon: "dict", noCache: true },
+        children: [
+            {
+                path: "list",
+                noCache: true,
+                component: () => import ("@/views/questionAdmin/special/list"),
+                name: "questionAdminSpecialList",
+                meta: { title: "专题学习管理", icon: "dict" },
+            },
+            {
+                path: "add",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/questionAdmin/special/add"),
+                name: "questionAdminAddSpecial",
+                meta: { title: "添加专题", icon: "dict" },
+            },
+            {
+                path: "specialList",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/questionAdmin/special/specialList"),
+                name: "questionAdminSpecialSpecialList",
+                meta: { title: "专题学习管理", icon: "dict" },
+            },
+            {
+                path: "addSpecial",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/questionAdmin/special/addSpecial"),
+                name: "questionAdminAddSpecialSpecial",
+                meta: { title: "添加内容", icon: "dict" },
+            },
+        ],
+    },
     
 
 

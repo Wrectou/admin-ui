@@ -294,6 +294,93 @@ export const getErrQuestionAllList = params => {
     })
 }
 
+// 查询专题学习目录列表
+export const getLearnCatalogueList = params => {
+    return request({
+        url: '/business/learnCatalogue/list',
+        method: 'get',
+        params
+    })
+}
+
+// 新增专题学习目录
+export const addLearnCatalogue = data => {
+    return request({
+        url: '/business/learnCatalogue',
+        method: 'post',
+        data
+    })
+}
+
+// 获取专题学习目录详细信息
+export const getLearnCatalogueDetail = id => {
+    return request({
+        url: `/business/learnCatalogue/${id}`,
+        method: 'get',
+    })
+}
+
+// 删除专题学习目录
+export const deleteLearnCatalogue = id => {
+    return request({
+        url: `/business/learnCatalogue/${id}`,
+        method: 'delete',
+    })
+}
+
+// 修改专题学习目录
+export const editLearnCatalogue = data => {
+    return request({
+        url: "/business/learnCatalogue",
+        method: 'put',
+        data
+    })
+}
+
+
+// 查询专题学习资料列表
+export const getLearnMaterialsList = params => {
+    return request({
+        url: '/business/learnMaterials/list',
+        method: 'get',
+        params
+    })
+}
+
+// 删除专题学习资料
+export const deleteLearnMaterials = id => {
+    return request({
+        url: `/business/learnMaterials/${id}`,
+        method: 'delete',
+    })
+}
+
+// 获取专题学习资料详细信息
+export const getLearnMaterialsDetail = id => {
+    return request({
+        url: `/business/learnMaterials/${id}`,
+        method: 'get',
+    })
+}
+
+// 修改专题学习资料
+export const editLearnMaterials = data => {
+    return request({
+        url: "/business/learnMaterials",
+        method: 'put',
+        data
+    })
+}
+
+// 新增专题学习资料
+export const addLearnMaterials = data => {
+    return request({
+        url: '/business/learnMaterials',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

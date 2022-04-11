@@ -2,7 +2,7 @@
   <!-- 题目切换组件 -->
   <div class="change-question">
     <el-button type="text" @click="reduceIndex" :disabled="questionIndex === 0">上一题</el-button>
-    <el-button type="text" @click="plusIndex" :disabled="questionIndex+1 >= questionArrLength">下一题</el-button>
+    <el-button class="next" type="text" @click="plusIndex" :disabled="questionIndex+1 >= questionArrLength">下一题</el-button>
   </div>
 </template>
 
@@ -31,6 +31,9 @@
 .change-question{
   margin: 20px 0 30px;
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
+  .next{
+    margin: 0 0 0 100px;
+  }
 }
 </style>

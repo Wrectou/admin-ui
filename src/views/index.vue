@@ -21,19 +21,19 @@
     </el-row>
 
     
-    <div class="tit">考试相关</div>
+    <div class="tit">我的考试</div>
     <el-row>
-      <el-col :span="12" class="table-box" v-for="item in tableList" :key="item.name">
-        <div class="table" @click="goLink(item.linkName)">
-          <img class="logo" :src="item.logo" />
+      <el-card class="test-box-card" shadow="never">
+        <div class="text" v-for="item in epaperList.data" :key="item.id">
+          <div class="title" @click="goTestLink(item)">{{ item.name }}<el-icon><arrow-right /></el-icon></div>
         </div>
-      </el-col>
+      </el-card>
     </el-row>
 
 
     <div class="tit">专题学习</div>
     <el-row>
-      <el-col :span="8" class="special-box" v-for="item in specialList.data" :key="item.name">
+      <el-col :span="6" class="special-box" v-for="item in specialList.data" :key="item.name">
         <!-- <div class="special"> -->
         <div class="special" @click="goSpecial(item)">
           <img class="logo" :src="item.picture" />
@@ -48,7 +48,7 @@
 
 <script setup name="Index">
 
-import { getLearnCatalogueList, getEnum } from '@/api'
+import { getLearnCatalogueList, getEpaperList, getEnum } from '@/api'
 import { useRouter } from 'vue-router'
 
 import icon1 from '@/assets/images/index/1.png'
@@ -90,13 +90,14 @@ const menuList = reactive([
   { name: '模拟考试', linkName: 'imitateQuestion', logo: icon5, },
   { name: '错题巩固', linkName: 'errorQuestion', logo: icon6, },
   { name: '我的收藏', linkName: 'myCollect', logo: icon7, },
+  { name: '考试指南', linkName: 'guide', logo: icon8, },
   // { name: '学习报告', linkName: 'chapter', logo: icon8, },
 ])
 
-const tableList = reactive([
-  { name: '考试指南', linkName: 'guide', logo: table1, },
-  { name: '我的考试', linkName: 'chapter', logo: table2, },
-])
+// const tableList = reactive([
+//   { name: '考试指南', linkName: 'guide', logo: table1, },
+//   { name: '我的考试', linkName: 'chapter', logo: table2, },
+// ])
 
 const specialList = reactive({
   data: []
@@ -138,9 +139,26 @@ function goSpecial(item) {
 
 const goLink = name => router.push({ name })
 
-function goTarget(url) {
-  window.open(url, "__blank");
+// 我的考试  模拟假数据
+let isLoading = ref(false)
+const epaperList = reactive({
+  data: []
+})
+function getEpaperListFunc() {
+  let params = {
+    etype: 0,
+    level: proxy.$cache.session.getJSON('level'),
+  }
+  isLoading.value = true
+  getEpaperList(params)
+    .then(res => {
+      console.log('getEpaperList: ', res);
+      isLoading.value = false
+      epaperList.data = res.rows
+    }, err => isLoading.value = false )
 }
+getEpaperListFunc()
+const goTestLink = item => router.push({ name: 'realQuestionDetail', query: { id: item.id } })
 
 </script>
 
@@ -178,10 +196,11 @@ function goTarget(url) {
     }
     .title{
       margin: 6px 0 0;
-      font-size: 18px;
+      font-size: 17px;
     }
   }
   .menu:hover{
+    color: #409EFF;
     transform: scale(1.1);
     transition: transform .3s ease-in-out;
     border: solid 1px #f4f4f4;
@@ -205,7 +224,7 @@ function goTarget(url) {
   position: relative;
   margin: 30px 0 20px;
   padding: 0 0 0 20px;
-  font-size: 20px;
+  font-size: 19px;
 }
 .tit:before{
   content: '';
@@ -224,6 +243,9 @@ function goTarget(url) {
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, .04);
+    transition: transform .3s;
+    transition: transform .3s ease-in-out;
     .logo{
       width: 390px;
       height: 202px;
@@ -231,6 +253,35 @@ function goTarget(url) {
     .title{
       padding: 0 0 0 10px;
     }
+  }
+  .special:hover{
+    color: #409EFF;
+    transform: scale(1.03);
+    transition: transform .3s ease-in-out;
+    border: solid 1px #f4f4f4;
+    cursor: pointer;
+  }
+}
+
+.test-box-card {
+  margin: 0 10px;
+  width: 100vw;
+  border: none;
+  .el-card__body{
+    padding: 10px 12px !important;
+  }
+  .title{
+    display: flex;
+    align-items: center;
+    line-height: 40px;
+    cursor: pointer;
+    border-bottom: dashed 1px #e1e1e1;
+    .el-icon{
+      margin: 0 0 0 10px;
+    }
+  }
+  .title:hover{
+    color: #409EFF;
   }
 }
 

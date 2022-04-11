@@ -4,7 +4,7 @@
     <!-- 倒计时 -->
     <div class="count-down">
       <div :class="['time', dangerCountDown]">倒计时：{{countTime}}</div>
-      <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">提前交卷</el-button></div>
+      <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">交卷</el-button></div>
     </div>
 
     <!-- 题目工具条 -->
@@ -564,13 +564,13 @@ const checkAnswerDiscussFunc = (formEl) => {
 }
 
 let isCompleteTest = ref(false)
-// 提前交卷按钮
+// 交卷按钮
 const haveTimeCompleteTest = () => {
   let nodo = 0
   questionArr.forEach(item => {
     if (item.answerTime == '') nodo ++
   })
-  ElMessageBox.confirm(`还有${nodo}题未完成，确定提前交卷吗？`, '提前交卷', {
+  ElMessageBox.confirm(`还有${nodo}题未完成，确定交卷吗？`, '交卷', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning', 
@@ -578,12 +578,12 @@ const haveTimeCompleteTest = () => {
       .then(() => {
         ElMessage({
           type: 'success',
-          message: '提前交卷',
+          message: '交卷',
         })
         isCompleteTest.value = true
       })
       .catch(() => {
-        console.log('取消提前交卷');
+        console.log('取消交卷');
       })
 }
 

@@ -233,17 +233,11 @@ export default {
         let formdata = new FormData()
         let uploadFileUrl = `${import.meta.env.VITE_APP_BASE_API}/common/upload`
         formdata.set('file', blobInfo.blob())
-        axios.post(uploadFileUrl, formdata, {
-                      headers:
-                        {
-                          'Authorization': 'Bearer ' + getToken()
-                        }
-                    }).then(res => {
-          console.log('images_upload_handler: ',res);
-          success(res.data.data.url)
-        }).catch(res => {
-          failure('error')
-        })
+        axios.post(uploadFileUrl, formdata, { headers: { 'Authorization': 'Bearer ' + getToken() } })
+          .then(res => {
+            console.log('images_upload_handler: ',res);
+            success(res.data.url)
+          }, err => failure('error') )
       },
       resVideo:'',    //上传视频的url
       uploaded:false,//有没有上传完成

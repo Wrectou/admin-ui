@@ -33,9 +33,10 @@ import { getLearnMaterialsList } from '@/api'
 
 import QuestionNotFound from '@/components/questionNotFound/index'
 
-const { proxy } = getCurrentInstance()
-
+const route = useRoute()
 const router = useRouter()
+
+const { proxy } = getCurrentInstance()
 
 let isLoading = ref(false)
 
@@ -43,7 +44,7 @@ const guideListData = reactive([])
 
 function getLearnMaterialsListFunc() {
   isLoading.value = true
-  getLearnMaterialsList()
+  getLearnMaterialsList({learnId: route.query.id})
     .then(res => {
       console.log('getLearnMaterialsList: ', res);
       if (res.code === 200) {

@@ -249,6 +249,28 @@ export const routes = [{
             },
         ],
     },
+    {
+        path: "/specialLearn",
+        component: Layout,
+        meta: { title: "专题学习", icon: "education", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/specialLearn/index"),
+                name: "special",
+                meta: { title: "专题学习", icon: "education" },
+            },
+            {
+                path: "detail",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/specialLearn/detail"),
+                name: "specialDetail",
+                meta: { title: "专题学习", icon: "education" },
+            },
+        ],
+    },
 
 
 

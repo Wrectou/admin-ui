@@ -95,7 +95,7 @@
 
   // 编辑
   const editProductCityFunc = row => {
-    router.push({name: 'questionAdminAddSpecialSpecial', query: { isEdit: true, id: routeObj.value.id, level: routeObj.value.level, practiceId: row.id, title: routeObj.value.title, }})
+    router.push({name: 'questionAdminAddSpecialSpecial', query: { isEdit: true, id: row.id, title: routeObj.value.title, }})
   }
   
   // 删除

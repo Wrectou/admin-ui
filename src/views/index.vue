@@ -35,7 +35,7 @@
     <el-row>
       <el-col :span="8" class="special-box" v-for="item in specialList.data" :key="item.name">
         <!-- <div class="special"> -->
-        <div class="special" @click="show(item)">
+        <div class="special" @click="goSpecial(item)">
           <img class="logo" :src="item.picture" />
           <p class="title"> {{item.title}} </p>
         </div>
@@ -48,7 +48,7 @@
 
 <script setup name="Index">
 
-import { getLearnCatalogueList, getLearnMaterialsList, getEnum } from '@/api'
+import { getLearnCatalogueList, getEnum } from '@/api'
 import { useRouter } from 'vue-router'
 
 import icon1 from '@/assets/images/index/1.png'
@@ -132,11 +132,8 @@ function getLearnCatalogueListFunc() {
 }
 getLearnCatalogueListFunc()
 
-function show(item) {
-  getLearnMaterialsList({learnId: item.id})
-    .then(res => {
-      console.log('getLearnMaterialsList: ',res);
-    })
+function goSpecial(item) {
+  router.push({ name: 'special', query: {id: item.id} })
 }
 
 const goLink = name => router.push({ name })

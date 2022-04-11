@@ -47,6 +47,7 @@ import "tinymce/plugins/media"; //插入编辑媒体
 import "tinymce/plugins/nonbreaking"; //插入不间断空格
 import "tinymce/plugins/pagebreak"; //插入分页符
 import "tinymce/plugins/paste"; //粘贴插件
+// import "tinymce/plugins/powerpaste"; //粘贴插件
 import "tinymce/plugins/preview"; //预览
 // import "tinymce/plugins/print"; //打印
 import "tinymce/plugins/quickbars"; //快速工具栏
@@ -87,12 +88,12 @@ export default {
     },
     plugins: {
       type: [String, Array],
-      default: "preview searchreplace autolink directionality visualblocks paste visualchars fullscreen image link media template code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave",
+      default: "preview searchreplace autolink directionality visualblocks powerpaste visualchars fullscreen image link media template code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave",
       // default: "print preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template code codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern autosave",
     },
     toolbar: {
       type: [String, Array],
-      default: "fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | table image media charmap emoticons pagebreak insertdatetime preview | code selectall | indent2em lineheight formatpainter axupimgs",
+      default: "fullscreen undo redo restoredraft | cut copy powerpaste pastetext | forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | table image media charmap emoticons pagebreak insertdatetime preview | code selectall | indent2em lineheight formatpainter axupimgs",
       // default: "fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | table image media charmap emoticons hr pagebreak insertdatetime print preview | code selectall | indent2em lineheight formatpainter axupimgs",
     },
     height: {
@@ -124,7 +125,7 @@ export default {
         edit: {
           title: "编辑",
           // items: "undo redo | cut copy | selectall",
-          items: "undo redo | cut copy paste pastetext | selectall",
+          items: "undo redo | cut copy powerpaste pastetext | selectall",
         },
         insert: { title: "插入", items: "link image" },
         // insert: { title: "插入", items: "link image  |  hr" },
@@ -159,69 +160,75 @@ export default {
       //   const img = "data:image/jpeg;base64," + blobInfo.base64();
       //   success(img);
       // },
+      external_plugins: {
+        'powerpaste': '/tinymce/plugins/powerpaste/plugin.min.js'
+      },
+      powerpaste_word_import: 'propmt',// 参数可以是propmt, merge, clear，效果自行切换对比
+      powerpaste_html_import: 'propmt',// propmt, merge, clear
+      powerpaste_allow_local_images: true,
       paste_webkit_styles: "all",   // 指定在WebKit中粘贴时要保留的样式
       paste_retain_style_properties: "all",   // 从Word粘贴过来时，允许保留的样式
       paste_data_images: true,
-      paste_preprocess: function(plugin, args) {
-        // console.log(args.content);
-        // args.content = args.content.replace("<img", "<img id=\"pasted_image_\"");
-        // console.log(args.content)
-        args.content = args.content.replace("<img", "<img id=\"pasted_image_" + parseInt(globalcounter) + "\"");
-            console.log(args.content)
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function(){
-                if (this.readyState == 4 && this.status == 200){
-                  console.log('response: ',this.response);
-                  // upload(this.response);
-                  let formdata = new FormData()
-                  let uploadFileUrl =  `${import.meta.env.VITE_APP_BASE_API}/common/upload`
-                  formdata.set('file', this.response)
-                  axios.post(uploadFileUrl, formdata, {
-                      headers:
-                        {
-                          'Authorization': 'Bearer ' + getToken()
-                        }
-                    }).then(res => {
-                      console.log('images_upload_handler: ',res);
-                    }).catch(res => {
-                      failure('error')
-                    })
+      // paste_preprocess: function(plugin, args) {
+      //   // console.log(args.content);
+      //   // args.content = args.content.replace("<img", "<img id=\"pasted_image_\"");
+      //   // console.log(args.content)
+      //   args.content = args.content.replace("<img", "<img id=\"pasted_image_" + parseInt(globalcounter) + "\"");
+      //       console.log(args.content)
+      //       var xhr = new XMLHttpRequest();
+      //       xhr.onreadystatechange = function(){
+      //           if (this.readyState == 4 && this.status == 200){
+      //             console.log('response: ',this.response);
+      //             // upload(this.response);
+      //             let formdata = new FormData()
+      //             let uploadFileUrl =  `${import.meta.env.VITE_APP_BASE_API}/common/upload`
+      //             formdata.set('file', this.response)
+      //             axios.post(uploadFileUrl, formdata, {
+      //                 headers:
+      //                   {
+      //                     'Authorization': 'Bearer ' + getToken()
+      //                   }
+      //               }).then(res => {
+      //                 console.log('images_upload_handler: ',res);
+      //               }).catch(res => {
+      //                 failure('error')
+      //               })
 
-                }
-            };
-            console.log('args.c: ', args.content.split('"'))
-            // xhr.open('GET', args.content.split('"')[0]);   // 图片地址
-            xhr.open('GET', args.content.split('"')[3]);    // 图片 
-            xhr.responseType = 'blob';
-            xhr.send();
+      //           }
+      //       };
+      //       console.log('args.c: ', args.content.split('"'))
+      //       // xhr.open('GET', args.content.split('"')[0]);   // 图片地址
+      //       xhr.open('GET', args.content.split('"')[3]);    // 图片 
+      //       xhr.responseType = 'blob';
+      //       xhr.send();
  
-            function upload(BlobFile){
-                var x = new XMLHttpRequest();
-                x.onreadystatechange = function(){
-                    if( this.readyState == 4 && this.status == 200 ){
-                        data = this.responseText;
-                        console.log('response data: ' + data);
-                        id = parseInt(globalcounter++);
+      //       function upload(BlobFile){
+      //           var x = new XMLHttpRequest();
+      //           x.onreadystatechange = function(){
+      //               if( this.readyState == 4 && this.status == 200 ){
+      //                   data = this.responseText;
+      //                   console.log('response data: ' + data);
+      //                   id = parseInt(globalcounter++);
  
-                        // function setimg(id, data){
-                        //     if( document.getElementById("pasted_image_" + id)  == null){
-                        //         setTimeout( setimg , 5000);                               
-                        //     }else{
-                        //         document.getElementById("pasted_image_" + id).setAttribute("src", data);     
-                        //     }
-                        // }
-                        document.getElementById("mycontent_ifr").contentWindow.document.getElementById("pasted_image_" + id).setAttribute("src", data);
-                    }
-                };
-                x.open('POST', '/pasteimg/');  
-                x.send(BlobFile);
-            }
+      //                   // function setimg(id, data){
+      //                   //     if( document.getElementById("pasted_image_" + id)  == null){
+      //                   //         setTimeout( setimg , 5000);                               
+      //                   //     }else{
+      //                   //         document.getElementById("pasted_image_" + id).setAttribute("src", data);     
+      //                   //     }
+      //                   // }
+      //                   document.getElementById("mycontent_ifr").contentWindow.document.getElementById("pasted_image_" + id).setAttribute("src", data);
+      //               }
+      //           };
+      //           x.open('POST', '/pasteimg/');  
+      //           x.send(BlobFile);
+      //       }
  
 
-      },
-      paste_postprocess(plugin, args) {
-        console.log('paste_postprocess: ',plugin, args, args.node, args.content);
-      },
+      // },
+      // paste_postprocess(plugin, args) {
+      //   console.log('paste_postprocess: ',plugin, args, args.node, args.content);
+      // },
       images_upload_handler(blobInfo, success, failure) {
         let formdata = new FormData()
         let uploadFileUrl = `${import.meta.env.VITE_APP_BASE_API}/common/upload`

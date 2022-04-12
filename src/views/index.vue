@@ -450,6 +450,7 @@ const goTestLink = item => router.push({ name: 'realQuestionDetail', query: { id
     padding: 10px;
     .logo{
       width: 100%;
+      max-width: 200px;
       height: 90px;
     }
     .name{

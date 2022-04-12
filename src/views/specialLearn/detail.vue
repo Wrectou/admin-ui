@@ -59,6 +59,9 @@ getLearnMaterialsDetailFunc()
 .content{
   max-width: 75%;
   flex: 0 0 75%;
+  ::v-deep(img){
+    width: 100% !important;
+  }
 }
 
 // 标题

@@ -1,81 +1,7 @@
 <template>
   <div class="container home">
-    <el-row :gutter="20">
-      <!-- 左边 -->
-      <el-col :span="16">
-        <!-- 日常学习 -->
-        <div class="content-box">
-          <div class="title">日常学习</div>
-          <el-row class="content menu-content">
-            <el-col class="menu" :span="8" v-for="item in menuList" :key="item.name"  @click="goLink(item.linkName)">
-              <img class="logo" :src="item.logo" />
-              <div class="name">
-                <div>{{item.name}}</div>
-                <div class="tip">{{item.tip}}</div>
-              </div>
-            </el-col>
-          </el-row>
-        </div>
-        <!-- 最新动态 -->
-        <div class="content-box">
-          <div class="title">最新动态</div>
-          <el-row class="content test-dynamic-content">
-            <el-col class="test" :span="24" v-for="item in epaperList.data" :key="item.id"  @click="goLink(item.linkName)">
-              <div class="title" @click="goTestLink(item)"><el-icon><bell /></el-icon>{{ item.name }}</div>
-            </el-col>
-          </el-row>
-        </div>
-      </el-col>
-      <!-- 右边 -->
-      <el-col :span="8">
-        <div class="content-box">
-          <div class="title">考试相关</div>
-          <el-row class="content test-content">
-            <el-col class="test" :span="12" v-for="item in tableList" :key="item.name"  @click="goLink(item.linkName)">
-              <img class="logo" :src="item.logo" />
-              <!-- <div class="name">{{item.name}}</div> -->
-            </el-col>
-          </el-row>
-        </div>
-        <div class="content-box">
-          <div class="title">学习报告</div>
-          <el-tabs v-model="tabsActiveName" class="demo-tabs">
-            <el-tab-pane label="今日" name="today">
-              <div class="tab-item">
-                <div class="item">
-                  <div>答题量</div>
-                  <span class="tip">超过0.01%的学员</span>
-                </div>
-                <div class="num">66</div>
-              </div>
-              <div class="tab-item">
-                <div class="item">
-                  <div>学习时长</div>
-                  <span class="tip">超过0.01%的学员</span>
-                </div>
-                <div class="num">7分10秒</div>
-              </div>
-              <div class="tab-item">
-                <div class="item">
-                  <div>正确率</div>
-                  <span class="tip">超过0.01%的学员</span>
-                </div>
-                <div class="num">66%</div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="历史" name="all">
-              <div class="tab-item">
-                暂无统计数据
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-      </el-col>
-    </el-row>
 
-
-
-    <!-- <div class="tit">考试类型</div>
+    <div class="tit">考试类型</div>
     <div class="level-box">
       <el-radio-group v-model="level" @change="levelChange">
         <el-radio :label="0">基本级执法资格考试</el-radio>
@@ -108,12 +34,13 @@
     <div class="tit">专题学习</div>
     <el-row>
       <el-col :span="6" class="special-box" v-for="item in specialList.data" :key="item.name">
+        <!-- <div class="special"> -->
         <div class="special" @click="goSpecial(item)">
           <img class="logo" :src="item.picture" />
           <p class="title"> {{item.title}} </p>
         </div>
       </el-col>
-    </el-row> -->
+    </el-row>
 
 
   </div>
@@ -142,11 +69,6 @@ const router = useRouter()
 
 const { proxy } = getCurrentInstance()
 
-let tabsActiveName = ref('today')
-const handleClick = (tab, event) => {
-  console.log(tab, event)
-}
-
 let level = ref('')
 if (proxy.$cache.session.getJSON('level')) level.value = proxy.$cache.session.getJSON('level')
 else {
@@ -161,21 +83,21 @@ const levelChange = e => {
 
 
 const menuList = reactive([
-  { name: '章节练习', tip: '分不同章节进行练习', linkName: 'chapter', logo: icon1, },
-  // { name: '题型练习', tip: '强化题型练习', linkName: 'questionType', logo: icon2, },
-  { name: '每日练习', tip: '每日进行巩固练习', linkName: 'today', logo: icon3, },
-  { name: '历年真题', tip: '历年真题题库', linkName: 'realQuestion', logo: icon4, },
-  { name: '模拟考试', tip: '仿真考试练习', linkName: 'imitateQuestion', logo: icon5, },
-  { name: '错题巩固', tip: '对错题进行专项练习', linkName: 'errorQuestion', logo: icon6, },
-  { name: '我的收藏', tip: '收藏题目随时浏览', linkName: 'myCollect', logo: icon7, },
-  // { name: '考试指南', tip: '', linkName: 'guide', logo: icon8, },
-  // { name: '学习报告', tip: '', linkName: 'chapter', logo: icon8, },
+  { name: '章节练习', linkName: 'chapter', logo: icon1, },
+  // { name: '题型练习', linkName: 'questionType', logo: icon2, },
+  { name: '每日练习', linkName: 'today', logo: icon3, },
+  { name: '历年真题', linkName: 'realQuestion', logo: icon4, },
+  { name: '模拟考试', linkName: 'imitateQuestion', logo: icon5, },
+  { name: '错题巩固', linkName: 'errorQuestion', logo: icon6, },
+  { name: '我的收藏', linkName: 'myCollect', logo: icon7, },
+  { name: '考试指南', linkName: 'guide', logo: icon8, },
+  // { name: '学习报告', linkName: 'chapter', logo: icon8, },
 ])
 
-const tableList = reactive([
-  { name: '考试指南', linkName: 'guide', logo: table1, },
-  { name: '我的考试', linkName: 'chapter', logo: table2, },
-])
+// const tableList = reactive([
+//   { name: '考试指南', linkName: 'guide', logo: table1, },
+//   { name: '我的考试', linkName: 'chapter', logo: table2, },
+// ])
 
 const specialList = reactive({
   data: []
@@ -360,131 +282,6 @@ const goTestLink = item => router.push({ name: 'realQuestionDetail', query: { id
   }
   .title:hover{
     color: #409EFF;
-  }
-}
-
-*{
-  box-sizing: border-box;
-}
-.content-box{
-  margin: 0 0 16px;
-  background: #fff;
-  >.title{
-    color: #222;
-    padding: 16px 24px;
-    font-weight: 500;
-    font-size: 16px;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .menu-content{
-    .menu{
-      display: flex;
-      padding: 24px;
-      border-right: 1px solid #f0f0f0;
-      border-bottom: 1px solid #f0f0f0;
-      transition: all .3s;
-      .logo{
-        flex: 0 0 48px;
-        margin: 0 10px 0 0;
-        width: 48px;
-        height: 48px;
-      }
-      .name{
-        >div{
-          color: #444;
-          margin: 2px 0 0;
-        }
-        .tip{
-          margin: 4px 0 0;
-          color: #777;
-          font-size: 14px;
-        }
-      }
-    }
-    .menu:hover{
-      cursor: pointer;
-      transition: all .3s;
-      box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
-      .name{
-        >div{
-          color: #409EFF;
-        }
-      }
-    }
-    .menu:nth-child(3n){
-      border-right: none;
-    }
-  }
-}
-
-.test-dynamic-content{
-  .test {
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .test:last-child{
-    border-bottom: none;
-  }
-  .title{
-    display: flex;
-    align-items: center;
-    padding: 8px 20px;
-    line-height: 36px;
-    font-size: 15px;
-    color: #555;
-    cursor: pointer;
-    .el-icon{
-      margin: 0 10px 0 0;
-    }
-  }
-  .title:hover{
-    color: #409EFF;
-  }
-}
-
-.test-content{
-  .test{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 10px;
-    .logo{
-      width: 100%;
-      height: 90px;
-    }
-    .name{
-      margin: 4px 0 0;
-      color: #444;
-      font-size: 14px;
-    }
-  }
-}
-
-.demo-tabs{
-  padding: 12px 24px;
-  ::v-deep(.el-tabs__header){
-    margin: 0 0 10px;
-  }
-  .tab-item{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
-    margin: 8px 0 0;
-    .item{
-      >div{
-        font-size: 15px;
-        color: #444;
-      }
-      .tip{
-        font-size: 13px;
-        color: #777;
-      }
-    }
-    .num{
-      font-size: 16px;
-      color: #409EFF;
-    }
   }
 }
 

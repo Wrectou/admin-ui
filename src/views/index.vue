@@ -20,7 +20,7 @@
         <div class="content-box">
           <div class="title">最新动态</div>
           <el-row class="content test-dynamic-content">
-            <el-col class="test" :span="24" v-for="item in epaperList.data" :key="item.id"  @click="goLink(item.linkName)">
+            <el-col class="test" :span="24" v-for="item in epaperList.data" :key="item.id">
               <div class="title" @click="goTestLink(item)"><el-icon><bell /></el-icon>{{ item.name }}</div>
             </el-col>
           </el-row>
@@ -236,7 +236,7 @@ function getEpaperListFunc() {
     }, err => isLoading.value = false )
 }
 getEpaperListFunc()
-const goTestLink = item => router.push({ name: 'realQuestionDetail', query: { id: item.id } })
+const goTestLink = item => router.push({ name: 'realQuestion' })
 
 </script>
 

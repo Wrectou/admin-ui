@@ -1,127 +1,145 @@
 <template>
   <div class="container answer">
+
+    <el-row>
+
+      <el-col :span="18">
     
-    <!-- 倒计时 -->
-    <div class="count-down">
-      <div :class="['time', dangerCountDown]">倒计时：{{countTime}}</div>
-      <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">交卷</el-button></div>
-    </div>
+        <!-- 倒计时 -->
+        <!-- <div class="count-down">
+          <div :class="['time', dangerCountDown]">倒计时：{{countTime}}</div>
+          <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">交卷</el-button></div>
+        </div> -->
 
-    <!-- 题目工具条 -->
-    <QuestionToolBar 
-      :toolbarObj="toolbarObj"
-      @changeAnswerSheet="changeAnswerSheet"
-    />
+        <!-- 试卷名 -->
+        <div class="test-name" v-if="!isLoadingData && questionArr.length > 0">{{route.query.name}}</div>
 
-    <!-- 分割线 -->
-    <el-divider />
-
-    <!-- 问题内容区域 -->
-    <div class="content-box">
-
-      <!-- 切换题目动画类 -->
-      <div :class="switchQuestionClass">
-      
-        <!-- 标题组件 -->
-        <QuestionTitle 
-          :questionTitleObj="questionArr[questionIndex]"
-          @changeCollectTitle="changeCollectTitle"
+        <!-- 题目工具条 -->
+        <QuestionToolBar 
+          :toolbarObj="toolbarObj"
+          @changeAnswerSheet="changeAnswerSheet"
         />
-        
-        <!-- 答题选项盒子 -->
-        <div class="answer-box"
-          v-if="questionArr.length > 0"
-          v-loading="isLoading"
-          element-loading-text="Loading..."
-          element-loading-background="rgba(255, 255, 255, 0.3)"
-        >
 
-          <!-- 单选选项组 type类型为1 -->
-          <QuestionAnswerSingle 
-            v-if="questionArr[questionIndex].type === 1"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerSingleFunc="checkAnswerSingleFunc"
-          />
+        <!-- 分割线 -->
+        <el-divider />
 
-          <!-- 多选选项组 type类型为2 -->
-          <QuestionAnswerSeveral 
-            v-if="questionArr[questionIndex].type === 2"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerSeveralItemFunc="checkAnswerSeveralItemFunc"
-            @checkAnswerSeveralFunc="checkAnswerSeveralFunc"
-          />
+        <!-- 问题内容区域 -->
+        <div class="content-box">
+
+          <!-- 切换题目动画类 -->
+          <div :class="switchQuestionClass">
           
-          <!-- 判断题 type类型为3 -->
-          <QuestionAnswerJudge 
-            v-if="questionArr[questionIndex].type === 3"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerJudgeFunc="checkAnswerJudgeFunc"
+            <!-- 标题组件 -->
+            <QuestionTitle 
+              :questionTitleObj="questionArr[questionIndex]"
+              @changeCollectTitle="changeCollectTitle"
+            />
+            
+            <!-- 答题选项盒子 -->
+            <div class="answer-box"
+              v-if="questionArr.length > 0"
+              v-loading="isLoading"
+              element-loading-text="Loading..."
+              element-loading-background="rgba(255, 255, 255, 0.3)"
+            >
+
+              <!-- 单选选项组 type类型为1 -->
+              <QuestionAnswerSingle 
+                v-if="questionArr[questionIndex].type === 1"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerSingleFunc="checkAnswerSingleFunc"
+              />
+
+              <!-- 多选选项组 type类型为2 -->
+              <QuestionAnswerSeveral 
+                v-if="questionArr[questionIndex].type === 2"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerSeveralItemFunc="checkAnswerSeveralItemFunc"
+                @checkAnswerSeveralFunc="checkAnswerSeveralFunc"
+              />
+              
+              <!-- 判断题 type类型为3 -->
+              <QuestionAnswerJudge 
+                v-if="questionArr[questionIndex].type === 3"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerJudgeFunc="checkAnswerJudgeFunc"
+              />
+
+              <!-- 论述题 type类型为4 -->
+              <QuestionAnswerDiscuss 
+                v-if="questionArr[questionIndex].type === 4"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
+              />
+
+            </div>
+
+            <!-- 加载题目骨架屏 -->
+            <el-skeleton :rows="5" animated :loading="isLoadingData" />
+
+            <!-- 没有题目数据 -->
+            <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
+
+          </div>
+
+
+          <!-- 题目切换组件 -->
+          <QuestionChangeIndex 
+            :questionIndex="questionIndex"
+            :questionArrLength="questionArr.length"
+            @plusQuestionIndex="plusQuestionIndex"
+            @reduceQuestionIndex="reduceQuestionIndex"
           />
 
-          <!-- 论述题 type类型为4 -->
-          <QuestionAnswerDiscuss 
-            v-if="questionArr[questionIndex].type === 4"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
-          />
+          <!-- 回答错误的错题解析 -->
+          <div :class="switchQuestionClass" v-if="(questionArr.length > 0 && !answerQuestion) || (questionArr.length > 0 && questionArr[questionIndex].isShowQuestionAnalysis)">
+
+            <!-- 回答错误工具组件 -->
+            <QuestionAnswerBar
+              v-if="questionArr[questionIndex].type !== 4"
+              :questionAnswerBarObj="questionArr[questionIndex]"
+            />
+
+            <div class="tit" v-if="answerQuestion">统计</div>
+            <!-- 答案统计组件 -->
+            <QuestionStatistics 
+              v-if="answerQuestion"
+              :questionStatisticsObj="questionArr[questionIndex]"
+            />
+
+            <div class="tit">解析</div>
+            <!-- 答案解析组件 -->
+            <QuestionAnalysis 
+              :questionAnalysisObj="questionArr[questionIndex]"
+            />
+
+          </div>
 
         </div>
 
-        <!-- 加载题目骨架屏 -->
-        <el-skeleton :rows="5" animated :loading="isLoadingData" />
+      </el-col>
 
-        <!-- 没有题目数据 -->
-        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
+      <el-col :span="6">
 
-      </div>
-
-
-      <!-- 题目切换组件 -->
-      <QuestionChangeIndex 
-        :questionIndex="questionIndex"
-        :questionArrLength="questionArr.length"
-        @plusQuestionIndex="plusQuestionIndex"
-        @reduceQuestionIndex="reduceQuestionIndex"
-      />
-
-      <!-- 回答错误的错题解析 -->
-      <div :class="switchQuestionClass" v-if="(questionArr.length > 0 && !answerQuestion) || (questionArr.length > 0 && questionArr[questionIndex].isShowQuestionAnalysis)">
-
-        <!-- 回答错误工具组件 -->
-        <QuestionAnswerBar
-          v-if="questionArr[questionIndex].type !== 4"
-          :questionAnswerBarObj="questionArr[questionIndex]"
+        <!-- 答题卡组件 -->
+        <QuestionAnswerSheet 
+          :isShowAnswerSheet="isShowAnswerSheet"
+          :questionArr="questionArr"
+          :answerSheetModel="'test'"
+          :countTime="countTime"
+          :dangerCountDown="dangerCountDown"
+          @changeQuestion="changeQuestionIndex"
+          @changeAnswerSheet="changeAnswerSheet"
+          @haveTimeCompleteTest="haveTimeCompleteTest"
         />
 
-        <div class="tit" v-if="answerQuestion">统计</div>
-        <!-- 答案统计组件 -->
-        <QuestionStatistics 
-          v-if="answerQuestion"
-          :questionStatisticsObj="questionArr[questionIndex]"
-        />
+      </el-col>
 
-        <div class="tit">解析</div>
-        <!-- 答案解析组件 -->
-        <QuestionAnalysis 
-          :questionAnalysisObj="questionArr[questionIndex]"
-        />
-
-      </div>
-
-    </div>
-
-    <!-- 答题卡组件 -->
-    <QuestionAnswerSheet 
-      :isShowAnswerSheet="isShowAnswerSheet"
-      :questionArr="questionArr"
-      :answerSheetModel="'test'"
-      @changeQuestion="changeQuestionIndex"
-      @changeAnswerSheet="changeAnswerSheet"
-    />
+    </el-row>
 
   </div>
 </template>
@@ -609,32 +627,40 @@ onBeforeRouteLeave(() => {
   padding: 0 40px;
 }
 
+// 考试名称
+.test-name{
+  margin: 0 0 30px;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
 // 倒计时
-.count-down{
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  margin: 0 0 40px;
-  .time{
-    font-size: 18px;
-    color: #333;
-  }
-  .danger-count-down{
-    color: #f56c6c;
-    animation: Flash 1s infinite;
-  }
-}
-@keyframes Flash {
-  0%{
-    transform: scale(1);
-  }
-  50%{
-    transform: scale(1.07);
-  }
-  100%{
-    transform: scale(1);
-  }
-}
+// .count-down{
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-evenly;
+//   margin: 0 0 40px;
+//   .time{
+//     font-size: 18px;
+//     color: #333;
+//   }
+//   .danger-count-down{
+//     color: #f56c6c;
+//     animation: Flash 1s infinite;
+//   }
+// }
+// @keyframes Flash {
+//   0%{
+//     transform: scale(1);
+//   }
+//   50%{
+//     transform: scale(1.07);
+//   }
+//   100%{
+//     transform: scale(1);
+//   }
+// }
 
 // 题目切换样式
 .tramsform-form{

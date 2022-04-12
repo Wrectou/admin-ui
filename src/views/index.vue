@@ -174,7 +174,7 @@ const menuList = reactive([
 
 const tableList = reactive([
   { name: '考试指南', linkName: 'guide', logo: table1, },
-  { name: '我的考试', linkName: 'chapter', logo: table2, },
+  { name: '我的考试', linkName: 'realQuestion', logo: table2, },
 ])
 
 const specialList = reactive({

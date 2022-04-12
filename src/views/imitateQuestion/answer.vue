@@ -379,7 +379,11 @@ const changeCollectTitle = () => {
         else ElMessage.error('收藏出错，请稍后再试！')
       })
   } else {
-    deleteFavorite(questionArr[questionIndex.value].id)
+    let params = {
+      quesionId: questionArr[questionIndex.value].id,
+      type: 1,
+    }
+    deleteFavorite(params)
       .then(res => {
         console.log('deleteFavorite: ', res);
         if (res.code === 200) {

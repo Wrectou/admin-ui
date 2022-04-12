@@ -317,7 +317,7 @@ const changeCollectTitle = () => {
       })
   } else {
     let params = {
-      questionId: questionArr[questionIndex.value].id,
+      quesionId: questionArr[questionIndex.value].id,
       type: 1,
     }
     deleteFavorite(params)

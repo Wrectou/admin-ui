@@ -1,15 +1,18 @@
 <template>
   <div class="container answer">
-    
+
     <el-row>
 
       <el-col :span="18">
+    
+        <!-- 倒计时 -->
+        <!-- <div class="count-down">
+          <div :class="['time', dangerCountDown]">倒计时：{{countTime}}</div>
+          <div class="button"><el-button type="warning" @click="haveTimeCompleteTest">交卷</el-button></div>
+        </div> -->
 
-        <!-- 模式切换组件 -->
-        <QuestionModel 
-          :answerQuestion="answerQuestion" 
-          @changeQuestionModel="changeQuestionModel" 
-        />
+        <!-- 试卷名 -->
+        <div class="test-name" v-if="!isLoadingData && questionArr.length > 0">{{route.query.name}}</div>
 
         <!-- 题目工具条 -->
         <QuestionToolBar 
@@ -29,7 +32,6 @@
             <!-- 标题组件 -->
             <QuestionTitle 
               :questionTitleObj="questionArr[questionIndex]"
-              :isShowCollect=false
               @changeCollectTitle="changeCollectTitle"
             />
             
@@ -118,7 +120,7 @@
           </div>
 
         </div>
-      
+
       </el-col>
 
       <el-col :span="6">
@@ -127,8 +129,12 @@
         <QuestionAnswerSheet 
           :isShowAnswerSheet="isShowAnswerSheet"
           :questionArr="questionArr"
+          :answerSheetModel="'test'"
+          :countTime="countTime"
+          :dangerCountDown="dangerCountDown"
           @changeQuestion="changeQuestionIndex"
           @changeAnswerSheet="changeAnswerSheet"
+          @haveTimeCompleteTest="haveTimeCompleteTest"
         />
 
       </el-col>
@@ -138,15 +144,18 @@
   </div>
 </template>
 
-<script setup name="errorQuestionAnswer">
+<script setup name="myTestAnswer">
 
-import { getFavoritesQuestionList, getSelfLastQuestionId, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, getErrQuestionAllList } from '@/api'
+import { getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite  } from '@/api'
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
 import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
-import { ElMessage } from 'element-plus'
+import { useRouter, useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+
+import { ElMessage, ElMessageBox } from 'element-plus'
+
 import QuestionModel from '@/components/questionModel/index'
 import QuestionToolBar from '@/components/questionToolBar/index'
 import QuestionTitle from '@/components/questionTitle/index'
@@ -167,13 +176,47 @@ const { proxy } = getCurrentInstance()
 
 // 模式切换组件 属性/方法
 let answerQuestion = ref(true)
-const changeQuestionModel = () => answerQuestion.value = !answerQuestion.value
 
 // 正在显示的题目下标
 let questionIndex = ref(0)
 // 修改题目下标
 const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.value -- }
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
+
+// 倒计时
+let countTime = ref('')
+let timer = null
+let dangerCountDown = ref('')
+let isShowElMessageBox = false
+const countDown = () => {
+  clearInterval(timer)
+  timer = setInterval(() => {
+    var nowtimeGetTime = new Date().getTime(),
+        endtimeGetTime = proxy.$cache.session.getJSON('endmyTestTime');
+    var lefttime = endtimeGetTime - nowtimeGetTime,
+        lefth = '0' + Math.floor(lefttime/(1000*60*60)%24),
+        leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),
+        lefts = Math.floor(lefttime/1000%60) < 10 ? '0'+Math.floor(lefttime/1000%60) : Math.floor(lefttime/1000%60);
+    if ((lefttime/1000).toFixed() < 900) dangerCountDown.value = 'danger-count-down'
+    if ((lefttime/1000).toFixed() >= 1) {
+      countTime.value = lefth + ":" + leftm + ":" + lefts
+    } else {
+      countTime.value = "00:00:00"
+      if (!isShowElMessageBox) {
+        isShowElMessageBox = true
+        ElMessageBox.alert('考试时间结束，请交卷！', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            console.log('action: ',action);
+            isShowElMessageBox = false
+            isCompleteTest.value = true
+          }
+        })
+      }
+    }
+  }, 1000)
+}
+countDown()
 
 // 题目数组
 // const questionArr = reactive(allQuestionData)
@@ -183,17 +226,16 @@ const questionArr = reactive([])
 let isLoadingData = ref(false)
 
 // 获取本章节所有题目
-function getFavoritesQuestionListFunc() {
+function getQuestionListFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
     practiceId: route.query.id,
-    qtype: route.query.qtype,
-    type: 0,
+    qtype: 1,
   }
   isLoadingData.value = true
-  getFavoritesQuestionList(params)
+  getQuestionList(params)
     .then(async res => {
-      console.log('getFavoritesQuestionList: ',res);
+      console.log('getQuestionList: ',res);
       res.rows.forEach(item => {
         let obj = {
           id: item.id,
@@ -230,65 +272,12 @@ function getFavoritesQuestionListFunc() {
         }
         questionArr.push(obj)
       })
-      getSelfLastQuestionIdFunc()
+      // getSelfLastQuestionIdFunc()
+      isLoadingData.value = false
       getQuestionItemFunc(0, res.rows[0].id)
     }, err => isLoadingData.value = false )
 }
-
-// 获取所有错题
-function getErrQuestionAllListFunc() {
-  let params = {
-    level: proxy.$cache.session.getJSON('level'),
-    qtype: route.query.qtype,
-    type: 0,
-  }
-  isLoadingData.value = true
-  getErrQuestionAllList(params)
-    .then(async res => {
-      console.log('getErrQuestionAllList: ',res);
-      res.rows.forEach(item => {
-        let obj = {
-          id: item.id,
-          type: item.type,
-          showType: item.type,
-          fraction: item.score,
-          title: item.title,
-          isCollect: item.favorite === 1 ? true : false,
-          answerList: [],
-          yourAnswer: '',
-          answerTime: '',
-          okAnswer: '',
-          allAnswerNum: '',
-          allAnswerCorrectRate: '',
-          fallibility: '',
-          analysis: item.explanation,
-          isShowQuestionAnalysis: false,
-        }
-        if (item.type === 1) {
-          obj.type = 3
-          obj.okAnswer = LetterToIndex[item.correctAnswers]
-        } else if (item.type === 2) {
-          obj.type = 1
-          obj.okAnswer = LetterToIndex[item.correctAnswers]
-        } else if (item.type === 3 || item.type === 4) {
-          obj.type = 2
-          obj.okAnswer = []
-          obj.yourAnswer = []
-          let correctAnswersArr = item.correctAnswers.split('')
-          correctAnswersArr = correctAnswersArr.map(item => item = LetterToIndex[item])
-          obj.okAnswer = correctAnswersArr
-        } else if (item.type === 5) {
-          obj.type = 4
-        }
-        questionArr.push(obj)
-      })
-      getSelfLastQuestionIdFunc()
-      getQuestionItemFunc(0, res.rows[0].id)
-    }, err => isLoadingData.value = false )
-}
-
-if (route.query.all) getErrQuestionAllListFunc()
-else getFavoritesQuestionListFunc()
+getQuestionListFunc()
 
 // 获取做到哪一题
 function getSelfLastQuestionIdFunc() {
@@ -334,7 +323,7 @@ function getQuestionStatisFunc(i, id) {
         questionArr[i].fallibility = LetterToIndex[res.data.easyWrong]
       }
     })
-  // favoriteErrQuestionFunc()
+  favoriteErrQuestionFunc()
 }
 
 // 错题自动收藏
@@ -342,7 +331,7 @@ function favoriteErrQuestionFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
     practiceId: route.query.id,
-    qtype: 0,
+    qtype: 1,
     questionId: questionArr[questionIndex.value].id,
     type: 0,
   }
@@ -376,7 +365,7 @@ const changeCollectTitle = () => {
     let params = {
       level: proxy.$cache.session.getJSON('level'),
       practiceId: route.query.id,
-      qtype: 0,
+      qtype: 1,
       questionId: questionArr[questionIndex.value].id,
       type: 1,
     }
@@ -428,7 +417,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     correctAnswers: questionArr[i].okAnswer,
     isCorrect,
     practiceId: route.query.id,
-    qtype: 2,   // 收藏传2
+    qtype: 1,
     questionId: id,
     reply: questionArr[i].yourAnswer,
     score: questionArr[i].fraction
@@ -456,9 +445,9 @@ let isLoading = ref(false)
 // 单选选择点击/确定选择
 const checkAnswerSingleFunc = item => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 1 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 此处调接口
   isLoading.value = true
   // 答题时间
@@ -466,6 +455,7 @@ const checkAnswerSingleFunc = item => {
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
   // setTimeout(() => {
+    questionArr[questionIndex.value].answerList.forEach( item => item.isChecked = false )
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
@@ -473,13 +463,13 @@ const checkAnswerSingleFunc = item => {
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
       addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
-      plusQuestionIndex()
     } else {
       addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
-      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+      // getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
+      // questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
+    plusQuestionIndex()
     // 取消loading
     isLoading.value = false
   // }, 700)
@@ -488,9 +478,9 @@ const checkAnswerSingleFunc = item => {
 // 多选点击选项
 const checkAnswerSeveralItemFunc = item => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 选中/反选 增加删除选中项数组
   if (!item.isChecked) questionArr[questionIndex.value].yourAnswer.push(item.value)
   else {
@@ -505,9 +495,9 @@ const checkAnswerSeveralItemFunc = item => {
 // 多选确定选择
 const checkAnswerSeveralFunc = () => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 是单选切已经选过答案后点击没操作
   if (questionArr[questionIndex.value].type === 2 && questionArr[questionIndex.value].yourAnswer.length <= 0) return ElMessage.error('请先选择选项再确认答案！')
   // 此处调接口
@@ -520,14 +510,15 @@ const checkAnswerSeveralFunc = () => {
     if (String(questionArr[questionIndex.value].yourAnswer) === String(questionArr[questionIndex.value].okAnswer)) {
       addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
-      plusQuestionIndex()
+      // plusQuestionIndex()
     } else {
       addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
-      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+      // questionArr[questionIndex.value].isShowQuestionAnalysis = true
       // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
+      // getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
     }
+    plusQuestionIndex()
     // 取消loading
     isLoading.value = false
   // }, 700)
@@ -536,9 +527,9 @@ const checkAnswerSeveralFunc = () => {
 // 判断题选择点击/确定选择
 const checkAnswerJudgeFunc = item => {
   // 背题模式禁止操作
-  if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+  // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
   // 是单选切已经选过答案后点击没操作
-  if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+  // if (questionArr[questionIndex.value].type === 3 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
   // 此处调接口
   isLoading.value = true
   // 答题时间
@@ -546,6 +537,7 @@ const checkAnswerJudgeFunc = item => {
   questionArr[questionIndex.value].answerTime = time > 0 ? time : 1
   // 模拟接口延迟
   // setTimeout(() => {
+    questionArr[questionIndex.value].answerList.forEach( item => item.isChecked = false )
     // 用户选择回答项
     questionArr[questionIndex.value].yourAnswer = item.value
     // 此选项已选择
@@ -553,13 +545,14 @@ const checkAnswerJudgeFunc = item => {
     if (questionArr[questionIndex.value].yourAnswer === questionArr[questionIndex.value].okAnswer) {
       addPracticeQuestionAnswerFunc(1, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答正确去下一题
-      plusQuestionIndex()
+      // plusQuestionIndex()
     } else {
       addPracticeQuestionAnswerFunc(0, questionIndex.value, questionArr[questionIndex.value].id)
       // 回答错误显示答题解析
-      getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
-      questionArr[questionIndex.value].isShowQuestionAnalysis = true
+      // getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
+      // questionArr[questionIndex.value].isShowQuestionAnalysis = true
     }
+      plusQuestionIndex()
     // 取消loading
     isLoading.value = false
   // }, 700)
@@ -571,9 +564,9 @@ const checkAnswerDiscussFunc = (formEl) => {
   formEl.validate((valid, fields) => {
     if (valid) {
       // 背题模式禁止操作
-      if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
+      // if (!answerQuestion.value) return ElMessage.error('当前为背题模式，不可答题！')
       // 是单选切已经选过答案后点击没操作
-      if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
+      // if (questionArr[questionIndex.value].type === 4 && questionArr[questionIndex.value].answerTime) return ElMessage.error('已作答题目不可再次答题！')
       // 此处调接口
       isLoading.value = true
       // 答题时间
@@ -592,6 +585,39 @@ const checkAnswerDiscussFunc = (formEl) => {
   })
 }
 
+let isCompleteTest = ref(false)
+// 交卷按钮
+const haveTimeCompleteTest = () => {
+  let nodo = 0
+  questionArr.forEach(item => {
+    if (item.answerTime == '') nodo ++
+  })
+  ElMessageBox.confirm(`还有${nodo}题未完成，确定交卷吗？`, '交卷', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning', 
+    })
+      .then(() => {
+        ElMessage({
+          type: 'success',
+          message: '交卷',
+        })
+        isCompleteTest.value = true
+      })
+      .catch(() => {
+        console.log('取消交卷');
+      })
+}
+
+// 离开导航守卫
+onBeforeRouteLeave(() => {
+  if (!isCompleteTest.value) {
+    const answer = window.confirm('必须交卷才可离开本页面!')
+    return false
+  }
+  clearInterval(timer)
+})
+
 
 </script>
 
@@ -604,6 +630,41 @@ const checkAnswerDiscussFunc = (formEl) => {
 .content-box{
   padding: 0 40px;
 }
+
+// 考试名称
+.test-name{
+  margin: 0 0 30px;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+// 倒计时
+// .count-down{
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-evenly;
+//   margin: 0 0 40px;
+//   .time{
+//     font-size: 18px;
+//     color: #333;
+//   }
+//   .danger-count-down{
+//     color: #f56c6c;
+//     animation: Flash 1s infinite;
+//   }
+// }
+// @keyframes Flash {
+//   0%{
+//     transform: scale(1);
+//   }
+//   50%{
+//     transform: scale(1.07);
+//   }
+//   100%{
+//     transform: scale(1);
+//   }
+// }
 
 // 题目切换样式
 .tramsform-form{

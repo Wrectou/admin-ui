@@ -57,10 +57,15 @@ getLearnMaterialsDetailFunc()
 }
 
 .content{
-  max-width: 75%;
-  flex: 0 0 75%;
+  max-width: 64%;
+  flex: 0 0 64%;
   ::v-deep(img){
-    width: 100% !important;
+    margin: 0 auto;
+    > span {
+      display: inline-block;
+      width: 100% !important;
+      text-align: center;
+    }
   }
 }
 
@@ -70,8 +75,8 @@ getLearnMaterialsDetailFunc()
   margin: 26px 0;
   padding: 0 0 0 14px;
   font-size: 20px;
-  max-width: 75%;
-  flex: 0 0 75%;
+  max-width: 64%;
+  flex: 0 0 64%;
 }
 .tit:before{
   content: '';

@@ -112,8 +112,7 @@ let dialogVisible = ref(false)
 const goLink = () => {
   dialogVisible.value = false
   router.push({ name: 'realQuestionAnswer', query: { id: epaperDetail.data.id, name: epaperDetail.data.name } })
-  // proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
-  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + 15*60*1000))
+  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
 }
 
 const showDialog = item => {

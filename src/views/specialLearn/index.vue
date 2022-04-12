@@ -1,7 +1,7 @@
 <template>
   <div class="container chapter">
     
-    <div class="tit">专题学习</div>
+    <div class="tit">专题学习<div v-if="route.query.title"> - {{route.query.title}}</div></div>
     <el-row>
 
       <el-col :span="8" v-for="item in guideListData" :key="item.id">
@@ -81,6 +81,9 @@ const goLink = item => router.push({ name: 'specialDetail', query: { id: item.id
   padding: 0 0 0 26px;
   font-size: 20px;
   text-align: left;
+  >div{
+    display: inline-block;
+  }
 }
 .tit:before{
   content: '';

@@ -184,6 +184,28 @@ export const routes = [{
         ],
     },
     {
+        path: "/myTest",
+        component: Layout,
+        meta: { title: "我的考试", icon: "edit", noCache: true },
+        children: [
+            {
+                path: "index",
+                noCache: true,
+                component: () => import ("@/views/myTest/index"),
+                name: "myTest",
+                meta: { title: "我的考试", icon: "edit" },
+            },
+            {
+                path: "answer",
+                noCache: true,
+                hidden: true,
+                component: () => import ("@/views/myTest/answer"),
+                name: "myTestAnswer",
+                meta: { title: "我的考试", icon: "edit" },
+            },
+        ],
+    },
+    {
         path: "/errorQuestion",
         component: Layout,
         meta: { title: "错题巩固", icon: "log", noCache: true },

@@ -63,7 +63,7 @@
   </div>
 </template>
 
-<script setup name="imitateQuestion">
+<script setup name="myTest">
 
 import { getEpaperList, getEpaperDetail } from '@/api'
 import QuestionNotFound from '@/components/questionNotFound/index'
@@ -77,7 +77,7 @@ let isLoading = ref(false)
 // 列表
 function getEpaperListFunc() {
   let params = {
-    etype: 1,
+    etype: 2,
     level: proxy.$cache.session.getJSON('level'),
   }
   isLoading.value = true
@@ -111,8 +111,8 @@ let dialogVisible = ref(false)
 
 const goLink = () => {
   dialogVisible.value = false
-  router.push({ name: 'imitateQuestionAnswer', query: { id: epaperDetail.data.id, name: epaperDetail.data.name } })
-  proxy.$cache.session.setJSON('endImitateQuestionTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
+  router.push({ name: 'myTestAnswer', query: { id: epaperDetail.data.id, name: epaperDetail.data.name } })
+  proxy.$cache.session.setJSON('endmyTestTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
 }
 
 const showDialog = item => {

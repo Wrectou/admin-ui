@@ -17,13 +17,33 @@
           </el-row>
         </div>
         <!-- 最新动态 -->
-        <div class="content-box">
+        <!-- <div class="content-box">
           <div class="title">最新动态</div>
           <el-row class="content test-dynamic-content">
             <el-col class="test" :span="24" v-for="item in epaperList.data" :key="item.id">
               <div class="title" @click="goTestLink(item)"><el-icon><bell /></el-icon>{{ item.name }}</div>
             </el-col>
+            <el-col class="title" v-if="epaperList.data.length < 1">暂无数据</el-col>
           </el-row>
+        </div> -->
+        <!-- 专题学习 -->
+        <div class="content-box">
+          <div class="title">专题学习</div>
+          
+          <el-row class="content special-content">
+            <el-col class="special" :span="8" v-for="item in specialList.data" :key="item.id"  @click="goSpecial(item)">
+              <img class="logo" :src="item.picture" />
+              <div class="name">{{item.title}}</div>
+            </el-col>
+          </el-row>
+          
+          <!-- <el-col :span="6" class="special-box" v-for="item in specialList.data" :key="item.name">
+            <div class="special" @click="goSpecial(item)">
+              <img class="logo" :src="item.picture" />
+              <p class="title"> {{item.title}} </p>
+            </div>
+          </el-col> -->
+
         </div>
       </el-col>
       <!-- 右边 -->
@@ -121,7 +141,7 @@
 
 <script setup name="Index">
 
-import { getLearnCatalogueList, getEpaperList, getEnum } from '@/api'
+import { getLearnCatalogueList, getEpaperSelflist, getEnum } from '@/api'
 import { useRouter } from 'vue-router'
 
 import icon1 from '@/assets/images/index/1.png'
@@ -174,7 +194,7 @@ const menuList = reactive([
 
 const tableList = reactive([
   { name: '考试指南', linkName: 'guide', logo: table1, },
-  { name: '我的考试', linkName: 'realQuestion', logo: table2, },
+  { name: '我的考试', linkName: 'myTest', logo: table2, },
 ])
 
 const specialList = reactive({
@@ -212,7 +232,7 @@ function getLearnCatalogueListFunc() {
 getLearnCatalogueListFunc()
 
 function goSpecial(item) {
-  router.push({ name: 'special', query: {id: item.id} })
+  router.push({ name: 'special', query: { id: item.id, title: item.title } })
 }
 
 const goLink = name => router.push({ name })
@@ -222,21 +242,21 @@ let isLoading = ref(false)
 const epaperList = reactive({
   data: []
 })
-function getEpaperListFunc() {
+function getEpaperSelflistFunc() {
   let params = {
-    etype: 0,
+    etype: 2,
     level: proxy.$cache.session.getJSON('level'),
   }
   isLoading.value = true
-  getEpaperList(params)
+  getEpaperSelflist(params)
     .then(res => {
-      console.log('getEpaperList: ', res);
+      console.log('getEpaperSelflist: ', res);
       isLoading.value = false
       epaperList.data = res.rows
     }, err => isLoading.value = false )
 }
-getEpaperListFunc()
-const goTestLink = item => router.push({ name: 'realQuestion' })
+getEpaperSelflistFunc()
+const goTestLink = item => router.push({ name: 'myTest' })
 
 </script>
 
@@ -438,6 +458,41 @@ const goTestLink = item => router.push({ name: 'realQuestion' })
   }
   .title:hover{
     color: #409EFF;
+  }
+}
+
+
+.special-content{
+  .special{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    border-right: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all .3s;
+    .logo{
+      flex: 0 0 100px;
+      margin: 0 10px 0 0;
+      width: 220px;
+      height: 110px;
+      border-radius: 8px;
+    }
+    .name{
+      margin: 10px 0 0;
+      color: #444;
+    }
+  }
+  .special:hover{
+    cursor: pointer;
+    transition: all .3s;
+    box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+    .name{
+      color: #409EFF;
+    }
+  }
+  .special:nth-child(3n){
+    border-right: none;
   }
 }
 

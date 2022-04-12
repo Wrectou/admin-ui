@@ -251,11 +251,11 @@ export const addFavorite = data => {
 }
 
 // 取消收藏
-export const deleteFavorite = data => {
+export const deleteFavorite = params => {
     return request({
         url: `/business/practiceFavorites/del`,
         method: 'delete',
-        data
+        params
     })
 }
 
@@ -378,6 +378,15 @@ export const addLearnMaterials = data => {
         url: '/business/learnMaterials',
         method: 'post',
         data
+    })
+}
+
+// 查询自己的考试试卷列表
+export const getEpaperSelflist = params => {
+    return request({
+        url: '/business/epaper/selflist',
+        method: 'get',
+        params
     })
 }
 

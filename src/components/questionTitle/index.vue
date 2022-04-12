@@ -35,7 +35,7 @@
 <style lang="scss" scoped>
 .question-title{
   display: flex;
-  align-items: center;
+  align-items: start;
   .fraction{
     margin: 0 10px 0 0;
     color: rgb(64, 158, 255);
@@ -45,6 +45,7 @@
     font-size: 20px;
   }
   .collect{
+    margin: 0 0 0 10px;
     color: #999;
     cursor: pointer;
   }

@@ -1,127 +1,139 @@
 <template>
   <div class="container answer">
-    
-    <!-- 模式切换组件 -->
-    <QuestionModel 
-      :answerQuestion="answerQuestion" 
-      @changeQuestionModel="changeQuestionModel" 
-    />
 
-    <!-- 题目工具条 -->
-    <QuestionToolBar 
-      :toolbarObj="toolbarObj"
-      @changeAnswerSheet="changeAnswerSheet"
-    />
+    <el-row>
 
-    <!-- 分割线 -->
-    <el-divider />
+      <el-col :span="18">
 
-    <!-- 问题内容区域 -->
-    <div class="content-box">
-
-      <!-- 切换题目动画类 -->
-      <div :class="switchQuestionClass">
-      
-        <!-- 标题组件 -->
-        <QuestionTitle 
-          :questionTitleObj="questionArr[questionIndex]"
-          @changeCollectTitle="changeCollectTitle"
+        <!-- 模式切换组件 -->
+        <QuestionModel 
+          :answerQuestion="answerQuestion" 
+          @changeQuestionModel="changeQuestionModel" 
         />
-        
-        <!-- 答题选项盒子 -->
-        <div class="answer-box"
-          v-if="questionArr.length > 0"
-          v-loading="isLoading"
-          element-loading-text="Loading..."
-          element-loading-background="rgba(255, 255, 255, 0.3)"
-        >
 
-          <!-- 单选选项组 type类型为1 -->
-          <QuestionAnswerSingle 
-            v-if="questionArr[questionIndex].type === 1"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerSingleFunc="checkAnswerSingleFunc"
-          />
+        <!-- 题目工具条 -->
+        <QuestionToolBar 
+          :toolbarObj="toolbarObj"
+          @changeAnswerSheet="changeAnswerSheet"
+        />
 
-          <!-- 多选选项组 type类型为2 -->
-          <QuestionAnswerSeveral 
-            v-if="questionArr[questionIndex].type === 2"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerSeveralItemFunc="checkAnswerSeveralItemFunc"
-            @checkAnswerSeveralFunc="checkAnswerSeveralFunc"
-          />
+        <!-- 分割线 -->
+        <el-divider />
+
+        <!-- 问题内容区域 -->
+        <div class="content-box">
+
+          <!-- 切换题目动画类 -->
+          <div :class="switchQuestionClass">
           
-          <!-- 判断题 type类型为3 -->
-          <QuestionAnswerJudge 
-            v-if="questionArr[questionIndex].type === 3"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerJudgeFunc="checkAnswerJudgeFunc"
+            <!-- 标题组件 -->
+            <QuestionTitle 
+              :questionTitleObj="questionArr[questionIndex]"
+              @changeCollectTitle="changeCollectTitle"
+            />
+            
+            <!-- 答题选项盒子 -->
+            <div class="answer-box"
+              v-if="questionArr.length > 0"
+              v-loading="isLoading"
+              element-loading-text="Loading..."
+              element-loading-background="rgba(255, 255, 255, 0.3)"
+            >
+
+              <!-- 单选选项组 type类型为1 -->
+              <QuestionAnswerSingle 
+                v-if="questionArr[questionIndex].type === 1"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerSingleFunc="checkAnswerSingleFunc"
+              />
+
+              <!-- 多选选项组 type类型为2 -->
+              <QuestionAnswerSeveral 
+                v-if="questionArr[questionIndex].type === 2"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerSeveralItemFunc="checkAnswerSeveralItemFunc"
+                @checkAnswerSeveralFunc="checkAnswerSeveralFunc"
+              />
+              
+              <!-- 判断题 type类型为3 -->
+              <QuestionAnswerJudge 
+                v-if="questionArr[questionIndex].type === 3"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerJudgeFunc="checkAnswerJudgeFunc"
+              />
+
+              <!-- 论述题 type类型为4 -->
+              <QuestionAnswerDiscuss 
+                v-if="questionArr[questionIndex].type === 4"
+                :answerQuestion="answerQuestion"
+                :questionObj="questionArr[questionIndex]"
+                @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
+              />
+
+            </div>
+
+            <!-- 加载题目骨架屏 -->
+            <el-skeleton :rows="5" animated :loading="isLoadingData" />
+
+            <!-- 没有题目数据 -->
+            <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
+
+          </div>
+
+
+          <!-- 题目切换组件 -->
+          <QuestionChangeIndex 
+            :questionIndex="questionIndex"
+            :questionArrLength="questionArr.length"
+            @plusQuestionIndex="plusQuestionIndex"
+            @reduceQuestionIndex="reduceQuestionIndex"
           />
 
-          <!-- 论述题 type类型为4 -->
-          <QuestionAnswerDiscuss 
-            v-if="questionArr[questionIndex].type === 4"
-            :answerQuestion="answerQuestion"
-            :questionObj="questionArr[questionIndex]"
-            @checkAnswerDiscussFunc="checkAnswerDiscussFunc"
-          />
+          <!-- 回答错误的错题解析 -->
+          <div :class="switchQuestionClass" v-if="(questionArr.length > 0 && !answerQuestion) || (questionArr.length > 0 && questionArr[questionIndex].isShowQuestionAnalysis)">
+
+            <!-- 回答错误工具组件 -->
+            <QuestionAnswerBar
+              v-if="questionArr[questionIndex].type !== 4"
+              :questionAnswerBarObj="questionArr[questionIndex]"
+            />
+
+            <div class="tit" v-if="answerQuestion">统计</div>
+            <!-- 答案统计组件 -->
+            <QuestionStatistics 
+              v-if="answerQuestion"
+              :questionStatisticsObj="questionArr[questionIndex]"
+            />
+
+            <div class="tit">解析</div>
+            <!-- 答案解析组件 -->
+            <QuestionAnalysis 
+              :questionAnalysisObj="questionArr[questionIndex]"
+            />
+
+          </div>
 
         </div>
+      
+      </el-col>
 
-        <!-- 加载题目骨架屏 -->
-        <el-skeleton :rows="5" animated :loading="isLoadingData" />
+      <el-col :span="6">
 
-        <!-- 没有题目数据 -->
-        <QuestionNotFound v-if="!isLoadingData && questionArr.length < 1" />
-
-      </div>
-
-
-      <!-- 题目切换组件 -->
-      <QuestionChangeIndex 
-        :questionIndex="questionIndex"
-        :questionArrLength="questionArr.length"
-        @plusQuestionIndex="plusQuestionIndex"
-        @reduceQuestionIndex="reduceQuestionIndex"
-      />
-
-      <!-- 回答错误的错题解析 -->
-      <div :class="switchQuestionClass" v-if="(questionArr.length > 0 && !answerQuestion) || (questionArr.length > 0 && questionArr[questionIndex].isShowQuestionAnalysis)">
-
-        <!-- 回答错误工具组件 -->
-        <QuestionAnswerBar
-          v-if="questionArr[questionIndex].type !== 4"
-          :questionAnswerBarObj="questionArr[questionIndex]"
+        <!-- 答题卡组件 -->
+        <QuestionAnswerSheet 
+          :isShowAnswerSheet="isShowAnswerSheet"
+          :questionArr="questionArr"
+          @changeQuestion="changeQuestionIndex"
+          @changeAnswerSheet="changeAnswerSheet"
         />
 
-        <div class="tit" v-if="answerQuestion">统计</div>
-        <!-- 答案统计组件 -->
-        <QuestionStatistics 
-          v-if="answerQuestion"
-          :questionStatisticsObj="questionArr[questionIndex]"
-        />
+      </el-col>
 
-        <div class="tit">解析</div>
-        <!-- 答案解析组件 -->
-        <QuestionAnalysis 
-          :questionAnalysisObj="questionArr[questionIndex]"
-        />
-
-      </div>
-
-    </div>
-
-    <!-- 答题卡组件 -->
-    <QuestionAnswerSheet 
-      :isShowAnswerSheet="isShowAnswerSheet"
-      :questionArr="questionArr"
-      @changeQuestion="changeQuestionIndex"
-      @changeAnswerSheet="changeAnswerSheet"
-    />
-
+    </el-row>
+    
   </div>
 </template>
 
@@ -530,11 +542,12 @@ const checkAnswerDiscussFunc = (formEl) => {
 <style scoped lang="scss">
 
 .container{
-  padding: 40px;
+  padding: 40px 30px;
 }
 
 .content-box{
-  padding: 0 40px;
+  padding: 0 30px;
+  overflow: hidden;
 }
 
 // 题目切换样式

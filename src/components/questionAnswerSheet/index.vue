@@ -1,27 +1,39 @@
 <template>
   <!-- 答题卡组件 -->
-  <div>
-    <el-drawer
-      v-model="isShowAnswerSheet"
-      title="答题卡"
-      :direction="'rtl'"
-      :before-close="handleClose"
-    >
-      <div>
-        <!-- 学习模式 -->
-        <div v-if="answerSheetModel === 'learn'">
-          <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : item.type === 4 || String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
-            {{index+1}}
-          </el-button>
+  <div class="answer-sheet">
+    <div class="title">答题卡</div>
+    <div class="time" v-if="answerSheetModel === 'test'">倒计时：01:22:22</div>
+    <div class="sheets">
+      <!-- 学习模式 -->
+      <div v-if="answerSheetModel === 'learn'">
+        <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : item.type === 4 || String(item.yourAnswer) === String(item.okAnswer) ? 'success' : 'danger' ">
+          {{index+1}}
+        </el-button>
+      </div>
+      <!-- 考试模式 -->
+      <div v-if="answerSheetModel === 'test'">
+        <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : 'primary'">
+          {{index+1}}
+        </el-button>
+      </div>
+    </div>
+    <div class="button-box">
+      <div class="example">
+        <div class="item">
+          <div class="white"></div>未答
         </div>
-        <!-- 考试模式 -->
-        <div v-if="answerSheetModel === 'test'">
-          <el-button v-for="(item, index) in questionArr" :key="item.title" @click="changeQuestionIndex(index)" :type="!item.answerTime ? '' : 'primary'">
-            {{index+1}}
-          </el-button>
+        <div class="item" v-if="answerSheetModel === 'test'">
+          <div class="blue"></div>已答
+        </div>
+        <div class="item" v-if="answerSheetModel === 'learn'">
+          <div class="blue"></div>正确
+        </div>
+        <div class="item" v-if="answerSheetModel === 'learn'">
+          <div class="red"></div>错误
         </div>
       </div>
-    </el-drawer>
+      <el-button v-if="answerSheetModel === 'test'" type="primary" round>交卷</el-button>
+    </div>
   </div>
 </template>
 
@@ -52,14 +64,68 @@
 </script>
 
 <style lang="scss" scoped>
-::v-deep(.el-drawer__body) {
-  padding: 6px;
-  .el-button{
-    margin: 6px;
-    min-width: 66px;
+.answer-sheet{
+  position: relative;
+  margin: 0 0 0 26px;
+  min-height: 460px;
+  border: solid 1px #e9e9e9;
+  .title{
+    padding: 8px 0;
+    background: #f3f3f3;
+    text-align: center;    
   }
-  +.el-button{
-    margin: 6px;
+  .time{
+    padding: 6px 0;
+    text-align: center;
+  }
+  .sheets {
+    margin: 10px 6px;
+    padding: 0 0 120px;
+    .el-button{
+      padding: 8px 10px;
+      margin: 4px;
+      min-width: 50px;
+    }
+    +.el-button{
+      margin: 4px;
+    }
+  }
+  .button-box{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 0 0;
+    .example{
+      display: flex;
+      justify-content: center;
+      margin: 10px;
+      .item{
+        display: flex;
+        align-items: center;
+        margin: 0 8px 0 0;
+        font-size: 13px;
+        >div{
+          margin: 0 4px 0 0;
+          width: 16px;
+          height: 16px;
+        }
+        .white{
+          background: #fff;
+        }
+        .blue{
+          background: #409eff;
+        }
+        .red{
+          background: #f56c6c;
+        }
+      }
+    }
+    >.el-button{
+      margin: 0 20px 20px;
+      width: 87%;
+      height: 34px;
+    }
   }
 }
 </style>

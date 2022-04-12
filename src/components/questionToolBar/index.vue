@@ -5,9 +5,10 @@
       <div class="type">{{questionTypeToText[toolbarObj.questionArr[toolbarObj.questionIndex]?.showType] || ''}}</div>
       <div class="chapter" v-if="toolbarObj.chapter">当前章节：{{toolbarObj.chapter}}</div>
     </div>
-    <div class="number" @click="changeSheet">
+    <div class="number">
+    <!-- <div class="number" @click="changeSheet"> -->
       <div><span>{{toolbarObj.questionArr.length < 1 ? 0 : toolbarObj.questionIndex + 1}}</span>/{{toolbarObj.questionArr.length}}</div>
-      <el-button type="text">答题卡</el-button>
+      <!-- <el-button type="text">答题卡</el-button> -->
     </div>
   </div>
 </template>

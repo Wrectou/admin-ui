@@ -390,7 +390,40 @@ export const getEpaperSelflist = params => {
     })
 }
 
+// 管理系统-查询考试试卷列表
+export const getAdminEpaperList = params => {
+    return request({
+        url: '/business/epaper/list',
+        method: 'get',
+        params
+    })
+}
 
+// 新增考试试卷
+export const addEpaper = data => {
+    return request({
+        url: '/business/epaper',
+        method: 'post',
+        data
+    })
+}
+
+// 修改考试试卷
+export const editEpaper = data => {
+    return request({
+        url: "/business/epaper",
+        method: 'put',
+        data
+    })
+}   
+
+// 删除考试试卷
+export const deleteEpaper = id => {
+    return request({
+        url: `/business/epaper/${id}`,
+        method: 'delete',
+    })
+}
 
 
 

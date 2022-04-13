@@ -112,18 +112,71 @@
           </el-form-item>
           <br />
           <el-form-item label="开考时间" prop="startTime">
-            <el-date-picker v-model="addParams.startTime" type="datetime" placeholder="请选择开考时间" />
+            <el-date-picker v-model="addParams.startTime" type="datetime" value-format="YYYY-MM-DD hh:mm:ss" placeholder="请选择开考时间" />
           </el-form-item>
           <el-form-item label="停考时间" prop="endTime">
-            <el-date-picker v-model="addParams.endTime" type="datetime" placeholder="请选择停考时间" />
+            <el-date-picker v-model="addParams.endTime" type="datetime" value-format="YYYY-MM-DD hh:mm:ss" placeholder="请选择停考时间" />
           </el-form-item>
           <br />
 
           <el-form-item class="button-box">
-            <el-button @click="resetAddForm(addRuleFormRef)">取消</el-button>
+            <!-- <el-button @click="resetAddForm(addRuleFormRef)">取消</el-button> -->
             <el-button type="primary" :loading="addTestLoading" @click="submitAddForm(addRuleFormRef)"  >{{ isEdit ? "保存" : "添加" }}</el-button>
           </el-form-item>
         </el-form>
+
+      </div>
+    </el-dialog>
+
+    <!-- 试题管理弹窗 -->
+    <el-dialog
+      v-model="setTestSubjectVisible"
+      title="试题管理"
+      width="76%"
+      :close-on-click-modal="false"
+      :before-close="setTestSubjectHandleClose"
+    >
+      <!-- 弹窗内容 -->
+      <div class="dialog-content add-test">
+
+        <!-- <el-form
+          ref="addRuleFormRef"
+          :inline="true"
+          :model="addParams"
+          :rules="addRules"
+          label-width="90px"
+          class="add-form"
+        > -->
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="test-tree-content">
+              <el-tree
+                ref="testTree"
+                :props="props"
+                :load="loadNode"
+                node-key="id"
+                lazy
+                show-checkbox
+                default-expand-all
+                @check-change="handleCheckChange"
+              />
+            </div>
+          </el-col>
+          <el-col :span="12">
+            右边选中！！！
+          </el-col>
+        </el-row>
+
+        
+        
+         
+
+
+          <!-- <el-form-item class="button-box">
+            <el-button type="primary" :loading="addTestLoading" @click="submitAddForm(addRuleFormRef)"  >{{ isEdit ? "保存" : "添加" }}</el-button>
+          </el-form-item>
+        </el-form> -->
 
       </div>
     </el-dialog>
@@ -135,7 +188,7 @@
   
   import { ElMessage, ElMessageBox } from 'element-plus'
 
-  import { getAdminEpaperList, addEpaper, getEpaperDetail, editEpaper, deleteEpaper } from "@/api"
+  import { getAdminEpaperList, addEpaper, getEpaperDetail, editEpaper, deleteEpaper, getSectionList, getQuestionList } from "@/api"
 
   const router = useRouter()
   
@@ -176,7 +229,6 @@
     total: 0,
     items: []
   })
-
   // 获取列表
   function searchList() {
     isLoading.value = true
@@ -189,7 +241,6 @@
       }, err => isLoading.value = false )
   }
   searchList()
-
   // 重置搜索项
   const resetListParams = () => {
     proxy.resetForm("queryRef")
@@ -231,6 +282,7 @@
   // 添加弹窗关闭按钮
   const addHandleClose = done => {
     if (addTestLoading.value) return ElMessage.warning('正在添加，请稍后！')
+    if (isEdit.value) return done()
     ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
       .then(() => {
         done()
@@ -281,32 +333,29 @@
       }, err => addTestLoading.value = false
     )
   }
-
-
-
-
-
-
-  // 快速清空对象key值
-  const resetObj = target => Object.keys(target).forEach( key => target[key] = '')
-
-
-
   // 编辑
-  const editTest = row => {
-    router.push({name: 'questionAdminAddChapter', query: {id: row.id, isEdit: true }})
+  const editTest = row => getEpaperDetailFunc(row.id)
+  // 获取详情
+  function getEpaperDetailFunc(id) {
+    getEpaperDetail(id)
+      .then(res => {
+        console.log('getEpaperDetail: ', res);
+        if (res.code === 200) {
+          addParams.id = res.data.id
+          addParams.difficulty = res.data.difficulty
+          addParams.startTime = res.data.startTime
+          addParams.endTime = res.data.endTime
+          addParams.duration = res.data.duration
+          addParams.etype = res.data.etype
+          addParams.level = res.data.level
+          addParams.name = res.data.name
+          addParams.qualifiedScore = res.data.qualifiedScore
+          addParams.totalScore = res.data.totalScore
+          addTestVisible.value = true
+          isEdit.value = true
+        }
+      })
   }
-  
-  // 试题管理
-  const setTestSubject = row => {
-    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, name: row.name, level: row.level }})
-  }
-
-  // 人员管理
-  const setTestPerson = row => {
-    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, name: row.name, level: row.level }})
-  }
-
   // 删除
   const deleteTest = row => {
     proxy.$modal.confirm(`确认删除试卷《${row.name}》吗？`)
@@ -319,6 +368,136 @@
           })
       })
   }
+
+
+  // 添加弹出框是否显示
+  let setTestSubjectVisible = ref(false)
+  // 添加试卷loading
+  let setTestSubjectLoading = ref(false)
+  // testTree ref
+  let testTree = ref(null)
+  // tree 题目类型
+  let paramsLevel = ref(0)
+  // tree 重复加载配置
+  let _node = ref('')
+  let _resolve = ref('')
+  // 试题管理
+  const setTestSubject = item => {
+    console.log('setTestSubject: ',item, _node.value, _resolve.value);
+    // 设置题目类型
+    paramsLevel.value = item.level
+    if (_node.value && _resolve.value) {
+      _node.value.childNodes = []
+      loadNode(_node.value, _resolve.value)
+    }
+    setTestSubjectVisible.value = true
+  }
+  // 添加弹窗关闭按钮
+  const setTestSubjectHandleClose = done => {
+    if (addTestLoading.value) return ElMessage.warning('正在添加，请稍后！')
+    if (isEdit.value) return done()
+    ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
+      .then(() => {
+        done()
+        resetObj(addParams)
+      }, err => {})
+  }
+
+  const props = {
+    label: 'name',
+    children: 'zones',
+    isLeaf: 'leaf'
+  }
+
+  const handleCheckChange = ( data, checked, indeterminate ) => {
+    console.log(data, checked, indeterminate)
+    // console.log(testTree, testTree.value);
+
+    console.log('getCheckedKeys: ',testTree.value.getCheckedKeys());
+    console.log('getCheckedNodes: ',testTree.value.getCheckedNodes());
+
+    console.log('getHalfCheckedKeys: ',testTree.value.getHalfCheckedKeys());
+    console.log('getHalfCheckedNodes: ',testTree.value.getHalfCheckedNodes());
+
+    // let res = testTree.value.getCheckedKeys().concat(testTree.value.getHalfCheckedKeys())
+    // console.log('concat: ',res)
+
+  }
+
+  const loadNode = async (node, resolve) => {
+    console.log('node: ', node);
+    if (node.level === 0) {
+      _node.value = node
+      _resolve.value = resolve
+      try {
+        let res = await getSectionList({ level: paramsLevel.value})
+        console.log('getSectionList: ', res);
+        res.rows.forEach(item => {
+          item.treeIdent = 'L1'
+          item.treeId = item.treeIdent + '-' + item.id
+          item.name = item.title
+        })
+        return resolve(res.rows)
+      } catch (err) { return resolve([]) }
+    } else if (node.level === 1) {
+      try {
+        let res = await getQuestionList({ level: paramsLevel.value, practiceId: node.id })
+        console.log('getQuestionList: ', res);
+        res.rows.forEach(item => {
+          item.treeIdent = 'L2'
+          item.treeId = node.data.treeIdent + '-' + item.treeIdent + '-' + item.id
+          item.name = item.title
+          item.leaf = true
+        })
+        return resolve(res.rows)
+      } catch (err) { return resolve([]) }
+    } else return resolve([])
+    if (node.level === 0) {
+      _node.value = node
+      _resolve.value = resolve
+      let sectionArr = []
+      try {
+        let res = await getSectionList({ level: paramsLevel.value})
+        console.log('getSectionList: ', res);
+        res.rows.forEach(item => {
+          let obj = {
+            id: item.id,
+            name: item.title,
+          }
+          sectionArr.push(obj)
+        })
+        return resolve(sectionArr)
+      } catch (err) { return resolve([]) }
+    } else if (node.level === 1) {
+      let questionArr = []
+      try {
+        let res = await getQuestionList({ level: paramsLevel.value, practiceId: node.id })
+        console.log('getQuestionList: ', res);
+        res.rows.forEach(item => {
+          let obj = {
+            id: item.id,
+            name: item.title,
+            leaf: true
+          }
+          questionArr.push(obj)
+        })
+        return resolve(questionArr)
+      } catch (err) { return resolve([]) }
+    } else return resolve([])
+  }
+
+
+
+
+
+
+
+
+  // 人员管理
+  const setTestPerson = row => {
+    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, name: row.name, level: row.level }})
+  }
+
 
 
 
@@ -335,6 +514,9 @@
     target.filter(item => { if (item.value === key) str = item.label })
     return str
   }
+
+  // 快速清空对象key值
+  const resetObj = target => Object.keys(target).forEach( key => target[key] = '')
   
 </script>
 

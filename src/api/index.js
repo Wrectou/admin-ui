@@ -425,6 +425,48 @@ export const deleteEpaper = id => {
     })
 }
 
+// 部门列表
+export const getDeptList = params => {
+    return request({
+        url: '/system/dept/list',
+        method: 'get',
+        params
+    })
+}
+
+// 部门列表
+export const getDeptTreeselectList = params => {
+    return request({
+        url: '/system/dept/treeselect',
+        method: 'get',
+        params
+    })
+}
+
+// 部门列表
+export const getDeptUsersList = params => {
+    return request({
+        url: '/system/dept/deptUsers',
+        method: 'get',
+        params
+    })
+}
+
+// 部门列表
+export const getAllSectionQuestionList = params => {
+    return request({
+        url: '/business/section/allSectionQuestionList',
+        method: 'get',
+        params
+    })
+}
+
+
+
+
+
+
+
 
 
 

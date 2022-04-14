@@ -128,16 +128,16 @@
       </div>
     </el-dialog>
 
-    <!-- 考试人员管理弹窗 -->
+    <!-- 试题管理弹窗 -->
     <el-dialog
       v-model="setTestSubjectVisible"
-      title="考试人员管理"
+      title="试题管理"
       width="76%"
       :close-on-click-modal="false"
       :before-close="setTestSubjectHandleClose"
     >
       <!-- 弹窗内容 -->
-      <div class="dialog-content add-person">
+      <div class="dialog-content add-test">
 
         <!-- <el-form
           ref="addRuleFormRef"
@@ -149,40 +149,22 @@
         > -->
 
         <el-row :gutter="20">
-
           <el-col :span="12">
-
-            <div class="person-tree-content">
-            
-              <el-tree 
+            <div class="test-tree-content">
+              <el-tree
                 ref="testTree"
+                :props="props"
+                :load="loadNode"
                 node-key="id"
-                :data="treeData" 
-                :props="defaultProps" 
-                show-checkbox 
+                lazy
+                show-checkbox
                 @check-change="handleCheckChange"
               />
             </div>
-            
           </el-col>
-
-          <el-col :span="11">
-
-            <div class="person-checked-content">
-
-              <div class="title">已选（{{checkedTreeData.length}}）</div>
-
-              <div class="checked-list">
-                <div class="checked" v-for="item in checkedTreeData" :key="item.id" @click="deleteTestPeople(item)">
-                  {{item.name}}
-                  <el-icon><circle-close-filled /></el-icon>
-                </div>
-              </div>
-
-            </div>
-
+          <el-col :span="12">
+            右边选中！！！
           </el-col>
-
         </el-row>
 
         
@@ -205,7 +187,7 @@
   
   import { ElMessage, ElMessageBox } from 'element-plus'
 
-  import { getAdminEpaperList, addEpaper, getEpaperDetail, editEpaper, deleteEpaper, getSectionList, getQuestionList, getDeptList, getDeptTreeselectList, getDeptUsersList, getAllSectionQuestionList } from "@/api"
+  import { getAdminEpaperList, addEpaper, getEpaperDetail, editEpaper, deleteEpaper, getSectionList, getQuestionList } from "@/api"
 
   const router = useRouter()
   
@@ -407,7 +389,6 @@
       _node.value.childNodes = []
       loadNode(_node.value, _resolve.value)
     }
-    getDeptUsersListFunc()
     setTestSubjectVisible.value = true
   }
   // 添加弹窗关闭按钮
@@ -427,7 +408,6 @@
     isLeaf: 'leaf'
   }
 
-  // 选择考试人员
   const handleCheckChange = ( data, checked, indeterminate ) => {
     console.log(data, checked, indeterminate)
     // console.log(testTree, testTree.value);
@@ -435,35 +415,12 @@
     console.log('getCheckedKeys: ',testTree.value.getCheckedKeys());
     console.log('getCheckedNodes: ',testTree.value.getCheckedNodes());
 
-    // 所有选中数据处理 只要最下层
-    let checkedNodesArr = testTree.value.getCheckedNodes(),
-        checkedNodesObj = {}
-    // 每次点击都是空
-    checkedTreeData.value = []
-    // 递归找最下层 因为会重复，存到obj
-    function deepArr(arr) {
-      arr.forEach(item => {
-        if (item.children) deepArr(item.children)
-        else if (item.type === 1) checkedNodesObj[item.id] = item
-      })
-    }
-    deepArr(checkedNodesArr)
-    // 把obj对象的数据添加到渲染数组
-    for (let i in checkedNodesObj) {
-      checkedTreeData.value.push(checkedNodesObj[i])
-    }
-
-
     console.log('getHalfCheckedKeys: ',testTree.value.getHalfCheckedKeys());
     console.log('getHalfCheckedNodes: ',testTree.value.getHalfCheckedNodes());
 
     // let res = testTree.value.getCheckedKeys().concat(testTree.value.getHalfCheckedKeys())
     // console.log('concat: ',res)
 
-  }
-  // 删除回显考试人员
-  const deleteTestPeople = (item) => {
-    testTree.value.setChecked(item.id, false, false)
   }
 
   const loadNode = async (node, resolve) => {
@@ -497,60 +454,7 @@
   }
 
 
-  let treeData = ref([])
-  let checkedTreeData = ref([])
 
-  const defaultProps = {
-    children: 'children',
-    label: 'name',
-    disabled: 'disabled',
-  }
-
-  // function getDeptListFunc() {
-  //   getDeptList()
-  //     .then(res => {
-  //       console.log('getDeptList: ', res);
-  //       treeData.value = proxy.handleTree(res.data, "deptId");
-  //       console.log(treeData.value);
-  //     })
-  // }
-  // getDeptListFunc()
-  
-  // function getDeptTreeselectListFunc() {
-  //   getDeptTreeselectList()
-  //     .then(res => {
-  //       console.log('getDeptTreeselectList: ', res);
-  //       treeData.value = res.data
-  //       console.log(treeData.value);
-  //     })
-  // }
-  // getDeptTreeselectListFunc()
-
-
-  
-  function getDeptUsersListFunc() {
-    treeData.value = []
-    checkedTreeData.value = []
-    getDeptUsersList()
-      .then(res => {
-        console.log('getDeptUsersList: ', res);
-        treeData.value = proxy.handleTree(res.data, "id");
-        console.log(treeData.value);
-      })
-  }
-  
-  // function getAllSectionQuestionListFunc() {
-  //   getAllSectionQuestionList()
-  //     .then(res => {
-  //       console.log('getAllSectionQuestionList: ', res);
-  //       treeData.value = proxy.handleTree(res.data, "id");
-  //       console.log(treeData.value);
-  //     })
-  // }
-  // getAllSectionQuestionListFunc()
-
-  
-  
 
 
 
@@ -611,198 +515,6 @@
   }
   .button-box{
     margin: 30px 0 0 90px;
-  }
-}
-
-// tree 弹窗设置
-.dialog-content{
-  min-height: 60vh;
-}
-
-.add-person{
-  ::v-deep(.el-row){
-    justify-content: space-evenly;
-    .el-col{
-      padding: 18px;
-      border: solid 1px #e1e1e1;
-      border-radius: 8px;
-    }
-  }
-}
-
-.person-tree-content {
-
-  ::v-deep(.el-tree) {
-
-    >.el-tree-node{
-      >.el-tree-node__content{
-        >.el-tree-node__label{
-          position: relative;
-          padding: 0 0 0 20px;
-          color: #333;
-          font-size: 16px;
-        }
-        >.el-tree-node__label::after{
-          content: '';
-          background-image: url('http://localhost/src/assets/logo/police.png');
-          background-size: 10px;
-          background-repeat: no-repeat;
-          width: 10px;
-          height: 10px;
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-      }
-      >.el-tree-node__children{
-        >.el-tree-node{
-          >.el-tree-node__content{
-            >.el-tree-node__label{
-              color: #555;
-              font-size: 15px;
-            }
-          }
-          >.el-tree-node__children{
-            >.el-tree-node{
-              >.el-tree-node__content{
-                >.el-tree-node__label{
-                  color: #666;
-                  font-size: 14px;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-
-
-
-
-
-
-
-
-    .el-tree-node__expand-icon.expanded {
-      -webkit-transform: rotate(0deg);
-      transform: rotate(0deg);
-    }
-    .el-icon-caret-right:before {
-      content: "\e723";
-      font-size: 16px;
-      color: #409eff;
-    }
-    .el-tree-node__expand-icon.expanded.el-icon-caret-right:before{
-      content: "\e722";
-      font-size: 16px;
-      color: #409eff;
-    }
-    overflow-y:auto;
-    .el-tree > .el-tree-node:after {
-      border-top: none;
-    }
-    .el-tree-node {
-      position: relative;
-      padding-left: 16px;
-    }
-    //节点有间隙，隐藏掉展开按钮就好了,如果觉得空隙没事可以删掉
-    .el-tree-node__expand-icon.is-leaf {
-      display: none;
-    }
-    .el-tree-node__children {
-      padding-left: 16px;
-    }
-
-    .el-tree-node :last-child:before {
-      height: 38px;
-    }
-
-    .el-tree > .el-tree-node:before {
-      border-left: none;
-    }
-
-    .el-tree > .el-tree-node:after {
-      border-top: none;
-    }
-
-    .el-tree-node:before {
-      content: '';
-      left: -4px;
-      position: absolute;
-      right: auto;
-      border-width: 1px;
-    }
-
-    .el-tree-node:after {
-      content: '';
-      left: -4px;
-      position: absolute;
-      right: auto;
-      border-width: 1px;
-    }
-
-    .el-tree-node:before {
-      border-left: 1px dashed #409eff;
-      bottom: 0px;
-      height: 100%;
-      top: -26px;
-      width: 1px;
-    }
-
-    .el-tree-node:after {
-      border-top: 1px dashed #409eff;
-      height: 20px;
-      top: 12px;
-      width: 18px;
-    }
-    .el-tree .el-tree-node__expand-icon.expanded {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-      }
-      .el-tree .el-icon-caret-right:before {
-        content: "\e723";
-        font-size: 16px;
-        color: #409eff;
-        position: absolute;
-        left :-20px;
-        top: -8px;
-      }
-      .el-tree .el-tree-node__expand-icon.expanded.el-icon-caret-right:before{
-        content: "\e722";
-        font-size: 16px;
-        color: #409eff;
-        position: absolute;
-        left: -20px;
-        top: -8px;
-    }
-    .el-tree-node__content>.el-tree-node__expand-icon {
-      padding: 0;
-    }
-  }
-}
-
-.person-checked-content{
-  .title{
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    color: #333;
-    line-height: 30px;
-    border-bottom: solid 1px #e1e1e1;
-  }
-  .checked-list{
-    margin: 12px 12px 0 0;
-    line-height: 26px;
-    font-size: 15px;
-    .checked{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      ::v-deep(.el-icon){
-        color: #F56C6C;
-        cursor: pointer;
-      }
-    }
   }
 }
 </style>

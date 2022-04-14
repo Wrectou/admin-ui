@@ -425,25 +425,7 @@ export const deleteEpaper = id => {
     })
 }
 
-// 部门列表
-export const getDeptList = params => {
-    return request({
-        url: '/system/dept/list',
-        method: 'get',
-        params
-    })
-}
-
-// 部门列表
-export const getDeptTreeselectList = params => {
-    return request({
-        url: '/system/dept/treeselect',
-        method: 'get',
-        params
-    })
-}
-
-// 部门列表
+// 部门人员列表
 export const getDeptUsersList = params => {
     return request({
         url: '/system/dept/deptUsers',
@@ -452,7 +434,34 @@ export const getDeptUsersList = params => {
     })
 }
 
-// 部门列表
+// 新增试卷参考人员
+export const addEpaperUser = data => {
+    return request({
+        url: '/business/epaperUser',
+        method: 'post',
+        data
+    })
+}
+
+// 根据试卷ID查询参考人员ID数组
+export const getEpaperUserList = params => {
+    return request({
+        url: '/business/epaperUser/list',
+        method: 'get',
+        params
+    })
+}
+
+// 删除参考人员
+export const deleteEpaperUser = data => {
+    return request({
+        url: '/business/epaperUser/deleteUsers',
+        method: 'post',
+        data
+    })
+}
+
+// 章节题目列表
 export const getAllSectionQuestionList = params => {
     return request({
         url: '/business/section/allSectionQuestionList',
@@ -460,6 +469,34 @@ export const getAllSectionQuestionList = params => {
         params
     })
 }
+
+// 新增考试题库数组
+export const addEpaperQuestion = data => {
+    return request({
+        url: '/business/epaperQuestion',
+        method: 'post',
+        data
+    })
+}
+
+// 根据试卷ID查询考试题库列表
+export const getEpaperQuestionList = params => {
+    return request({
+        url: '/business/epaperQuestion/list',
+        method: 'get',
+        params
+    })
+}
+
+// 删除考试题目数组
+export const deleteEpaperQuestion = data => {
+    return request({
+        url: '/business/epaperQuestion/deleteQuestions',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

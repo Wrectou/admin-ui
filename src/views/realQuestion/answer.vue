@@ -146,7 +146,7 @@
 
 <script setup name="realQuestionAnswer">
 
-import { getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite  } from '@/api'
+import { getSelfLastQuestionId, getTestEpaperQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite  } from '@/api'
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
@@ -226,17 +226,12 @@ const questionArr = reactive([])
 let isLoadingData = ref(false)
 
 // 获取本章节所有题目
-function getQuestionListFunc() {
-  let params = {
-    level: proxy.$cache.session.getJSON('level'),
-    practiceId: route.query.id,
-    qtype: 1,
-  }
+function getTestEpaperQuestionListFunc() {
   isLoadingData.value = true
-  getQuestionList(params)
+  getTestEpaperQuestionList({epaperId: route.query.id})
     .then(async res => {
-      console.log('getQuestionList: ',res);
-      res.rows.forEach(item => {
+      console.log('getTestEpaperQuestionList: ',res);
+      res.data.forEach(item => {
         let obj = {
           id: item.id,
           type: item.type,
@@ -274,10 +269,10 @@ function getQuestionListFunc() {
       })
       // getSelfLastQuestionIdFunc()
       isLoadingData.value = false
-      getQuestionItemFunc(0, res.rows[0].id)
+      getQuestionItemFunc(0, res.data[0].id)
     }, err => isLoadingData.value = false )
 }
-getQuestionListFunc()
+getTestEpaperQuestionListFunc()
 
 // 获取做到哪一题
 function getSelfLastQuestionIdFunc() {
@@ -629,6 +624,7 @@ onBeforeRouteLeave(() => {
 
 .content-box{
   padding: 0 40px;
+  overflow: hidden;
 }
 
 // 考试名称

@@ -3,7 +3,7 @@
 
     <el-row>
 
-      <el-col :span="6" v-for="item in epaperList.data" :key="item.name">
+      <el-col :span="24" v-for="item in epaperList.data" :key="item.name">
         <el-card class="box-card">
           <template #header>
             <div class="card-header">
@@ -13,7 +13,7 @@
             </div>
           </template>
           <div class="card-cont">
-            <el-button plain class="button" type="primary" @click="showDialog(item)">做题</el-button>
+            <el-button plain class="button" type="primary" @click="showDialog(item)">考试</el-button>
           </div>
         </el-card>
       </el-col>
@@ -25,7 +25,7 @@
     <el-dialog
       v-model="dialogVisible"
       title="考试详情"
-      width="30%"
+      width="46%"
     >
       <div class="cont">
         <div class="item">
@@ -65,7 +65,7 @@
 
 <script setup name="realQuestion">
 
-import { getEpaperList, getEpaperDetail } from '@/api'
+import { getEpaperSelflist, getEpaperDetail, createEpaperScore } from '@/api'
 import QuestionNotFound from '@/components/questionNotFound/index'
 
 const router = useRouter()
@@ -75,20 +75,20 @@ const { proxy } = getCurrentInstance()
 let isLoading = ref(false)
 
 // 列表
-function getEpaperListFunc() {
+function getEpaperSelflistFunc() {
   let params = {
     etype: 0,
     level: proxy.$cache.session.getJSON('level'),
   }
   isLoading.value = true
-  getEpaperList(params)
+  getEpaperSelflist(params)
     .then(res => {
-      console.log('getEpaperList: ', res);
+      console.log('getEpaperSelflist: ', res);
       isLoading.value = false
       epaperList.data = res.rows
     }, err => isLoading.value = false )
 }
-getEpaperListFunc()
+getEpaperSelflistFunc()
 
 const epaperList = reactive({
   data: []
@@ -110,6 +110,14 @@ const epaperDetail = reactive({
 let dialogVisible = ref(false)
 
 const goLink = () => {
+  let params = {
+    epaperId: 0,
+    level: proxy.$cache.session.getJSON('level'),
+  }
+  createEpaperScore(params)
+    .then(res => {
+      
+    })
   dialogVisible.value = false
   router.push({ name: 'realQuestionAnswer', query: { id: epaperDetail.data.id, name: epaperDetail.data.name } })
   proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
@@ -174,7 +182,7 @@ const showDialog = item => {
 
 
 .cont{
-  margin: 30px auto;
+  margin: 0 auto;
   padding: 20px;
   font-size: 18px;
   border-radius: 8px;

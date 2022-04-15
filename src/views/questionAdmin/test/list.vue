@@ -154,7 +154,7 @@
           </el-col>
           <el-col :span="11">
             <div class="checked-content person-checked-content">
-              <div class="title">已选（{{personTreeCheckedData.length}}）</div>
+              <div class="title">已选（{{personTreeCheckedData.length}}）人</div>
               <div class="checked-list">
                 <div class="checked" v-for="item in personTreeCheckedData" :key="item.id" @click="deleteTestPerson(item)">
                   {{item.name}}（{{item.parentName}}）
@@ -196,7 +196,10 @@
           </el-col>
           <el-col :span="11">
             <div class="checked-content person-checked-content">
-              <div class="title">已选（{{subjectTreeCheckedData.length}}）</div>
+              <div class="title">
+                <div>已选（{{subjectTreeCheckedData.length}}）题</div>
+                <div>共（{{subjectTreeCheckedDataAllScore}}）分</div>
+              </div>
               <div class="checked-list">
                 <div class="checked" v-for="item in subjectTreeCheckedData" :key="item.id" @click="deleteTestSubject(item)">
                   {{item.title}}
@@ -336,6 +339,7 @@
     if (!formEl) return
     formEl.validate((valid) => {
       if (valid) {
+        if (addParams.qualifiedScore > addParams.totalScore) return ElMessage.error("合格分数不能大于总分数！")
         if (addParams.difficulty <= 0) return ElMessage.error("请选择考试难度")
         addTestLoading.value = true
         if (!isEdit.value) addProductFunc(addParams)
@@ -469,11 +473,15 @@
   // 删除已经添加的参考人员 （添加前先删除）
   function deleteEpaperUserFunc() {
     return new Promise((resolve, reject) => {
+      setTestPersonLoading.value = true
       deleteEpaperUser({epaperId: epaperId.value, userIds: oldPersonTreeCheckedData})
         .then(res => {
           console.log('deleteEpaperUser: ', res);
           resolve('')
-        }, err => reject('') )
+        }, err => {
+          setTestPersonLoading.value = false
+          reject('')
+        })
     })
   }
   // 人员管理按钮
@@ -543,7 +551,8 @@
 
 
 
-
+  // 点击题目管理的试卷信息
+  let testObj = ref({})
   // 原始的试题tree所有数据（接口返回）
   let originalSubjectTreeData = ref([])
   // 处理好的试题tree所有数据
@@ -573,7 +582,7 @@
     subjectTreeData.value = []
     subjectTreeCheckedData.value = []
     return new Promise((resolve, reject) => {
-      getAllSectionQuestionList()
+      getAllSectionQuestionList({ level: paramsLevel.value })
         .then(res => {
           console.log('getAllSectionQuestionList: ', res);
           originalSubjectTreeData.value = res.data
@@ -601,15 +610,20 @@
   // 删除已经添加的参考试题 （添加前先删除）
   function deleteEpaperQuestionFunc() {
     return new Promise((resolve, reject) => {
-      deleteEpaperQuestion({epaperId: epaperId.value, userIds: oldSubjectTreeCheckedData})
+      setTestSubjectLoading.value = true
+      deleteEpaperQuestion({epaperId: epaperId.value, quesionIds: oldSubjectTreeCheckedData})
         .then(res => {
           console.log('deleteEpaperQuestion: ', res);
           resolve('')
-        }, err => reject('') )
+        }, err => {
+          setTestSubjectLoading.value = false
+          reject('')
+        })
     })
   }
   // 试题管理按钮
   const setTestSubject = async item => {
+    testObj.value = item
     await getAllSectionQuestionListFunc()
     epaperId.value = item.id
     paramsLevel.value = item.level
@@ -652,13 +666,21 @@
     refSubjectTree.value.setChecked(item.id, false, false)
     sortSubjectTreeCheckedData()
   }
+  // 已选题目总分计算属性
+  let subjectTreeCheckedDataAllScore = computed(() => {
+    let score = 0
+    subjectTreeCheckedData.value.forEach( item => score += item.score )
+    return score
+  })
   // 保存考试试题
   async function addEpaperQuestionFunc() {
-    let userIdArr = []
-    subjectTreeCheckedData.value.forEach(item => userIdArr.push(item.dataId))
+    if (subjectTreeCheckedDataAllScore.value > testObj.value.totalScore) return ElMessage.error(`所选试题总分${subjectTreeCheckedDataAllScore.value}分大于试卷所设置分数${testObj.value.totalScore}分，请减少试题数量或者修改试卷分数！`)
+    else if (subjectTreeCheckedDataAllScore.value < testObj.value.totalScore) return ElMessage.error(`所选试题总分${subjectTreeCheckedDataAllScore.value}分小于试卷所设置分数${testObj.value.totalScore}分，请增加试题数量或者修改试卷分数！`)
+    let quesionIdsArr = []
+    subjectTreeCheckedData.value.forEach(item => quesionIdsArr.push(item.dataId))
     let params = {
       epaperId: epaperId.value,
-      userId: userIdArr
+      quesionIds: quesionIdsArr
     }
     if (oldSubjectTreeCheckedData.length > 0) await deleteEpaperQuestionFunc()
     setTestSubjectLoading.value = true
@@ -672,6 +694,7 @@
           setTestSubjectVisible.value = false
         }
       }, err => setTestSubjectLoading.value = false )
+
   }
 
 
@@ -744,6 +767,8 @@
   ::v-deep(.el-row){
     justify-content: space-evenly;
     min-height: 46vh;
+    max-height: 60vh;
+    overflow: scroll;
     .el-col{
       padding: 18px;
       border: solid 1px #e1e1e1;
@@ -901,7 +926,9 @@
 
 .checked-content{
   .title{
-    margin: 0 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 10px 0;
     font-size: 16px;
     color: #333;
     line-height: 30px;

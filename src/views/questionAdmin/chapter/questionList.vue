@@ -76,7 +76,7 @@
   // 城市列表参数
   const areaListParams = reactive({
     pageNum: 1, 
-    pageSize: 100, 
+    pageSize: 10, 
     level: routeObj.value.level,
     practiceId: routeObj.value.id,
     qtype: 0,

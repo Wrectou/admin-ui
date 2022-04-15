@@ -497,6 +497,24 @@ export const deleteEpaperQuestion = data => {
     })
 }
 
+// 获取试卷题目
+export const getTestEpaperQuestionList = params => {
+    return request({
+        url: '/business/epaper/epaperQuestionlist',
+        method: 'get',
+        params
+    })
+}
+
+// 生成本轮考试成绩ID
+export const createEpaperScore = data => {
+    return request({
+        url: '/business/epaperScore',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

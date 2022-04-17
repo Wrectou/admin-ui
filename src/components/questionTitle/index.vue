@@ -37,8 +37,8 @@
   display: flex;
   align-items: start;
   .fraction{
-    margin: 0 10px 0 0;
-    color: rgb(64, 158, 255);
+    margin: 2px 10px 0 0;
+    color: var(--el-color-success);
   }
   .title{
     flex: 1;

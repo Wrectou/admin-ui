@@ -29,7 +29,7 @@
 
 <style lang="scss" scoped>
 .change-question{
-  margin: 20px 0 30px;
+  margin: 40px 0 30px;
   display: flex;
   justify-content: start;
   .next{

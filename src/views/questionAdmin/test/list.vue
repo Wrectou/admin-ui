@@ -112,10 +112,10 @@
           </el-form-item>
           <br />
           <el-form-item label="开考时间" prop="startTime">
-            <el-date-picker v-model="addParams.startTime" type="datetime" value-format="YYYY-MM-DD hh:mm:ss" placeholder="请选择开考时间" />
+            <el-date-picker v-model="addParams.startTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开考时间" />
           </el-form-item>
           <el-form-item label="停考时间" prop="endTime">
-            <el-date-picker v-model="addParams.endTime" type="datetime" value-format="YYYY-MM-DD hh:mm:ss" placeholder="请选择停考时间" />
+            <el-date-picker v-model="addParams.endTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择停考时间" />
           </el-form-item>
           <br />
 
@@ -341,6 +341,7 @@
       if (valid) {
         if (addParams.qualifiedScore > addParams.totalScore) return ElMessage.error("合格分数不能大于总分数！")
         if (addParams.difficulty <= 0) return ElMessage.error("请选择考试难度")
+        if (addParams.startTime !== '' && addParams.endTime !== '' && (new Date(addParams.endTime).getTime() < new Date(addParams.startTime).getTime())) return ElMessage.error("考试停考时间不能早于考试开考时间！")
         addTestLoading.value = true
         if (!isEdit.value) addProductFunc(addParams)
         else editProductFunc(addParams)
@@ -768,7 +769,7 @@
     justify-content: space-evenly;
     min-height: 46vh;
     max-height: 60vh;
-    overflow: scroll;
+    overflow-y: scroll;
     .el-col{
       padding: 18px;
       border: solid 1px #e1e1e1;

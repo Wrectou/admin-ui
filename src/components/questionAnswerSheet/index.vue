@@ -108,6 +108,10 @@
   .sheets {
     margin: 10px 6px;
     padding: 0 0 120px;
+    >div{
+      height: 400px;
+      overflow-y: scroll;
+    }
     .el-button{
       padding: 8px 10px;
       margin: 4px;
@@ -149,9 +153,11 @@
       }
     }
     >.el-button{
-      margin: 0 20px 20px;
+      margin: 10px 20px 20px;
       width: 87%;
       height: 34px;
+      font-size: 18px;
+      letter-spacing: 4px;
     }
   }
 }

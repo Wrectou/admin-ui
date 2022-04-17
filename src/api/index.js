@@ -515,6 +515,15 @@ export const createEpaperScore = data => {
     })
 }
 
+// 考试交卷
+export const epaperCommit = data => {
+    return request({
+        url: '/business/epaper/commit',
+        method: 'post',
+        data
+    })
+}
+
 
 
 

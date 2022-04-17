@@ -7,7 +7,7 @@
     </div>
     <div class="number">
     <!-- <div class="number" @click="changeSheet"> -->
-      <div><span>{{toolbarObj.questionArr.length < 1 ? 0 : toolbarObj.questionIndex + 1}}</span>/{{toolbarObj.questionArr.length}}</div>
+      <div><span>{{toolbarObj.questionArr.length < 1 ? 0 : toolbarObj.questionIndex + 1}}</span> / {{toolbarObj.questionArr.length}}</div>
       <!-- <el-button type="text">答题卡</el-button> -->
     </div>
   </div>
@@ -51,7 +51,7 @@
     align-items: center;
     flex-direction: column;
     span{
-      color: #f56c6c;
+      color: var(--el-color-primary);
     }
   }
 }

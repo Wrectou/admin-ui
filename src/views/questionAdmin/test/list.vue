@@ -769,7 +769,7 @@
     justify-content: space-evenly;
     min-height: 46vh;
     max-height: 60vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     .el-col{
       padding: 18px;
       border: solid 1px #e1e1e1;

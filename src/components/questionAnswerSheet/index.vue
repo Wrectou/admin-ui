@@ -110,7 +110,7 @@
     padding: 0 0 120px;
     >div{
       height: 400px;
-      overflow-y: scroll;
+      overflow-y: auto;
     }
     .el-button{
       padding: 8px 10px;

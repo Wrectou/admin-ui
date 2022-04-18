@@ -23,15 +23,13 @@
         <!-- 列表搜索项 -->
         <el-form :model="favoritesQuestionListParams" ref="queryRef" :inline="true">
           <el-row class="control-bar">
-            <el-col :span="14" class="control-left">
+            <el-col :span="4" class="control-left">
             </el-col>
-            <el-col :span="10" class="control-right">
-              <el-col :span="14">
+            <el-col :span="20" class="control-right">
+              <el-col :span="24">
                 <el-form-item label="" prop="title" class="search-input">
                   <el-input v-model="favoritesQuestionListParams.title" placeholder="输入标题名称" />
                 </el-form-item>
-              </el-col>
-              <el-col :span="10">
                 <el-button icon="Search" type="primary" @click="getFavoritesQuestionListFunc">搜索</el-button>
                 <el-button icon="Refresh" @click="resetListParams">重置</el-button>
               </el-col>

@@ -26,7 +26,7 @@
         <!-- 骨架屏 -->
         <el-skeleton v-if="tableLoading && tableFirstLoading" :rows="5" animated style="margin: 27px 10px 0;" />
         <!-- 列表搜索项 -->
-        <el-form :model="favoritesQuestionListParams" ref="queryRef" :inline="true" v-if="!tableFirstLoading || !tableLoading && favoritesQuestionList.list.length > 0">
+        <el-form :model="favoritesQuestionListParams" ref="queryRef" :inline="true" v-if="!tableFirstLoading && favoritesSectionList.length > 1">
           <el-row class="control-bar">
             <el-col :span="4" class="control-left">
             </el-col>
@@ -41,7 +41,7 @@
             </el-col>
           </el-row>
         </el-form>
-        <div class="table-box" v-if="!tableFirstLoading || !tableLoading && favoritesQuestionList.list.length > 0">
+        <div class="table-box" v-if="!tableFirstLoading && favoritesSectionList.length > 1">
           <!-- 表格 -->
           <el-table v-loading="tableLoading" :data="favoritesQuestionList.list">
             <el-table-column label="标题" align="center" prop="title" min-width="220" />

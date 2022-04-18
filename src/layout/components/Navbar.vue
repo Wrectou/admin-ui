@@ -80,6 +80,7 @@ const levelChange = e => {
   console.log(e);
   level.value = e
   proxy.$cache.session.setJSON('level', level.value)
+  location.reload()
 }
 
 function toggleSideBar() {

@@ -4,14 +4,14 @@
     <el-row class="login-box">
       <el-col :span="12">
         <div class="back">
-          <h2 class="title">法度易学法</h2>
+          <h2 class="title">智慧学法</h2>
         </div>
       </el-col>
       <el-col :span="12">
         <div class="login">
 
           <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form">
-            <h3 class="title">学法综合应用系统</h3>
+            <!-- <h3 class="title">智慧学法</h3> -->
             <el-form-item prop="username">
               <el-input
                 v-model="loginParams.username"
@@ -133,7 +133,7 @@
 .login-form {
   border-radius: 6px;
   background: #ffffff;
-  padding: 120px 40px 40px 40px;
+  padding: 150px 40px 40px 40px;
   .title {
     margin: 0px auto 30px auto;
     text-align: center;

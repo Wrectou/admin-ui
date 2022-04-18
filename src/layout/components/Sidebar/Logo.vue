@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('学法综合应用系统');
+const title = ref('智慧学法');
 const store = useStore();
 const sideTheme = computed(() => store.state.settings.sideTheme);
 </script>
@@ -54,8 +54,10 @@ const sideTheme = computed(() => store.state.settings.sideTheme);
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      // width: 32px;
+      // height: 32px;
+      width: 26px;
+      height: 26px;
       vertical-align: middle;
       margin-right: 12px;
     }

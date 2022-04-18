@@ -32,6 +32,7 @@
             <!-- 标题组件 -->
             <QuestionTitle 
               :questionTitleObj="questionArr[questionIndex]"
+              :isShowCollect="false"
               @changeCollectTitle="changeCollectTitle"
             />
             
@@ -132,6 +133,7 @@
           :answerSheetModel="'test'"
           :countTime="countTime"
           :dangerCountDown="dangerCountDown"
+          :completeTestLoading="completeTestLoading"
           @changeQuestion="changeQuestionIndex"
           @changeAnswerSheet="changeAnswerSheet"
           @haveTimeCompleteTest="haveTimeCompleteTest"
@@ -141,12 +143,38 @@
 
     </el-row>
 
+    <el-dialog
+      v-model="showTestResultVisible"
+      title="考试结果"
+      width="40%"
+      :close-on-click-modal="false"
+      :before-close="testResulthandleClose"
+    >
+      <div class="result-content">
+        <img src="@/assets/images/success.png" alt="">
+        <div class="content">
+          <div class="item">
+            <div class="num">{{testResult.totalScore}} 分</div>
+            <div>得分</div>
+          </div>
+          <div class="item">
+            <div class="num" v-if="testResult.times">{{secondToMinth(testResult.times)}}</div>
+            <div>用时</div>
+          </div>
+          <div class="item">
+            <div class="num">{{testResult.questionNum - testResult.correntNum}} 题</div>
+            <div>错题</div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup name="myTestAnswer">
 
-import { getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite  } from '@/api'
+import { getSelfLastQuestionId, getTestEpaperQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, epaperCommit } from '@/api'
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
@@ -171,6 +199,7 @@ import QuestionAnswerDiscuss from '@/components/questionAnswerDiscuss/index'
 import QuestionNotFound from '@/components/questionNotFound/index'
 
 const route = useRoute()
+const router = useRouter()
 
 const { proxy } = getCurrentInstance()
 
@@ -192,7 +221,7 @@ const countDown = () => {
   clearInterval(timer)
   timer = setInterval(() => {
     var nowtimeGetTime = new Date().getTime(),
-        endtimeGetTime = proxy.$cache.session.getJSON('endmyTestTime');
+        endtimeGetTime = proxy.$cache.session.getJSON('endRealQuestionTime');
     var lefttime = endtimeGetTime - nowtimeGetTime,
         lefth = '0' + Math.floor(lefttime/(1000*60*60)%24),
         leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),
@@ -206,10 +235,16 @@ const countDown = () => {
         isShowElMessageBox = true
         ElMessageBox.alert('考试时间结束，请交卷！', '提示', {
           confirmButtonText: '确定',
-          callback: action => {
+          callback: async action => {
             console.log('action: ',action);
-            isShowElMessageBox = false
-            isCompleteTest.value = true
+            try { 
+              let res = await epaperCommitFunc()
+              clearInterval(timer)
+              testResult.value = res.data
+              showTestResultVisible.value = true
+              isShowElMessageBox = false
+              isCompleteTest.value = true
+            } catch (err) { }
           }
         })
       }
@@ -226,17 +261,12 @@ const questionArr = reactive([])
 let isLoadingData = ref(false)
 
 // 获取本章节所有题目
-function getQuestionListFunc() {
-  let params = {
-    level: proxy.$cache.session.getJSON('level'),
-    practiceId: route.query.id,
-    qtype: 1,
-  }
+function getTestEpaperQuestionListFunc() {
   isLoadingData.value = true
-  getQuestionList(params)
+  getTestEpaperQuestionList({epaperId: route.query.id})
     .then(async res => {
-      console.log('getQuestionList: ',res);
-      res.rows.forEach(item => {
+      console.log('getTestEpaperQuestionList: ',res);
+      res.data.forEach(item => {
         let obj = {
           id: item.id,
           type: item.type,
@@ -274,10 +304,10 @@ function getQuestionListFunc() {
       })
       // getSelfLastQuestionIdFunc()
       isLoadingData.value = false
-      getQuestionItemFunc(0, res.rows[0].id)
+      getQuestionItemFunc(0, res.data[0].id)
     }, err => isLoadingData.value = false )
 }
-getQuestionListFunc()
+getTestEpaperQuestionListFunc()
 
 // 获取做到哪一题
 function getSelfLastQuestionIdFunc() {
@@ -415,12 +445,14 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
   console.log(questionArr[i]);
   let params = {
     correctAnswers: questionArr[i].okAnswer,
+    epaperScoreId: route.query.epaperScore,
     isCorrect,
     practiceId: route.query.id,
     qtype: 1,
     questionId: id,
     reply: questionArr[i].yourAnswer,
-    score: questionArr[i].fraction
+    score: questionArr[i].fraction,
+    times: questionArr[i].answerTime
   }
   // 多选
   if (questionArr[i].type === 2) {
@@ -585,28 +617,81 @@ const checkAnswerDiscussFunc = (formEl) => {
   })
 }
 
+// 是否交卷
 let isCompleteTest = ref(false)
+// 交卷接口loading
+let completeTestLoading = ref(false)
 // 交卷按钮
-const haveTimeCompleteTest = () => {
+const haveTimeCompleteTest = async () => {
   let nodo = 0
   questionArr.forEach(item => {
     if (item.answerTime == '') nodo ++
   })
-  ElMessageBox.confirm(`还有${nodo}题未完成，确定交卷吗？`, '交卷', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning', 
-    })
-      .then(() => {
-        ElMessage({
-          type: 'success',
-          message: '交卷',
+  if (nodo === 0) {
+    try { 
+      let res = await epaperCommitFunc()
+      console.log(res);
+      isCompleteTest.value = true
+      testResult.value = res.data
+      showTestResultVisible.value = true
+    } catch (err) { }
+  } else {
+    ElMessageBox.confirm(`还有${nodo}题未完成，确定交卷吗？`, '交卷', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning', 
+      })
+        .then(async () => {
+          try { 
+            let res = await epaperCommitFunc()
+            console.log(res);
+            isCompleteTest.value = true
+            testResult.value = res.data
+            showTestResultVisible.value = true
+          } catch (err) { }
         })
-        isCompleteTest.value = true
+        .catch(() => {
+          console.log('取消交卷');
+        })
+  }
+}
+
+// 交卷接口
+function epaperCommitFunc() {
+  return new Promise((resolve, reject) => {
+    console.log(((new Date().getTime() - proxy.$cache.session.getJSON('seartRealQuestionTime')) / 1000).toFixed());
+    let times = ((new Date().getTime() - proxy.$cache.session.getJSON('seartRealQuestionTime')) / 1000).toFixed()
+    completeTestLoading.value = true
+    epaperCommit({epaperScoreId: route.query.epaperScore, times})
+      .then(res => {
+        console.log('epaperCommit: ', res);
+        completeTestLoading.value = false
+        resolve(res)
+      }, err => {
+        completeTestLoading.value = false
+        reject(err)
       })
-      .catch(() => {
-        console.log('取消交卷');
-      })
+  })
+}
+
+// 是否显示考试结果
+let showTestResultVisible = ref(false)
+// 考试结果数据
+let testResult = ref({})
+// 关闭考试结果
+const testResulthandleClose = done => {
+  done()
+  router.go(-1)
+}
+
+// 秒转分
+let secondToMinth = second => {
+  let lefth = Math.floor(second*1000/(1000*60*60)%24) < 10 ? '0' + Math.floor(second*1000/(1000*60*60)%24) : Math.floor(second*1000/(1000*60*60)%24),
+      leftm = Math.floor(second*1000/(1000*60)%60) < 10 ? '0'+Math.floor(second*1000/(1000*60)%60) : Math.floor(second*1000/(1000*60)%60),
+      lefts = Math.floor(second*1000/1000%60) < 10 ? '0'+Math.floor(second*1000/1000%60) : Math.floor(second*1000/1000%60);
+  if (lefth > 0) return `${lefth}时${leftm}分`
+  else if (leftm > 0) return `${leftm}分${lefts}秒`
+  else return `${lefts}秒`
 }
 
 // 离开导航守卫
@@ -629,13 +714,15 @@ onBeforeRouteLeave(() => {
 
 .content-box{
   padding: 0 40px;
+  overflow: hidden;
 }
 
 // 考试名称
 .test-name{
-  margin: 0 0 30px;
+  margin: 0 0 40px;
   text-align: center;
-  font-size: 18px;
+  font-size: 24px;
+  color: #333;
   letter-spacing: 2px;
 }
 
@@ -749,5 +836,24 @@ onBeforeRouteLeave(() => {
   width: 4px;
   height: 20px;
   background: rgb(64, 158, 255);
+}
+
+.result-content{
+  text-align: center;
+  .content{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 20px 0;
+    .item{
+      >div{
+        font-size: 16px;
+      }
+      .num{
+        margin: 0 0 10px;
+        font-size: 20px;
+      }
+    }
+  }
 }
 </style>

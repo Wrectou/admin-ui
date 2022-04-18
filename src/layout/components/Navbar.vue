@@ -16,13 +16,19 @@
           <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
         </el-tooltip> -->
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
+        <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
 
         <!-- <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip> -->
       </template>
       <div class="avatar-container">
+
+        <el-select class="level-select" v-model="level" @change="levelChange">
+          <el-option label="基本级执法资格考试" value="0" />
+          <el-option label="高级执法资格考试" value="1" />
+        </el-select>
+
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
             <img :src="getters.avatar" class="user-avatar" />
@@ -60,6 +66,21 @@ import RuoYiDoc from '@/components/RuoYi/Doc'
 
 const store = useStore();
 const getters = computed(() => store.getters);
+
+const { proxy } = getCurrentInstance()
+
+let level = ref("0")
+if (proxy.$cache.session.getJSON('level')) level.value = proxy.$cache.session.getJSON('level')
+else {
+  level.value = "0"
+  proxy.$cache.session.setJSON('level', level.value)
+}
+
+const levelChange = e => {
+  console.log(e);
+  level.value = e
+  proxy.$cache.session.setJSON('level', level.value)
+}
 
 function toggleSideBar() {
   store.dispatch('app/toggleSideBar')
@@ -161,6 +182,13 @@ function setLayout() {
 
     .avatar-container {
       margin-right: 40px;
+
+      display: flex;
+      align-items: center;
+
+      .level-select{
+        margin: 0 10px 0 0;
+      }
 
       .avatar-wrapper {
         margin-top: 5px;

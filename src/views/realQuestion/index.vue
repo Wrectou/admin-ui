@@ -196,7 +196,7 @@ const goTest = item => {
       console.log('createEpaperScore: ', res);
       if (res.code === 200) {
         router.push({ name: 'realQuestionAnswer', query: { id: item.id, epaperScore: res.data, name: item.name } })
-        proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + 1*60*1000))
+        proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000))
         proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
       }
     })

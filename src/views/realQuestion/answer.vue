@@ -133,6 +133,7 @@
           :answerSheetModel="'test'"
           :countTime="countTime"
           :dangerCountDown="dangerCountDown"
+          :completeTestLoading="completeTestLoading"
           @changeQuestion="changeQuestionIndex"
           @changeAnswerSheet="changeAnswerSheet"
           @haveTimeCompleteTest="haveTimeCompleteTest"
@@ -146,6 +147,7 @@
       v-model="showTestResultVisible"
       title="考试结果"
       width="40%"
+      :close-on-click-modal="false"
       :before-close="testResulthandleClose"
     >
       <div class="result-content">
@@ -615,7 +617,10 @@ const checkAnswerDiscussFunc = (formEl) => {
   })
 }
 
+// 是否交卷
 let isCompleteTest = ref(false)
+// 交卷接口loading
+let completeTestLoading = ref(false)
 // 交卷按钮
 const haveTimeCompleteTest = async () => {
   let nodo = 0
@@ -656,11 +661,16 @@ function epaperCommitFunc() {
   return new Promise((resolve, reject) => {
     console.log(((new Date().getTime() - proxy.$cache.session.getJSON('seartRealQuestionTime')) / 1000).toFixed());
     let times = ((new Date().getTime() - proxy.$cache.session.getJSON('seartRealQuestionTime')) / 1000).toFixed()
+    completeTestLoading.value = true
     epaperCommit({epaperScoreId: route.query.epaperScore, times})
       .then(res => {
         console.log('epaperCommit: ', res);
+        completeTestLoading.value = false
         resolve(res)
-      }, err => reject(err) )
+      }, err => {
+        completeTestLoading.value = false
+        reject(err)
+      })
   })
 }
 

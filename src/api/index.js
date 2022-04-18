@@ -524,6 +524,15 @@ export const epaperCommit = data => {
     })
 }
 
+// 获取自己的收藏题目列表
+export const getSelfQuestionAllList = params => {
+    return request({
+        url: '/business/practiceFavorites/selfQuestionAllList',
+        method: 'get',
+        params
+    })
+}
+
 
 
 

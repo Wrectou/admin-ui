@@ -32,7 +32,7 @@
           <div class="red"></div>错误
         </div>
       </div>
-      <el-button v-if="answerSheetModel === 'test'" type="primary" round @click="haveTimeCompleteTest">交卷</el-button>
+      <el-button :loading="completeTestLoading" v-if="answerSheetModel === 'test'" type="primary" round @click="haveTimeCompleteTest">交卷</el-button>
     </div>
   </div>
 </template>
@@ -58,6 +58,10 @@
     dangerCountDown: {
       type: String,
       default: ''
+    },
+    completeTestLoading: {
+      type: Boolean,
+      default: false
     },
     questionArr: {
       type: Array,

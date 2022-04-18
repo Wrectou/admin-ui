@@ -34,7 +34,7 @@
 
 <script setup name="myCollect">
 
-import { getFavoritesQuestionSectionList } from '@/api'
+import { getSelfQuestionAllList } from '@/api'
 import QuestionNotFound from '@/components/questionNotFound/index'
 
 const { proxy } = getCurrentInstance()
@@ -46,7 +46,7 @@ let isLoading = ref(false)
 let qtype = ref(0)
 const typeType = e => {
   qtype.value = e
-  getFavoritesQuestionSectionListFunc()
+  getSelfQuestionAllListFunc()
 }
 
 const favoritesQuestionSectionList = reactive({
@@ -54,20 +54,19 @@ const favoritesQuestionSectionList = reactive({
 })
 
 // 获取错题目录
-function getFavoritesQuestionSectionListFunc() {
+function getSelfQuestionAllListFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
-    qtype: qtype.value,
     type: 1,
   }
-  getFavoritesQuestionSectionList(params)
+  getSelfQuestionAllList(params)
     .then(res => {
-      console.log('getFavoritesQuestionSectionList: ', res);
+      console.log('getSelfQuestionAllList: ', res);
       isLoading.value = false
       favoritesQuestionSectionList.data = res.data
     })
 }
-getFavoritesQuestionSectionListFunc()
+getSelfQuestionAllListFunc()
 
 const goLink = item => router.push({ name: 'myCollectAnswer', query: { id: item.id, qtype: qtype.value } })
 

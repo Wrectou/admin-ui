@@ -66,7 +66,6 @@ const goLink = item => router.push({ name: 'guideDetail', query: { id: item.id }
 
 .container{
   padding: 40px;
-  text-align: center;
 }
 
 .tit{

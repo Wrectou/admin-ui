@@ -72,7 +72,6 @@ const goLink = item => router.push({ name: 'specialDetail', query: { id: item.id
 
 .container{
   padding: 40px;
-  text-align: center;
 }
 
 .tit{

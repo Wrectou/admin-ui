@@ -10,7 +10,7 @@
             </div>
           </template>
           <div class="card-cont">
-            <el-rate v-model="item.difficulty" disabled show-score text-color="#ff9900" :score-template="item.difficulty+'星'" />
+            <el-rate v-model="item.difficulty" disabled text-color="#ff9900" />
             <div class="num">{{item.answerNum}} / {{item.quesionNum}} 题</div>
           </div>
         </el-card>
@@ -65,13 +65,22 @@ const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id
 <style scoped lang="scss">
 
 .container{
-  padding: 40px;
+  padding: 20px;
   text-align: center;
 }
 
 .box-card {
-  margin: 10px 14px;
+  margin: 10px;
   box-shadow: 0 2px 8px 0 rgb(0 0 0 / 4%);
+  ::v-deep(.el-card__header){
+    padding: 10px 10px 8px !important;
+    .el-button{
+      padding: 6px 8px;
+    }
+  }
+  ::v-deep(.el-card__body){
+    padding: 10px 10px 8px !important;
+  }
   .card-header,
   .card-cont {
     display: flex;

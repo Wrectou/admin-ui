@@ -263,7 +263,7 @@ const goTestLink = item => router.push({ name: 'myTest' })
 <style scoped lang="scss">
 
 .home {
-  padding: 20px 40px;
+  padding: 20px;
   min-height: 100vh;
 }
 

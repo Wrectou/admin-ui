@@ -302,25 +302,70 @@ function getTestEpaperQuestionListFunc() {
         }
         questionArr.push(obj)
       })
-      // getSelfLastQuestionIdFunc()
+      if (route.query.isContinue) await arrangeLastRealQuestionData()
+      else getQuestionItemFunc(0, res.data[0].id)
       isLoadingData.value = false
-      getQuestionItemFunc(0, res.data[0].id)
     }, err => isLoadingData.value = false )
 }
 getTestEpaperQuestionListFunc()
 
-// 获取做到哪一题
-function getSelfLastQuestionIdFunc() {
-  getSelfLastQuestionId(route.query.id)
-    .then(res => {
-      console.log('getSelfLastQuestionId: ',res);
-      isLoadingData.value = false
-      if (res.data) {
-        questionArr.forEach((item, i) => {
-          if (item.id === res.data) questionIndex.value = i
-        })
+// 整理中断的答题数据
+async function arrangeLastRealQuestionData() {
+  let lastData = proxy.$cache.session.getJSON('lastRealQuestionData')
+
+  for (let item of lastData.lastQuestionList) {
+    for (let [index, qi] of questionArr.entries()) {
+      if (item.questionId === qi.id) {
+        let res = await getQuestionItemIsCheckedFunc(index, qi.id)
+        console.log('getQuestionItemIsCheckedFunc: ',res);
+        qi.answerTime = item.times
+        if (item.type === 1) {
+          qi.type = 3
+          qi.yourAnswer = LetterToIndex[item.reply]
+          qi.answerList.length = 0
+          res.forEach(i => {
+            let obj = { value: LetterToIndex[i.identifier], label: i.title, isChecked: false }
+            if (item.reply === i.identifier) obj.isChecked = true
+            qi.answerList.push(obj)
+          })
+        } else if (item.type === 2) {
+          qi.type = 1
+          qi.yourAnswer = LetterToIndex[item.reply]
+          qi.answerList.length = 0
+          res.forEach(i => {
+            let obj = { value: LetterToIndex[i.identifier], label: i.title, isChecked: false }
+            if (item.reply === i.identifier) obj.isChecked = true
+            qi.answerList.push(obj)
+          })
+        } else if (item.type === 3 || item.type === 4) {
+          qi.type = 2
+          let replyArr = item.reply.split('')
+          replyArr = replyArr.map(item => item = LetterToIndex[item])
+          qi.yourAnswer = replyArr
+          qi.answerList.length = 0
+          res.forEach(i => {
+            let obj = { value: LetterToIndex[i.identifier], label: i.title, isChecked: false }
+            if (item.reply.includes(i.identifier)) obj.isChecked = true
+            qi.answerList.push(obj)
+          })
+        } else if (item.type === 5) {
+          qi.type = 4
+          qi.yourAnswer = item.reply
+        }
+        questionIndex.value = index
       }
-    }, err => isLoadingData.value = false )
+    }
+  }
+}
+
+// 获取题目选项  同步 用于继续考试
+async function getQuestionItemIsCheckedFunc(i, id) {
+  return new Promise((resolve, reject) => {
+    getQuestionItem(id)
+      .then(res => {
+        if (res.code === 200) resolve(res.data)
+      }, err => reject(err) )
+  })
 }
 
 // 获取题目选项
@@ -328,12 +373,14 @@ function getQuestionItemFunc(i, id) {
   getQuestionItem(id)
     .then(res => {
       console.log('getQuestionItem: ',res);
-      res.data.forEach(item => {
-        let obj = {
-          value: LetterToIndex[item.identifier], label: item.title, isChecked: false
-        }
-        questionArr[i].answerList.push(obj)
-      })
+      if (res.code === 200) {
+        res.data.forEach(item => {
+          let obj = {
+            value: LetterToIndex[item.identifier], label: item.title, isChecked: false
+          }
+          questionArr[i].answerList.push(obj)
+        })
+      }
     })
 }
 
@@ -450,12 +497,14 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     practiceId: route.query.id,
     qtype: 1,
     questionId: id,
-    reply: questionArr[i].yourAnswer,
     score: questionArr[i].fraction,
     times: questionArr[i].answerTime
   }
-  // 多选
-  if (questionArr[i].type === 2) {
+  // 1 3 单选 判断  5 论述
+  // 2 多选 不定项
+  if (questionArr[i].type === 1 || questionArr[i].type === 3) {
+    params.reply = IndexTolLetter[questionArr[i].yourAnswer]
+  } else if (questionArr[i].type === 2) {
     let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
     let correctAnswersStr = ''
     correctAnswersArr.forEach(item => correctAnswersStr+=item)
@@ -464,7 +513,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     let replyStr = ''
     replyArr.forEach(item => replyStr+=item)
     params.reply = replyStr
-  } 
+  } else if (questionArr[i].type === 5) params.reply = questionArr[i].yourAnswer
   addPracticeQuestionAnswer(params)
     .then(res => {
       console.log('addPracticeQuestionAnswer: ', res);

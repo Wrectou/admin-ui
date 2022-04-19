@@ -32,8 +32,9 @@
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0" plain class="button" type="primary" @click="goTest(item)">再考一次</el-button>
-            <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button>
+            <el-button v-if="item.lastEpaperScoreId !== null" plain class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
+            <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" plain class="button" type="primary" @click="goTest(item)">再考一次</el-button>
+            <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
           </div>
         </div>
 
@@ -175,6 +176,7 @@ const countDown = (item) => {
 // 第一次开始按钮文字计算属性
 let firstTestButtonText = computed(item => {
   return (item) => {
+    if (!item.startTime && !item.endTime) return '开始考试'
     let nowTime = new Date().getTime()
     let startTime = new Date(item.startTime).getTime()
     let endTime = new Date(item.endTime).getTime()
@@ -200,6 +202,20 @@ const goTest = item => {
         proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
       }
     })
+}
+
+// 继续考试
+const goContinueTest = item => {
+  // createEpaperScore({epaperId: item.id, level: proxy.$cache.session.getJSON('level')})
+  //   .then(res => {
+  //     console.log('createEpaperScore: ', res);
+  //     if (res.code === 200) {
+        router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: item.lastEpaperScoreId, name: item.name, isContinue: true } })
+        proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000 - item.lastAnswerTotalTimes*1000))
+        proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
+        proxy.$cache.session.setJSON('lastRealQuestionData', item)
+    //   }
+    // })
 }
 
 

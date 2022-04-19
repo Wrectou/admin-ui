@@ -430,11 +430,14 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     practiceId: route.query.id,
     qtype: 2,   // 收藏传2
     questionId: id,
-    reply: questionArr[i].yourAnswer,
-    score: questionArr[i].fraction
+    score: questionArr[i].fraction,
+    times: questionArr[i].answerTime
   }
-  // 多选
-  if (questionArr[i].type === 2) {
+  // 1 3 单选 判断  5 论述
+  // 2 多选 不定项
+  if (questionArr[i].type === 1 || questionArr[i].type === 3) {
+    params.reply = IndexTolLetter[questionArr[i].yourAnswer]
+  } else if (questionArr[i].type === 2) {
     let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
     let correctAnswersStr = ''
     correctAnswersArr.forEach(item => correctAnswersStr+=item)
@@ -443,7 +446,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     let replyStr = ''
     replyArr.forEach(item => replyStr+=item)
     params.reply = replyStr
-  } 
+  } else if (questionArr[i].type === 5) params.reply = questionArr[i].yourAnswer
   addPracticeQuestionAnswer(params)
     .then(res => {
       console.log('addPracticeQuestionAnswer: ', res);

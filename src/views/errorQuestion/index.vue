@@ -50,9 +50,10 @@
               <template #default="scope"><el-rate v-model="scope.row.score" disabled text-color="#ff9900" /></template>
             </el-table-column> -->
             <el-table-column label="时间" align="center" prop="updateTime" width="170" />
-            <el-table-column label="操作" align="center" width="120">
+            <el-table-column label="操作" align="center" width="200">
               <template #default="scope">
                 <el-button plain type="primary" @click="toAnswer(scope.row)">详情</el-button>
+                <el-button plain type="danger" @click="deleteFavoriteFunc(scope.row)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -98,6 +99,7 @@
             <!-- 标题组件 -->
             <QuestionTitle 
               :questionTitleObj="questionArr[questionIndex]"
+              :isShowCollect=false
               @changeCollectTitle="changeCollectTitle"
             />
             
@@ -361,6 +363,23 @@ const toAnswer = item => {
       // getSelfLastQuestionIdFunc()
       getQuestionItemFunc(0, res.rows[0].id)
     }, err => isLoadingData.value = false )
+}
+
+// 删除  /  取消收藏
+function deleteFavoriteFunc(item) {
+  console.log(item);
+  let params = {
+    quesionId: item.id,
+    type: 0,
+  }
+  deleteFavorite(params)
+    .then(res => {
+      console.log('deleteFavorite: ', res);
+      if (res.code === 200) {
+        ElMessage.success('取消收藏成功！') 
+        getFavoritesQuestionListFunc()
+      } else ElMessage.error('取消收藏出错，请稍后再试！')
+    })
 }
 
 

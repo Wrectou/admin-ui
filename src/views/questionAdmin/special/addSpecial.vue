@@ -65,7 +65,7 @@ const { proxy } = getCurrentInstance()
 let headerObj = ref({
   Authorization: 'Bearer ' + getToken()
 })
-const qiniuBaseURL = ref(import.meta.env.VITE_APP_UPLOAD)
+const qiniuBaseURL = ref(`${import.meta.env.VITE_APP_BASE_API}/common/upload`)
 let qiniuConfig = ref({})
 const handleLogoSuccess = (res, file) => {
   console.log(res, file);
@@ -78,7 +78,7 @@ const addProductParams = reactive({
   title: "",
   content: "",
   picture: "",
-  learnId: route.query.id,
+  learnId: route.query.learnId,
 })
 
 let isLoading = ref(false)
@@ -150,7 +150,7 @@ function addProductFunc(addProductParams) {
       isLoading.value = false
       ElMessage.success(res.msg)
       proxy.$tab.closeOpenPage()
-      proxy.$tab.openPage(`/questionAdmin/special/specialList?id=${route.query.id}&title=${route.query.title}`)
+      proxy.$tab.openPage(`/questionAdmin/special/specialList?id=${route.query.learnId}&title=${route.query.title}`)
     }, err => isLoading.value = false
   )
 }
@@ -163,7 +163,7 @@ function editProductFunc(addProductParams) {
       isLoading.value = false
       ElMessage.success(res.msg)
       proxy.$tab.closeOpenPage()
-      proxy.$tab.openPage(`/questionAdmin/special/specialList?id=${route.query.id}&title=${route.query.title}`)
+      proxy.$tab.openPage(`/questionAdmin/special/specialList?id=${route.query.learnId}&title=${route.query.title}`)
     }, err => isLoading.value = false
   )
 }

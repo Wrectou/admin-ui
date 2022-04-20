@@ -67,6 +67,11 @@ getLearnMaterialsDetailFunc()
       text-align: center;
     }
   }
+  ::v-deep(p){
+    > video {
+      width: 100% !important;
+    }
+  }
 }
 
 // 标题

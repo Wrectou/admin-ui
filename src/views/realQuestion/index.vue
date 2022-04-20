@@ -32,8 +32,9 @@
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button v-if="item.lastEpaperScoreId !== null" plain class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
-            <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" plain class="button" type="primary" @click="goTest(item)">再考一次</el-button>
+            <el-button v-if="item.lastEpaperScoreId !== null" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
+            <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
+            <el-button v-if="item.hisNum > 0 && item.lastEpaperScoreId == null && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
             <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
           </div>
         </div>
@@ -184,6 +185,9 @@ let firstTestButtonText = computed(item => {
     let endTime = new Date(item.endTime).getTime()
     let calcStartTime = startTime-nowTime
     let calcEndTime = endTime-nowTime
+    console.log(item);
+    console.log(calcStartTime);
+    console.log(calcEndTime);
     if (calcStartTime < 0 && calcEndTime < 0) return '停止考试'
     else if (calcStartTime < 0 && calcEndTime > 0) return '开始考试'
     else {

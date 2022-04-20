@@ -53,7 +53,7 @@ const { proxy } = getCurrentInstance()
 let headerObj = ref({
   Authorization: 'Bearer ' + getToken()
 })
-const qiniuBaseURL = ref(import.meta.env.VITE_APP_UPLOAD)
+const qiniuBaseURL = ref(`${import.meta.env.VITE_APP_BASE_API}/common/upload`)
 let qiniuConfig = ref({})
 const handleLogoSuccess = (res, file) => {
   console.log(res, file);

@@ -57,7 +57,21 @@ getGuideDetailFunc()
 .content{
   max-width: 64%;
   flex: 0 0 64%;
+  ::v-deep(img){
+    margin: 0 auto;
+    > span {
+      display: inline-block;
+      width: 100% !important;
+      text-align: center;
+    }
+  }
+  ::v-deep(p){
+    > video {
+      width: 100% !important;
+    }
+  }
 }
+
 
 // 标题
 .tit{

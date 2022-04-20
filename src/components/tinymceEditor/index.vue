@@ -169,66 +169,7 @@ export default {
       paste_webkit_styles: "all",   // 指定在WebKit中粘贴时要保留的样式
       paste_retain_style_properties: "all",   // 从Word粘贴过来时，允许保留的样式
       paste_data_images: true,
-      // paste_preprocess: function(plugin, args) {
-      //   // console.log(args.content);
-      //   // args.content = args.content.replace("<img", "<img id=\"pasted_image_\"");
-      //   // console.log(args.content)
-      //   args.content = args.content.replace("<img", "<img id=\"pasted_image_" + parseInt(globalcounter) + "\"");
-      //       console.log(args.content)
-      //       var xhr = new XMLHttpRequest();
-      //       xhr.onreadystatechange = function(){
-      //           if (this.readyState == 4 && this.status == 200){
-      //             console.log('response: ',this.response);
-      //             // upload(this.response);
-      //             let formdata = new FormData()
-      //             let uploadFileUrl =  `${import.meta.env.VITE_APP_BASE_API}/common/upload`
-      //             formdata.set('file', this.response)
-      //             axios.post(uploadFileUrl, formdata, {
-      //                 headers:
-      //                   {
-      //                     'Authorization': 'Bearer ' + getToken()
-      //                   }
-      //               }).then(res => {
-      //                 console.log('images_upload_handler: ',res);
-      //               }).catch(res => {
-      //                 failure('error')
-      //               })
-
-      //           }
-      //       };
-      //       console.log('args.c: ', args.content.split('"'))
-      //       // xhr.open('GET', args.content.split('"')[0]);   // 图片地址
-      //       xhr.open('GET', args.content.split('"')[3]);    // 图片 
-      //       xhr.responseType = 'blob';
-      //       xhr.send();
- 
-      //       function upload(BlobFile){
-      //           var x = new XMLHttpRequest();
-      //           x.onreadystatechange = function(){
-      //               if( this.readyState == 4 && this.status == 200 ){
-      //                   data = this.responseText;
-      //                   console.log('response data: ' + data);
-      //                   id = parseInt(globalcounter++);
- 
-      //                   // function setimg(id, data){
-      //                   //     if( document.getElementById("pasted_image_" + id)  == null){
-      //                   //         setTimeout( setimg , 5000);                               
-      //                   //     }else{
-      //                   //         document.getElementById("pasted_image_" + id).setAttribute("src", data);     
-      //                   //     }
-      //                   // }
-      //                   document.getElementById("mycontent_ifr").contentWindow.document.getElementById("pasted_image_" + id).setAttribute("src", data);
-      //               }
-      //           };
-      //           x.open('POST', '/pasteimg/');  
-      //           x.send(BlobFile);
-      //       }
- 
-
-      // },
-      // paste_postprocess(plugin, args) {
-      //   console.log('paste_postprocess: ',plugin, args, args.node, args.content);
-      // },
+      // 图片上传方法
       images_upload_handler(blobInfo, success, failure) {
         let formdata = new FormData()
         let uploadFileUrl = `${import.meta.env.VITE_APP_BASE_API}/common/upload`
@@ -239,12 +180,30 @@ export default {
             success(res.data.url)
           }, err => failure('error') )
       },
-      resVideo:'',    //上传视频的url
-      uploaded:false,//有没有上传完成
+      resVideo: '',    //上传视频的url
+      uploaded: false, //有没有上传完成
       file_picker_types: 'media', 
+      // 视频上传方法
       file_picker_callback: (callback, value, meta) => {
-        console.log(callback, value, meta)
-        // this.open(callback, value, meta)
+        if (meta.filetype === 'media') {
+          // 动态创建上传input，并进行模拟点击上传操作，达到本地上传视频效果。
+          let input = document.createElement('input')  // 创建一个隐藏的input
+          input.setAttribute('type', 'file')
+          input.setAttribute("accept", ".mp4")
+          input.onchange = function() {
+            let file = this.files[0]
+            let formdata = new FormData()
+            formdata.append("file", file)
+            let uploadFileUrl = `${import.meta.env.VITE_APP_BASE_API}/common/upload`
+            axios.post(uploadFileUrl, formdata, { headers: { 'Authorization': 'Bearer ' + getToken() } })
+              .then(res => {
+                console.log('images_upload_handler: ',res);
+                callback(res.data.url)
+              }, err => failure('error') )
+          }
+          // 触发点击
+          input.click()
+        }
       }
     };
     tinymce.init; // 初始化

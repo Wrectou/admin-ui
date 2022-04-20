@@ -322,11 +322,12 @@
   const addHandleClose = done => {
     if (addTestLoading.value) return ElMessage.warning('正在添加，请稍后！')
     if (!isEdit.value) return done()
-    ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
-      .then(() => {
-        done()
-        resetObj(addParams)
-      }, err => {})
+    done()
+    // ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
+    //   .then(() => {
+    //     done()
+    //     resetObj(addParams)
+    //   }, err => {})
   }
   // 重置添加表单
   const resetAddForm = formEl => {
@@ -496,11 +497,12 @@
   const setTestPersonHandleClose = done => {
     if (setTestPersonLoading.value) return ElMessage.warning('正在添加，请稍后！')
     if (!isEditPerson.value) return done()
-    ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
-      .then(() => {
-        done()
-        resetObj(addParams)
-      }, err => {})
+    done()
+    // ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
+    //   .then(() => {
+    //     done()
+    //     resetObj(addParams)
+    //   }, err => {})
   }
   // 左侧树checked或者右侧删除情况下 整理personTreeCheckedData数据
   function sortPersonTreeCheckedData() {
@@ -635,11 +637,12 @@
   const setTestSubjectHandleClose = done => {
     if (setTestSubjectLoading.value) return ElMessage.warning('正在添加，请稍后！')
     if (!isEditSubject.value) return done()
-    ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
-      .then(() => {
-        done()
-        resetObj(addParams)
-      }, err => {})
+    done()
+    // ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
+    //   .then(() => {
+    //     done()
+    //     resetObj(addParams)
+    //   }, err => {})
   }
   // 左侧树checked或者右侧删除情况下 整理subjectTreeCheckedData数据
   function sortSubjectTreeCheckedData() {

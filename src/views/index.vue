@@ -31,18 +31,22 @@
           <div class="title">专题学习<span class="more" @click="goMoreSpecial">更多</span></div>
 
 
-          <el-row class="content special-list">
-            <div class="special" :span="24" v-for="item in newlist" :key="item.id">
-              <div class="title" @click="goSpecial(item)">
-                {{ item.title }} 
-                <span class="parent-name">（{{item.catalogueName}}）</span>
+          <div class="content special-list">
+            <div class="special" :span="24" v-for="item in newlist" :key="item.id" @click="goSpecial(item)">
+              <div class="poster">
+                <img :src="item.picture" alt="">
               </div>
-              <div class="time">{{item.createTime}}</div>
+              <div class="content">
+                <div class="title">{{ item.title }}<span class="parent-name">（{{item.catalogueName}}）</span></div>
+                <div class="time">{{item.createTime}}</div>
+              </div>
             </div>
             <div class="special" v-if="newlist.length < 1">
-              <div class="title">暂无数据</div>
+              <div class="content">
+                <div class="time">暂无数据</div>
+              </div>
             </div>
-          </el-row>
+          </div>
           
           <!-- <el-row class="content special-content">
             <el-col class="special" :span="8" v-for="item in specialList.data" :key="item.id"  @click="goSpecial(item)">
@@ -541,31 +545,39 @@ function timesToText(second) {
 
 .special-list{
   .special {
-    padding: 4px 25px;
-    width: 100%;
+    display: flex;
+    padding: 8px 25px;
     border-bottom: 1px solid #f0f0f0;
-    .title{
-      display: flex;
-      align-items: center;
-      line-height: 36px;
-      font-size: 16px;
-      color: #555;
-      cursor: pointer;
-      .parent-name{
-        font-size: 13px;
-        color: #777;
+    .poster{
+      margin: 0 14px 0 0;
+      img {
+        width: 140px;
+        height: 80px;
       }
     }
-    .time{
-      margin: 2px 0 4px;
-      font-size: 12px;
-      color: #999;
+    .content{
+      .title{
+        margin: 4px 0 0;
+        line-height: 24px;
+        font-size: 16px;
+        color: #555;
+        .parent-name{
+          font-size: 13px;
+          color: #777;
+        }
+      }
+      .time{
+        margin: 4px 0;
+        font-size: 12px;
+        color: #999;
+      }
     }
   }
   .special:last-child{
     border-bottom: none;
   }
   .special:hover{
+    cursor: pointer;
     .title{
       color: #409EFF;
       .parent-name{

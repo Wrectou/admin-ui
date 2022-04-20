@@ -28,14 +28,28 @@
         </div> -->
         <!-- 专题学习 -->
         <div class="content-box">
-          <div class="title">专题学习</div>
+          <div class="title">专题学习<span class="more" @click="goMoreSpecial">更多</span></div>
+
+
+          <el-row class="content special-list">
+            <div class="special" :span="24" v-for="item in newlist" :key="item.id">
+              <div class="title" @click="goSpecial(item)">
+                {{ item.title }} 
+                <span class="parent-name">（{{item.catalogueName}}）</span>
+              </div>
+              <div class="time">{{item.createTime}}</div>
+            </div>
+            <div class="special" v-if="newlist.length < 1">
+              <div class="title">暂无数据</div>
+            </div>
+          </el-row>
           
-          <el-row class="content special-content">
+          <!-- <el-row class="content special-content">
             <el-col class="special" :span="8" v-for="item in specialList.data" :key="item.id"  @click="goSpecial(item)">
               <img class="logo" :src="item.picture" />
               <div class="name">{{item.title}}</div>
             </el-col>
-          </el-row>
+          </el-row> -->
           
           <!-- <el-col :span="6" class="special-box" v-for="item in specialList.data" :key="item.name">
             <div class="special" @click="goSpecial(item)">
@@ -64,30 +78,30 @@
               <div class="tab-item">
                 <div class="item">
                   <div>答题量</div>
-                  <span class="tip">超过0.01%的学员</span>
+                  <!-- <span class="tip">超过0.01%的学员</span> -->
                 </div>
-                <div class="num">66</div>
+                <div class="num">{{todayLearnGrade.allAnswerNum}}</div>
               </div>
               <div class="tab-item">
                 <div class="item">
                   <div>学习时长</div>
-                  <span class="tip">超过0.01%的学员</span>
+                  <!-- <span class="tip">超过0.01%的学员</span> -->
                 </div>
-                <div class="num">7分10秒</div>
+                <div class="num">{{todayLearnGrade.allTimes}}</div>
               </div>
               <div class="tab-item">
                 <div class="item">
                   <div>正确率</div>
-                  <span class="tip">超过0.01%的学员</span>
+                  <!-- <span class="tip">超过0.01%的学员</span> -->
                 </div>
-                <div class="num">66%</div>
+                <div class="num">{{todayLearnGrade.allRate}}</div>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="历史" name="all">
+            <!-- <el-tab-pane label="历史" name="all">
               <div class="tab-item">
                 暂无统计数据
               </div>
-            </el-tab-pane>
+            </el-tab-pane> -->
           </el-tabs>
         </div>
       </el-col>
@@ -141,7 +155,7 @@
 
 <script setup name="Index">
 
-import { getLearnCatalogueList, getEpaperSelflist, getEnum } from '@/api'
+import { getLearnCatalogueList, getEpaperSelflist, getEnum, getTodayLearnGrade, getNewlist } from '@/api'
 import { useRouter } from 'vue-router'
 
 import icon1 from '@/assets/images/index/1.png'
@@ -232,7 +246,7 @@ function getLearnCatalogueListFunc() {
 getLearnCatalogueListFunc()
 
 function goSpecial(item) {
-  router.push({ name: 'special', query: { id: item.id, title: item.title } })
+  router.push({ name: 'specialDetail', query: { id: item.id, title: item.title } })
 }
 
 const goLink = name => router.push({ name })
@@ -257,6 +271,60 @@ function getEpaperSelflistFunc() {
 }
 getEpaperSelflistFunc()
 const goTestLink = item => router.push({ name: 'myTest' })
+
+// 获取最新5条专题学习资料
+let newlist = ref([])
+function getNewlistFunc() {
+  getNewlist()
+    .then(res => {
+      console.log('getNewlist: ', res);
+      if (res.code === 200) {
+        newlist.value = res.data
+      } 
+    })
+}
+getNewlistFunc()
+
+// 更多专题
+const goMoreSpecial = () => router.push({ path: '/specialLearn/index' })
+
+
+// 获取今日学习数据
+let todayLearnGrade = reactive({
+  allAnswerNum: 0,
+  allTimes: 0,
+  allRate: 0,
+})
+function getTodayLearnGradeFunc() {
+  getTodayLearnGrade()
+    .then(res => {
+      console.log('getTodayLearnGrade: ', res);
+      if (res.code == 200) {
+        let allAnswerNum = 0
+        let allCorrentNum = 0
+        let allTimes = 0
+        res.data.forEach(item => {
+          allAnswerNum += item.answerNum
+          allCorrentNum += item.correntNum
+          allTimes += item.times
+        })
+        todayLearnGrade.allAnswerNum = allAnswerNum + '题'
+        todayLearnGrade.allTimes = timesToText(allTimes)
+        todayLearnGrade.allRate = (allCorrentNum/allAnswerNum).toFixed(2) + '%'
+      }
+    })
+}
+getTodayLearnGradeFunc()
+
+// 秒转中文时分秒
+function timesToText(second) {
+  let lefttime = second*1000,
+      lefth = Math.floor(lefttime/(1000*60*60)%24) < 10 ? '0' + Math.floor(lefttime/(1000*60*60)%24) : Math.floor(lefttime/(1000*60*60)%24),
+      leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),
+      lefts = Math.floor(lefttime/1000%60) < 10 ? '0'+Math.floor(lefttime/1000%60) : Math.floor(lefttime/1000%60);
+      if (lefth !== '00') return lefth + "时" + leftm + "分" + lefts + "秒"
+      else return leftm + "分" + lefts + "秒"
+}
 
 </script>
 
@@ -390,11 +458,19 @@ const goTestLink = item => router.push({ name: 'myTest' })
   margin: 0 0 16px;
   background: #fff;
   >.title{
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
     color: #222;
     padding: 16px 24px;
     font-weight: 500;
     font-size: 16px;
     border-bottom: 1px solid #f0f0f0;
+    .more{
+      font-size: 14px;
+      color: #409EFF;
+      cursor: pointer;
+    }
   }
   .menu-content{
     .menu{
@@ -458,6 +534,47 @@ const goTestLink = item => router.push({ name: 'myTest' })
   }
   .title:hover{
     color: #409EFF;
+  }
+}
+
+
+
+.special-list{
+  .special {
+    padding: 4px 25px;
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+    .title{
+      display: flex;
+      align-items: center;
+      line-height: 36px;
+      font-size: 16px;
+      color: #555;
+      cursor: pointer;
+      .parent-name{
+        font-size: 13px;
+        color: #777;
+      }
+    }
+    .time{
+      margin: 2px 0 4px;
+      font-size: 12px;
+      color: #999;
+    }
+  }
+  .special:last-child{
+    border-bottom: none;
+  }
+  .special:hover{
+    .title{
+      color: #409EFF;
+      .parent-name{
+        color: #409EFF;
+      }
+    }
+    .time{
+      color: #409EFF;
+    }
   }
 }
 

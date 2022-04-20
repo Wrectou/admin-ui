@@ -533,6 +533,24 @@ export const getSelfQuestionAllList = params => {
     })
 }
 
+// 今日学习情况
+export const getTodayLearnGrade = params => {
+    return request({
+        url: '/business/question/todayLearnGrade',
+        method: 'get',
+        params
+    })
+}
+
+// 获取最新5条专题学习资料
+export const getNewlist = params => {
+    return request({
+        url: '/business/learnMaterials/newlist',
+        method: 'get',
+        params
+    })
+}
+
 
 
 

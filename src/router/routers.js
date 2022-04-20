@@ -20,7 +20,8 @@ import Layout from "@/layout"
   }
 */
 
-export const routes = [{
+export const routes = [
+    {
         path: "/redirect",
         component: Layout,
         hidden: true,
@@ -147,7 +148,7 @@ export const routes = [{
     {
         path: "/chapter",
         component: Layout,
-        meta: { title: "章节练习", icon: "swagger", noCache: true },
+        meta: { title: "", icon: "swagger", noCache: true },
         children: [
             {
                 path: "index",
@@ -191,7 +192,7 @@ export const routes = [{
     {
         path: "/today",
         component: Layout,
-        meta: { title: "每日练习", icon: "edit", noCache: true },
+        meta: { title: "", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
@@ -205,7 +206,7 @@ export const routes = [{
     {
         path: "/realQuestion",
         component: Layout,
-        meta: { title: "历年真题", icon: "edit", noCache: true },
+        meta: { title: "", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
@@ -235,7 +236,7 @@ export const routes = [{
     {
         path: "/imitateQuestion",
         component: Layout,
-        meta: { title: "模拟考试", icon: "edit", noCache: true },
+        meta: { title: "", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
@@ -265,7 +266,7 @@ export const routes = [{
     {
         path: "/myTest",
         component: Layout,
-        meta: { title: "我的考试", icon: "edit", noCache: true },
+        meta: { title: "", icon: "edit", noCache: true },
         children: [
             {
                 path: "index",
@@ -287,7 +288,7 @@ export const routes = [{
     {
         path: "/errorQuestion",
         component: Layout,
-        meta: { title: "错题巩固", icon: "log", noCache: true },
+        meta: { title: "", icon: "log", noCache: true },
         children: [
             {
                 path: "index",
@@ -309,7 +310,7 @@ export const routes = [{
     {
         path: "/myCollect",
         component: Layout,
-        meta: { title: "我的收藏", icon: "rate", noCache: true },
+        meta: { title: "", icon: "rate", noCache: true },
         children: [
             {
                 path: "index",
@@ -331,7 +332,7 @@ export const routes = [{
     {
         path: "/questionGuide",
         component: Layout,
-        meta: { title: "考试指南", icon: "education", noCache: true },
+        meta: { title: "", icon: "education", noCache: true },
         children: [
             {
                 path: "index",
@@ -353,7 +354,7 @@ export const routes = [{
     {
         path: "/specialLearn",
         component: Layout,
-        meta: { title: "专题学习", icon: "education", noCache: true },
+        meta: { title: "", icon: "education", noCache: true },
         children: [
             {
                 path: "index",
@@ -378,7 +379,7 @@ export const routes = [{
     {
         path: "/questionAdmin/chapter",
         component: Layout,
-        meta: { title: "章节练习管理", icon: "dict", noCache: true },
+        meta: { title: "", icon: "dict", noCache: true },
         children: [
             {
                 path: "list",
@@ -416,7 +417,7 @@ export const routes = [{
     {
         path: "/questionAdmin/test",
         component: Layout,
-        meta: { title: "考试试卷管理", icon: "dict", noCache: true },
+        meta: { title: "", icon: "dict", noCache: true },
         children: [
             {
                 path: "list",
@@ -430,7 +431,7 @@ export const routes = [{
     {
         path: "/questionAdmin/guide",
         component: Layout,
-        meta: { title: "考试指南管理", icon: "dict", noCache: true },
+        meta: { title: "", icon: "dict", noCache: true },
         children: [
             {
                 path: "list",
@@ -452,7 +453,7 @@ export const routes = [{
     {
         path: "/questionAdmin/special",
         component: Layout,
-        meta: { title: "专题学习管理", icon: "dict", noCache: true },
+        meta: { title: "", icon: "dict", noCache: true },
         children: [
             {
                 path: "list",

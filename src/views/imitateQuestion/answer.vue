@@ -489,7 +489,6 @@ let answerTime = ref(new Date())
 
 // 回答问题接口
 function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
-  console.log(questionArr[i]);
   let params = {
     correctAnswers: questionArr[i].okAnswer,
     epaperScoreId: route.query.epaperScore,
@@ -497,6 +496,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     practiceId: route.query.id,
     qtype: 1,
     questionId: id,
+    reply: questionArr[i].yourAnswer,
     score: questionArr[i].fraction,
     times: questionArr[i].answerTime
   }
@@ -504,16 +504,20 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
   // 2 多选 不定项
   if (questionArr[i].type === 1 || questionArr[i].type === 3) {
     params.reply = IndexTolLetter[questionArr[i].yourAnswer]
+    params.correctAnswers = IndexTolLetter[questionArr[i].okAnswer]
   } else if (questionArr[i].type === 2) {
     let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
     let correctAnswersStr = ''
     correctAnswersArr.forEach(item => correctAnswersStr+=item)
-    params.correctAnswers = correctAnswersStr
     let replyArr = params.reply.map(item => item = IndexTolLetter[item])
     let replyStr = ''
     replyArr.forEach(item => replyStr+=item)
+    params.correctAnswers = correctAnswersStr
     params.reply = replyStr
-  } else if (questionArr[i].type === 5) params.reply = questionArr[i].yourAnswer
+  } else if (questionArr[i].type === 5) {
+    // params.reply = questionArr[i].yourAnswer
+    // params.correctAnswers = questionArr[i].okAnswer
+  }
   addPracticeQuestionAnswer(params)
     .then(res => {
       console.log('addPracticeQuestionAnswer: ', res);

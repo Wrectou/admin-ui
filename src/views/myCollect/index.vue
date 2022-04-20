@@ -44,11 +44,11 @@
         <div class="table-box" v-if="!tableFirstLoading && favoritesSectionList.length > 1">
           <!-- 表格 -->
           <el-table v-loading="tableLoading" :data="favoritesQuestionList.list">
-            <el-table-column label="标题" align="center" prop="title" min-width="220" />
+            <el-table-column label="标题" align="left" prop="title" min-width="220" />
             <el-table-column label="章节" align="center" prop="sectionName" width="210" />
-            <el-table-column label="熟悉程度" align="center" prop="score" width="170">
+            <!-- <el-table-column label="熟悉程度" align="center" prop="score" width="170">
               <template #default="scope"><el-rate v-model="scope.row.score" disabled text-color="#ff9900" /></template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column label="时间" align="center" prop="updateTime" width="170" />
             <el-table-column label="操作" align="center" width="120">
               <template #default="scope">
@@ -504,13 +504,13 @@ let answerTime = ref(new Date())
 
 // 回答问题接口
 function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
-  console.log(questionArr[i]);
   let params = {
     correctAnswers: questionArr[i].okAnswer,
     isCorrect,
     practiceId: questionArrPracticeId.value,
     qtype: 0,
     questionId: id,
+    reply: questionArr[i].yourAnswer,
     score: questionArr[i].fraction,
     times: questionArr[i].answerTime
   }
@@ -518,16 +518,20 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
   // 2 多选 不定项
   if (questionArr[i].type === 1 || questionArr[i].type === 3) {
     params.reply = IndexTolLetter[questionArr[i].yourAnswer]
+    params.correctAnswers = IndexTolLetter[questionArr[i].okAnswer]
   } else if (questionArr[i].type === 2) {
     let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
     let correctAnswersStr = ''
     correctAnswersArr.forEach(item => correctAnswersStr+=item)
-    params.correctAnswers = correctAnswersStr
     let replyArr = params.reply.map(item => item = IndexTolLetter[item])
     let replyStr = ''
     replyArr.forEach(item => replyStr+=item)
+    params.correctAnswers = correctAnswersStr
     params.reply = replyStr
-  } else if (questionArr[i].type === 5) params.reply = questionArr[i].yourAnswer
+  } else if (questionArr[i].type === 5) {
+    // params.reply = questionArr[i].yourAnswer
+    // params.correctAnswers = questionArr[i].okAnswer
+  }
   addPracticeQuestionAnswer(params)
     .then(res => {
       console.log('addPracticeQuestionAnswer: ', res);

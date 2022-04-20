@@ -546,139 +546,139 @@
 
 
 
-  // 原始的人员tree所有数据（接口返回）
-  let originalPersonTreeData = ref([])
-  // 处理好的人员tree所有数据
-  let personTreeData = ref([])
-  // 人员tree选中的数据
-  let personTreeCheckedData = ref([])
-  // 旧的数据（删除人员tree选中的数据使用）
-  let oldPersonTreeCheckedData
-  // 人员tree默认格式props
-  const personTreeDefaultProps = {
-    children: 'children',
-    label: 'name',
-    disabled: 'disabled',
-  }
-  // 添加人员弹出框是否显示
-  let setTestPersonVisible = ref(false)
-  // 添加人员loading
-  let setTestPersonLoading = ref(false)
-  // 是否编辑人员
-  let isEditPerson = ref(false)
-  // 添加人员弹出框 ref
-  let refPersonTree = ref(null)
-  // // tree 题目类型
-  // let paramsLevel = ref(0)
-  // 获取人员tree数据函数
-  function getDeptUsersListFunc() {
-    personTreeData.value = []
-    personTreeCheckedData.value = []
-    return new Promise((resolve, reject) => {
-      getDeptUsersList()
-        .then(res => {
-          console.log('getDeptUsersList: ', res);
-          originalPersonTreeData.value = res.data
-          personTreeData.value = proxy.handleTree(res.data, "id");
-          isEditPerson.value = true
-          resolve('')
-        }, err => reject(''))
-    })
-  }
-  // 获取已经添加的参考人员
-  function getEpaperUserListFunc() {
-    getEpaperUserList({epaperId: epaperId.value})
-      .then(res => {
-        console.log('getEpaperUserList: ', res);
-        if (res.code === 200) {
-          oldPersonTreeCheckedData = res.data
-          res.data.forEach(item => {
-            originalPersonTreeData.value.forEach(i => {
-              if (i.type === 1 && i.dataId === item) refPersonTree.value.setChecked(i.id, true, false)
-            })
-          })
-        }
-      })
-  }
-  // 删除已经添加的参考人员 （添加前先删除）
-  function deleteEpaperUserFunc() {
-    return new Promise((resolve, reject) => {
-      deleteEpaperUser({epaperId: epaperId.value, userIds: oldPersonTreeCheckedData})
-        .then(res => {
-          console.log('deleteEpaperUser: ', res);
-          resolve('')
-        }, err => reject('') )
-    })
-  }
-  // 人员管理按钮
-  const setTestPerson = async item => {
-    await getDeptUsersListFunc()
-    epaperId.value = item.id
-    getEpaperUserListFunc()
-    setTestPersonVisible.value = true
-  }
-  // 添加人员弹窗关闭事件
-  const setTestPersonHandleClose = done => {
-    if (setTestPersonLoading.value) return ElMessage.warning('正在添加，请稍后！')
-    if (!isEditPerson.value) return done()
-    ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
-      .then(() => {
-        done()
-        resetObj(addParams)
-      }, err => {})
-  }
-  // 左侧树checked或者右侧删除情况下 整理personTreeCheckedData数据
-  function sortPersonTreeCheckedData() {
-    // 所有选中数据处理 只要最下层
-    let checkedNodesArr = refPersonTree.value.getCheckedNodes()
-    // 每次点击都是空
-    personTreeCheckedData.value = []
-    checkedNodesArr.forEach(item => {
-      if (item.type === 1) {
-        checkedNodesArr.forEach(i => {
-          if (item.parentId === i.id) item.parentName = i.name
-        })
-        personTreeCheckedData.value.push(item)
-      }
-    })
-  }
-  // tree 选择考试人员函数
-  const handleCheckPersonTreeChange = ( data, checked, indeterminate ) => {
+  // // 原始的人员tree所有数据（接口返回）
+  // let originalPersonTreeData = ref([])
+  // // 处理好的人员tree所有数据
+  // let personTreeData = ref([])
+  // // 人员tree选中的数据
+  // let personTreeCheckedData = ref([])
+  // // 旧的数据（删除人员tree选中的数据使用）
+  // let oldPersonTreeCheckedData
+  // // 人员tree默认格式props
+  // const personTreeDefaultProps = {
+  //   children: 'children',
+  //   label: 'name',
+  //   disabled: 'disabled',
+  // }
+  // // 添加人员弹出框是否显示
+  // let setTestPersonVisible = ref(false)
+  // // 添加人员loading
+  // let setTestPersonLoading = ref(false)
+  // // 是否编辑人员
+  // let isEditPerson = ref(false)
+  // // 添加人员弹出框 ref
+  // let refPersonTree = ref(null)
+  // // // tree 题目类型
+  // // let paramsLevel = ref(0)
+  // // 获取人员tree数据函数
+  // function getDeptUsersListFunc() {
+  //   personTreeData.value = []
+  //   personTreeCheckedData.value = []
+  //   return new Promise((resolve, reject) => {
+  //     getDeptUsersList()
+  //       .then(res => {
+  //         console.log('getDeptUsersList: ', res);
+  //         originalPersonTreeData.value = res.data
+  //         personTreeData.value = proxy.handleTree(res.data, "id");
+  //         isEditPerson.value = true
+  //         resolve('')
+  //       }, err => reject(''))
+  //   })
+  // }
+  // // 获取已经添加的参考人员
+  // function getEpaperUserListFunc() {
+  //   getEpaperUserList({epaperId: epaperId.value})
+  //     .then(res => {
+  //       console.log('getEpaperUserList: ', res);
+  //       if (res.code === 200) {
+  //         oldPersonTreeCheckedData = res.data
+  //         res.data.forEach(item => {
+  //           originalPersonTreeData.value.forEach(i => {
+  //             if (i.type === 1 && i.dataId === item) refPersonTree.value.setChecked(i.id, true, false)
+  //           })
+  //         })
+  //       }
+  //     })
+  // }
+  // // 删除已经添加的参考人员 （添加前先删除）
+  // function deleteEpaperUserFunc() {
+  //   return new Promise((resolve, reject) => {
+  //     deleteEpaperUser({epaperId: epaperId.value, userIds: oldPersonTreeCheckedData})
+  //       .then(res => {
+  //         console.log('deleteEpaperUser: ', res);
+  //         resolve('')
+  //       }, err => reject('') )
+  //   })
+  // }
+  // // 人员管理按钮
+  // const setTestPerson = async item => {
+  //   await getDeptUsersListFunc()
+  //   epaperId.value = item.id
+  //   getEpaperUserListFunc()
+  //   setTestPersonVisible.value = true
+  // }
+  // // 添加人员弹窗关闭事件
+  // const setTestPersonHandleClose = done => {
+  //   if (setTestPersonLoading.value) return ElMessage.warning('正在添加，请稍后！')
+  //   if (!isEditPerson.value) return done()
+  //   ElMessageBox.confirm('确认关闭弹窗吗? 所有未保存数据均会消失！')
+  //     .then(() => {
+  //       done()
+  //       resetObj(addParams)
+  //     }, err => {})
+  // }
+  // // 左侧树checked或者右侧删除情况下 整理personTreeCheckedData数据
+  // function sortPersonTreeCheckedData() {
+  //   // 所有选中数据处理 只要最下层
+  //   let checkedNodesArr = refPersonTree.value.getCheckedNodes()
+  //   // 每次点击都是空
+  //   personTreeCheckedData.value = []
+  //   checkedNodesArr.forEach(item => {
+  //     if (item.type === 1) {
+  //       checkedNodesArr.forEach(i => {
+  //         if (item.parentId === i.id) item.parentName = i.name
+  //       })
+  //       personTreeCheckedData.value.push(item)
+  //     }
+  //   })
+  // }
+  // // tree 选择考试人员函数
+  // const handleCheckPersonTreeChange = ( data, checked, indeterminate ) => {
 
-    // console.log(data, checked, indeterminate)
+  //   // console.log(data, checked, indeterminate)
 
-    console.log('所有选中key，包括父级 - getCheckedKeys: ',refPersonTree.value.getCheckedKeys());
-    console.log('所有选中数据对象，包括父级 - getCheckedNodes: ',refPersonTree.value.getCheckedNodes());
+  //   console.log('所有选中key，包括父级 - getCheckedKeys: ',refPersonTree.value.getCheckedKeys());
+  //   console.log('所有选中数据对象，包括父级 - getCheckedNodes: ',refPersonTree.value.getCheckedNodes());
 
-    sortPersonTreeCheckedData()
+  //   sortPersonTreeCheckedData()
 
-  }
-  // 删除本地回显考试人员
-  const deleteTestPeople = (item) => {
-    refPersonTree.value.setChecked(item.id, false, false)
-    sortPersonTreeCheckedData()
-  }
-  // 保存考试人员
-  async function addEpaperUserFunc() {
-    let userIdArr = []
-    personTreeCheckedData.value.forEach(item => userIdArr.push(item.dataId))
-    let params = {
-      epaperId: epaperId.value,
-      userId: userIdArr
-    }
-    if (oldPersonTreeCheckedData.length > 0) await deleteEpaperUserFunc()
-    setTestPersonLoading.value = true
-    addEpaperUser(params)
-      .then(res => {
-        console.log('addEpaperUser: ', res);
-        setTestPersonLoading.value = false
-        if (res.code === 200) {
-          ElMessage.success('参考人员保存成功！')
-          isEditPerson.value = false
-          setTestPersonVisible.value = false
-        }
-      }, err => setTestPersonLoading.value = false )
-  }
+  // }
+  // // 删除本地回显考试人员
+  // const deleteTestPeople = (item) => {
+  //   refPersonTree.value.setChecked(item.id, false, false)
+  //   sortPersonTreeCheckedData()
+  // }
+  // // 保存考试人员
+  // async function addEpaperUserFunc() {
+  //   let userIdArr = []
+  //   personTreeCheckedData.value.forEach(item => userIdArr.push(item.dataId))
+  //   let params = {
+  //     epaperId: epaperId.value,
+  //     userId: userIdArr
+  //   }
+  //   if (oldPersonTreeCheckedData.length > 0) await deleteEpaperUserFunc()
+  //   setTestPersonLoading.value = true
+  //   addEpaperUser(params)
+  //     .then(res => {
+  //       console.log('addEpaperUser: ', res);
+  //       setTestPersonLoading.value = false
+  //       if (res.code === 200) {
+  //         ElMessage.success('参考人员保存成功！')
+  //         isEditPerson.value = false
+  //         setTestPersonVisible.value = false
+  //       }
+  //     }, err => setTestPersonLoading.value = false )
+  // }
 
 
 

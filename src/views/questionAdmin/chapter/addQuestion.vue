@@ -15,7 +15,7 @@
       <el-form-item label="标题" prop="title">
         <el-input
           v-model="addProductParams.title"
-          :rows="2"
+          :rows="5"
           type="textarea"
           placeholder="请输入标题"
         />
@@ -63,7 +63,7 @@
       <el-form-item label="解析" prop="">
         <el-input
           v-model="addProductParams.explanation"
-          :rows="5"
+          :rows="12"
           type="textarea"
           placeholder="请输入答案解析"
         />
@@ -381,12 +381,8 @@
   // 重置表单
   const resetForm = formEl => {
     if (!formEl) return
-    if (routeObj.value.isEdit) {
-      formEl.resetFields()
-    } else {
-      proxy.$tab.closeOpenPage()
-      proxy.$tab.openPage(`/questionAdmin/chapter/questionList?id=${routeObj.value.id}&level=${routeObj.value.level}&title=${routeObj.value.title}`)
-    }
+    proxy.$tab.closeOpenPage()
+    proxy.$tab.openPage(`/questionAdmin/chapter/questionList?id=${routeObj.value.id}&level=${routeObj.value.level}&title=${routeObj.value.title}`)
   }
   
   // 根据id返回指定的的lebel

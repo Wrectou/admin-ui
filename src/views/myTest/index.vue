@@ -136,6 +136,7 @@ getEpaperSelflistFunc()
 // 开始时间 / 结束时间 计算属性
 let calcStartTime = computed(time => {
   return (time) => {
+    if (time == null) return 1
     var nowTime = new Date().getTime()
     var startTime = new Date(time).getTime()
     return startTime-nowTime
@@ -143,6 +144,7 @@ let calcStartTime = computed(time => {
 })
 let calcEndtTime = computed(time => {
   return (time) => {
+    if (time == null) return 1
     var nowTime = new Date().getTime()
     var endTime = new Date(time).getTime()
     return endTime-nowTime

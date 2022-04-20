@@ -10,14 +10,14 @@
         <el-col :span="20" class="control-left">
           <el-col :span="5">
             <el-form-item label="类型" prop="level">
-              <el-select v-model="sectionListParams.level">
+              <el-select v-model="sectionListParams.level" @change="levelChange">
                 <el-option v-for="item in levelOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item label="难度" prop="difficulty">
-              <el-select v-model="sectionListParams.difficulty">
+              <el-select v-model="sectionListParams.difficulty" @change="difficultyChange">
                 <el-option v-for="item in difficultyOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -89,6 +89,14 @@
     { value: 4, label: '4星'},
     { value: 5, label: '5星'},
   ]
+
+  const levelChange = e => {
+    proxy.$cache.session.setJSON('levelChange', e)
+  }
+
+  const difficultyChange = e => {
+    proxy.$cache.session.setJSON('difficultyChange', e)
+  }
   
   // 产品列表参数
   const sectionListParams = reactive({
@@ -98,6 +106,10 @@
     difficulty: '',
     title: '',
   })
+
+  if (proxy.$cache.session.getJSON('levelChange') !== undefined) sectionListParams.level = proxy.$cache.session.getJSON('levelChange')
+
+  if (proxy.$cache.session.getJSON('difficultyChange')) sectionListParams.difficulty = proxy.$cache.session.getJSON('difficultyChange')
   
   let isLoading = ref(false)
 
@@ -122,18 +134,20 @@
 
   // 重置搜索项
   const resetFormParams = () => {
+    proxy.$cache.session.remove('levelChange')
+    proxy.$cache.session.remove('difficultyChange')
     proxy.resetForm("queryRef")
     searchSections()
   }
 
   // 编辑
   const editProduct = row => {
-    router.push({name: 'questionAdminAddChapter', query: {id: row.id, isEdit: true }})
+    router.push({path: '/questionAdmin/chapter/add', query: {id: row.id, isEdit: true }})
   }
   
   // 题目管理
   const setProductCity = row => {
-    router.push({name: 'questionAdminChapterQuestionList', query: {id: row.id, title: row.title, level: row.level }})
+    router.push({path: '/questionAdmin/chapter/questionList', query: {id: row.id, title: row.title, level: row.level }})
   }
   
   // 删除
@@ -150,7 +164,7 @@
   }
 
   // 添加产品
-  const addChapter = () => router.push({name: 'questionAdminAddChapter'})
+  const addChapter = () => router.push({path: '/questionAdmin/chapter/add'})
 
   // 根据id返回指定的的lebel
   const returnTargetOptionsLabel = (key, target) => target.filter(item => item.value === key )[0].label

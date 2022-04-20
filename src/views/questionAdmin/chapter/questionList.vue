@@ -8,7 +8,7 @@
     >
       <el-row class="control-bar">
         <el-col :span="20" class="control-left">
-          <el-col :span="7">
+          <el-col :span="14">
             <el-form-item label="当前章节" prop="operateCityId"> <div>{{routeObj.title}}</div> </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -32,12 +32,14 @@
       :data="areaListData.items"
       style="width: 100%;"
     >
-      <el-table-column label="标题" align="center" prop="title"  />
-      <el-table-column label="分数" align="center" prop="score" />
+      <el-table-column label="标题" align="left" prop="title" width="660" />
+      <el-table-column label="分数" align="center" prop="score">
+        <template #default="scope">{{scope.row.score}}分</template>
+      </el-table-column>
       <el-table-column label="类型" align="center" prop="type">
         <template #default="scope">{{returnTargetOptionsLabel(scope.row.type, typeOptions)}}</template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="320">
+      <el-table-column label="操作" align="center" width="200">
         <template #default="scope">
           <el-button type="primary" @click="editProductCityFunc(scope.row)">编辑</el-button>
           <el-button type="info" @click="deleteProductCityFunc(scope.row)">删除</el-button>
@@ -109,7 +111,7 @@
 
   // 编辑
   const editProductCityFunc = row => {
-    router.push({name: 'questionAdminAddQuestion', query: { isEdit: true, id: routeObj.value.id, level: routeObj.value.level, practiceId: row.id, title: routeObj.value.title, }})
+    router.push({path: '/questionAdmin/chapter/addQuestion', query: { isEdit: true, id: routeObj.value.id, level: routeObj.value.level, practiceId: row.id, title: routeObj.value.title, }})
   }
   
   // 删除
@@ -127,7 +129,7 @@
   }
 
   // 添加产城市
-  const addQuestion = () => router.push({name: 'questionAdminAddQuestion', query: { id: routeObj.value.id, level: routeObj.value.level, title: routeObj.value.title, }})
+  const addQuestion = () => router.push({path: '/questionAdmin/chapter/addQuestion', query: { id: routeObj.value.id, level: routeObj.value.level, title: routeObj.value.title, }})
   
   // 根据id返回指定的的lebel
   const returnTargetOptionsLabel = (key, target) => target.filter(item => item.value === key )[0].label

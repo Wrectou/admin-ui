@@ -149,12 +149,8 @@ function editProductFunc(addProductParams) {
 // 重置表单
 const resetForm = (formEl) => {
   if (!formEl) return
-  if (!isEdit.value) {
-    formEl.resetFields()
-  } else {
-    proxy.$tab.closeOpenPage()
-    proxy.$tab.openPage("/questionAdmin/special/list")
-  }
+  proxy.$tab.closeOpenPage()
+  proxy.$tab.openPage("/questionAdmin/special/list")
 };
 
 </script>

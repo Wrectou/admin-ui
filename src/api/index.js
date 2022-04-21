@@ -551,6 +551,26 @@ export const getNewlist = params => {
     })
 }
 
+// 考试成绩统计（自己）
+export const getHisEpaperScoreList = params => {
+    return request({
+        url: '/business/question/hisEpaperScoreList',
+        method: 'get',
+        params
+    })
+}
+
+// 根据试卷ID统计人员的考试成绩
+export const getEpaperPeopleStaticList = params => {
+    return request({
+        url: '/business/epaper/epaperPeopleStatic',
+        method: 'get',
+        params
+    })
+}
+
+
+
 
 
 

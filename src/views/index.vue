@@ -66,6 +66,8 @@
       </el-col>
       <!-- 右边 -->
       <el-col :span="8">
+
+        <!-- 考试相关 -->
         <div class="content-box">
           <div class="title">考试相关</div>
           <el-row class="content test-content">
@@ -75,6 +77,8 @@
             </el-col>
           </el-row>
         </div>
+
+        <!-- 学习报告 -->
         <div class="content-box">
           <div class="title">学习报告</div>
           <el-tabs v-model="tabsActiveName" class="demo-tabs">
@@ -108,6 +112,43 @@
             </el-tab-pane> -->
           </el-tabs>
         </div>
+
+        <!-- 成绩统计 -->
+        <div class="content-box">
+          <div class="title">成绩统计</div>
+
+          <div class="epaper-score-box">
+            <div class="epaper" v-for="item in hisEpaperScoreList" :key="item.id">
+              <h3 class="title">
+                {{item.epaperName}}
+                <div class="status success" v-if="item.passFlag === 1">合格</div>
+                <div class="status danger" v-else>不合格</div>
+              </h3>
+              <div class="time">{{item.create_time}}</div>
+              <div class="content">
+                <div class="content-item">
+                  <div class="value">{{item.score ? item.score : 0}}</div>
+                  <div class="key">得分</div>
+                </div>
+                <div class="content-item">
+                  <div class="value">{{(item.accuracy*100).toFixed()}}%</div>
+                  <div class="key">正确率</div>
+                </div>
+                <div class="content-item">
+                  <div class="value">{{item.answerNum ? item.answerNum : 0}}</div>
+                  <div class="key">答题数量</div>
+                </div>
+                <div class="content-item">
+                  <div class="value">{{timesToText(item.times)}}</div>
+                  <div class="key">用时</div>
+                </div>
+              </div>
+            </div>
+            <div class="no-data" v-if="hisEpaperScoreList.length < 1">暂无数据</div>
+          </div>
+          
+        </div>
+
       </el-col>
     </el-row>
 
@@ -159,7 +200,7 @@
 
 <script setup name="Index">
 
-import { getLearnCatalogueList, getEpaperSelflist, getEnum, getTodayLearnGrade, getNewlist } from '@/api'
+import { getLearnCatalogueList, getEpaperSelflist, getEnum, getTodayLearnGrade, getNewlist, getHisEpaperScoreList } from '@/api'
 import { useRouter } from 'vue-router'
 
 import icon1 from '@/assets/images/index/1.png'
@@ -319,7 +360,6 @@ function getTodayLearnGradeFunc() {
     })
 }
 getTodayLearnGradeFunc()
-
 // 秒转中文时分秒
 function timesToText(second) {
   let lefttime = second*1000,
@@ -329,6 +369,18 @@ function timesToText(second) {
       if (lefth !== '00') return lefth + "时" + leftm + "分" + lefts + "秒"
       else return leftm + "分" + lefts + "秒"
 }
+
+
+// 考试成绩统计（自己）
+let hisEpaperScoreList = ref([])
+function getHisEpaperScoreListFunc() {
+  getHisEpaperScoreList()
+    .then(res => {
+      console.log('getHisEpaperScoreList: ', res);
+      hisEpaperScoreList.value = res.data
+    })
+}
+getHisEpaperScoreListFunc()
 
 </script>
 
@@ -673,6 +725,73 @@ function timesToText(second) {
   }
 }
 
+
+.epaper-score-box{
+  .epaper{
+    margin: 6px 0;
+    padding: 8px 25px;
+    border-bottom: solid 1px #e1e1e1;
+    .title{
+      display: flex;
+      margin: 0;
+      font-size: 16px;
+      color: #444;
+      .status{
+        margin: 0 0 0 16px;
+        padding: 2px 6px;
+        font-size: 12px;
+        color: #777;
+        background: #f1f1f1;
+        border: solid 1px #e1e1e1;
+        border-radius: 6px;
+        line-height: 1;
+      }
+      .success{
+        color: #fff;
+        background: var(--el-color-success);
+        border: solid 1px var(--el-color-success);
+      }
+      .danger{
+        color: #fff;
+        background: var(--el-color-danger);
+        border: solid 1px var(--el-color-danger);
+      }
+    }
+    .time{
+      margin: 6px 0;
+      font-size: 13px;
+      color: #999;
+    }
+    .content{
+      margin: 10px 0 0;
+      padding: 4px 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      color: #555;
+      .content-item{
+        text-align: center;
+        .key{
+          margin: 4px 0 0;
+          font-size: 13px;
+        }
+        .value{
+          color: var(--el-color-primary);
+          font-size: 15px;
+        }
+      }
+    }
+  }
+  .epaper:last-child{
+    border: none;
+  }
+  .no-data{
+    margin: 6px 0;
+    padding: 8px 25px;
+    font-size: 12px;
+    color: #999;
+  }
+}
 
 </style>
 

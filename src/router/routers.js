@@ -429,6 +429,20 @@ export const routes = [
         ],
     },
     {
+        path: "/questionAdmin/score",
+        component: Layout,
+        meta: { title: "", icon: "dict", noCache: true },
+        children: [
+            {
+                path: "list",
+                noCache: true,
+                component: () => import ("@/views/questionAdmin/score/list"),
+                name: "questionAdminScoreList",
+                meta: { title: "考试成绩管理", icon: "dict" },
+            },
+        ],
+    },
+    {
         path: "/questionAdmin/guide",
         component: Layout,
         meta: { title: "", icon: "dict", noCache: true },

@@ -187,6 +187,7 @@ function getTodayQuestionFunc() {
     .then(res => {
       console.log('getTodayQuestion: ', res);
       toolbarObj.chapter = res.data.title
+      if (res.data.questionList.length < 1) return isLoadingData.value = false
       res.data.questionList.forEach(item => {
         let obj = {
           id: item.id,

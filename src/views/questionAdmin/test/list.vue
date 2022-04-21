@@ -44,11 +44,12 @@
       <el-table-column label="题目类型" align="center" prop="level">
         <template #default="scope">{{returnTargetOptionsLabel(scope.row.level, levelOptions)}}</template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="400">
+      <el-table-column label="操作" align="center" width="460">
         <template #default="scope">
           <el-button type="primary" @click="editTest(scope.row)">编辑</el-button>
           <el-button type="success" @click="setTestPerson(scope.row)">人员管理</el-button>
           <el-button type="danger" @click="setTestSubject(scope.row)">试题管理</el-button>
+          <el-button type="primary" @click="testScore(scope.row)">查看成绩</el-button>
           <el-button type="info" @click="deleteTest(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -410,7 +411,10 @@
           })
       })
   }
-
+  // 查看成绩
+  const testScore = row => {
+    router.push({ name: 'questionAdminScoreList', query: { epaperId: row.id} })
+  }
 
 
   // 试卷ID

@@ -533,7 +533,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     score: questionArr[i].fraction,
     times: questionArr[i].answerTime
   }
-  // 1 3 单选 判断  5 论述
+  // 1 3 单选 判断  4 论述
   // 2 多选 不定项
   if (questionArr[i].type === 1 || questionArr[i].type === 3) {
     params.reply = IndexTolLetter[questionArr[i].yourAnswer]
@@ -547,9 +547,10 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     replyArr.forEach(item => replyStr+=item)
     params.correctAnswers = correctAnswersStr
     params.reply = replyStr
-  } else if (questionArr[i].type === 5) {
-    // params.reply = questionArr[i].yourAnswer
-    // params.correctAnswers = questionArr[i].okAnswer
+  } else if (questionArr[i].type === 4) {
+    params.reply = ''
+    params.score = questionArr[i].yourAnswer
+    params.correctAnswers = questionArr[i].okAnswer
   }
   addPracticeQuestionAnswer(params)
     .then(res => {

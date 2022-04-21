@@ -186,6 +186,9 @@ export default {
       // 视频上传方法
       file_picker_callback: (callback, value, meta) => {
         if (meta.filetype === 'media') {
+          let buttonBoxEl = document.getElementsByClassName('tox-dialog__footer-end')
+          let cancelButton = buttonBoxEl[0].childNodes[0]
+          let uploadButton = buttonBoxEl[0].childNodes[1]
           // 动态创建上传input，并进行模拟点击上传操作，达到本地上传视频效果。
           let input = document.createElement('input')  // 创建一个隐藏的input
           input.setAttribute('type', 'file')
@@ -195,11 +198,22 @@ export default {
             let formdata = new FormData()
             formdata.append("file", file)
             let uploadFileUrl = `${import.meta.env.VITE_APP_BASE_API}/common/upload`
+            uploadButton.innerHTML = '上传中...'
+            uploadButton.disabled = true
+            cancelButton.disabled = true
             axios.post(uploadFileUrl, formdata, { headers: { 'Authorization': 'Bearer ' + getToken() } })
               .then(res => {
                 console.log('images_upload_handler: ',res);
+                uploadButton.innerHTML = '保存'
+                uploadButton.disabled = false
+                cancelButton.disabled = false
                 callback(res.data.url)
-              }, err => failure('error') )
+              }, err => {
+                uploadButton.innerHTML = '保存'
+                uploadButton.disabled = false
+                cancelButton.disabled = false
+                failure('error')
+              })
           }
           // 触发点击
           input.click()

@@ -23,6 +23,7 @@
             难度<el-rate v-model="item.difficulty" disabled text-color="#ff9900" />
           </div>
           <div class="button-box">
+            <el-button v-if="item.lastEpaperScoreId !== null && calcEndtTime(item.endTime) > 0" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
             <el-button 
               v-if="item.hisNum === 0" 
               :disabled="firstTestButtonText(item) !== '开始考试'" 
@@ -32,9 +33,8 @@
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button v-if="item.lastEpaperScoreId !== null" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
             <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
-            <el-button v-if="item.hisNum > 0 && item.lastEpaperScoreId == null && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
+            <el-button v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
             <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
           </div>
         </div>
@@ -158,7 +158,6 @@ let timer = null
 const countDown = (item) => {
   clearInterval(timer)
   timer = setInterval(() => {
-    console.log(item);
     var nowtimeGetTime = new Date().getTime(),
         endtimeGetTime = new Date(item.startTime).getTime()
     var lefttime = endtimeGetTime - nowtimeGetTime,
@@ -166,7 +165,6 @@ const countDown = (item) => {
         lefth = Math.floor(lefttime/(1000*60*60)%24) < 10 ? '0' + Math.floor(lefttime/(1000*60*60)%24) : Math.floor(lefttime/(1000*60*60)%24),
         leftm = Math.floor(lefttime/(1000*60)%60) < 10 ? '0'+Math.floor(lefttime/(1000*60)%60) : Math.floor(lefttime/(1000*60)%60),
         lefts = Math.floor(lefttime/1000%60) < 10 ? '0'+Math.floor(lefttime/1000%60) : Math.floor(lefttime/1000%60);
-        console.log(lefttime);
     if ((lefttime/1000).toFixed() >= 1) {
       countTime.value = leftd + '天 ' + lefth + ":" + leftm + ":" + lefts
     } else {
@@ -185,9 +183,6 @@ let firstTestButtonText = computed(item => {
     let endTime = new Date(item.endTime).getTime()
     let calcStartTime = startTime-nowTime
     let calcEndTime = endTime-nowTime
-    console.log(item);
-    console.log(calcStartTime);
-    console.log(calcEndTime);
     if (calcStartTime < 0 && calcEndTime < 0) return '停止考试'
     else if (calcStartTime < 0 && calcEndTime > 0) return '开始考试'
     else {

@@ -23,6 +23,7 @@
             难度<el-rate v-model="item.difficulty" disabled text-color="#ff9900" />
           </div>
           <div class="button-box">
+            <el-button v-if="item.lastEpaperScoreId !== null && calcEndtTime(item.endTime) > 0" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
             <el-button 
               v-if="item.hisNum === 0" 
               :disabled="firstTestButtonText(item) !== '开始考试'" 
@@ -32,9 +33,8 @@
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button v-if="item.lastEpaperScoreId !== null" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
             <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
-            <el-button v-if="item.hisNum > 0 && item.lastEpaperScoreId == null && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
+            <el-button v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
             <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
           </div>
         </div>

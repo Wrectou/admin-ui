@@ -303,7 +303,7 @@ function getTodayLearnGradeFunc() {
   getTodayLearnGrade()
     .then(res => {
       console.log('getTodayLearnGrade: ', res);
-      if (res.code == 200) {
+      if (res.code == 200 && res.data.length > 0) {
         let allAnswerNum = 0
         let allCorrentNum = 0
         let allTimes = 0

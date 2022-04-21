@@ -82,6 +82,7 @@
 
     & .theme-dark .is-active > .el-sub-menu__title {
       color: $base-menu-color-active !important;
+      // color: #333 !important;
     }
 
     & .nest-menu .el-sub-menu>.el-sub-menu__title,

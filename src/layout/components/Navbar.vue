@@ -1,6 +1,9 @@
 <template>
   <div class="navbar">
     <hamburger id="hamburger-container" :is-active="getters.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <div @click="goRepalce" v-if="isShowBack" style="float: left; height: 100%; display: inline-flex; align-items: center;">
+      <el-icon style="color: #333;"><ArrowLeftBold /></el-icon>
+    </div>
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!$store.state.settings.topNav" />
     <top-nav id="topmenu-container" class="topmenu-container" v-if="$store.state.settings.topNav" />
 
@@ -39,9 +42,9 @@
               <router-link to="/user/profile">
                 <el-dropdown-item>个人中心</el-dropdown-item>
               </router-link>
-              <!-- <el-dropdown-item command="setLayout">
+              <el-dropdown-item command="setLayout">
                 <span>布局设置</span>
-              </el-dropdown-item> -->
+              </el-dropdown-item>
               <el-dropdown-item divided command="logout">
                 <span>退出登录</span>
               </el-dropdown-item>
@@ -64,8 +67,45 @@ import HeaderSearch from '@/components/HeaderSearch'
 import RuoYiGit from '@/components/RuoYi/Git'
 import RuoYiDoc from '@/components/RuoYi/Doc'
 
+import { ArrowLeftBold } from '@element-plus/icons-vue'
+
 const store = useStore();
 const getters = computed(() => store.getters);
+
+const route = useRoute()
+const router = useRouter()
+
+let isShowBack = ref(false)
+let replacePath = ref('')
+
+const back = () => {
+  // console.log(route);
+  // console.log(route.name);
+  const nowRouteName = route.name
+  // console.log(router);
+  // console.log(router.options.routes);
+  router.options.routes.forEach(item => {
+    if (item.children) {
+      item.children.find(i => {
+        if (i.name === nowRouteName) {
+          if (item.path !== '' && item.children[0].path !== '') replacePath.value = item.path + '/' + item.children[0].path
+          else if (item.path !== '' || item.children[0].path !== '') replacePath.value = item.children[0].path
+          // console.log('item.path: ',item.path);
+          // console.log('item.children[0].path: ',item.children[0].path);
+          // console.log('replacePath.value: ',replacePath.value);
+          // console.log('router.path: ',route.path);
+          if (route.path === replacePath.value) isShowBack.value = false
+          else isShowBack.value = true
+        }
+      })
+    }
+  })
+}
+watch(() => route.name, () => {
+  back()
+})
+
+const goRepalce = () => router.replace({path: replacePath.value})
 
 const { proxy } = getCurrentInstance()
 

@@ -314,7 +314,7 @@ function getTodayLearnGradeFunc() {
         })
         todayLearnGrade.allAnswerNum = allAnswerNum + '题'
         todayLearnGrade.allTimes = timesToText(allTimes)
-        todayLearnGrade.allRate = (allCorrentNum/allAnswerNum).toFixed(2) + '%'
+        todayLearnGrade.allRate = (allCorrentNum/allAnswerNum*100).toFixed() + '%'
       }
     })
 }

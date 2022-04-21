@@ -16,6 +16,7 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-skeleton v-if="isLoading" :rows="5" animated />
     <QuestionNotFound v-if="!isLoading && selflist.data.length < 1" />
   </div>
 </template>
@@ -66,7 +67,6 @@ const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id
 
 .container{
   padding: 20px;
-  text-align: center;
 }
 
 .box-card {

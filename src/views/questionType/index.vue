@@ -22,7 +22,7 @@
 
 <script setup name="questionType">
 
-import { getHomeData, getEnum } from '@/api'
+// import { } from '@/api'
 
 const { proxy } = getCurrentInstance()
 

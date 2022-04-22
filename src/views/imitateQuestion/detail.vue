@@ -30,7 +30,7 @@
 
 <script setup name="imitateQuestionDetail">
 
-import { getEpaperDetail, getEnum } from '@/api'
+import { getEpaperDetail } from '@/api'
 
 const { proxy } = getCurrentInstance()
 

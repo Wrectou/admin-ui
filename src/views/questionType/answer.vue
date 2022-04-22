@@ -122,7 +122,7 @@
 
 <script setup name="questionTypeAnswer">
 
-import { getHomeData, getEnum } from '@/api'
+// import { } from '@/api'
 
 import { IndexTolLetter, questionType } from '@/utils'
 

@@ -30,7 +30,7 @@
 
 <script setup name="realQuestionDetail">
 
-import { getEpaperDetail, getEnum } from '@/api'
+import { getEpaperDetail } from '@/api'
 
 const { proxy } = getCurrentInstance()
 

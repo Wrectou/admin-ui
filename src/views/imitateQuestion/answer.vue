@@ -174,17 +174,15 @@
 
 <script setup name="imitateQuestionAnswer">
 
-import { getSelfLastQuestionId, getTestEpaperQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, epaperCommit } from '@/api'
+import { getTestEpaperQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, epaperCommit } from '@/api'
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
-import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
 
-import { useRouter, useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+import { onBeforeRouteLeave } from 'vue-router'
 
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-import QuestionModel from '@/components/questionModel/index'
 import QuestionToolBar from '@/components/questionToolBar/index'
 import QuestionTitle from '@/components/questionTitle/index'
 import QuestionChangeIndex from '@/components/questionChangeIndex/index'
@@ -254,7 +252,6 @@ const countDown = () => {
 countDown()
 
 // 题目数组
-// const questionArr = reactive(allQuestionData)
 const questionArr = reactive([])
 
 // 加载题目数据

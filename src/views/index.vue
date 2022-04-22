@@ -1,8 +1,11 @@
 <template>
   <div class="container home">
+
     <el-row :gutter="20">
+
       <!-- 左边 -->
       <el-col :span="16">
+
         <!-- 日常学习 -->
         <div class="content-box">
           <div class="title">日常学习</div>
@@ -16,21 +19,10 @@
             </el-col>
           </el-row>
         </div>
-        <!-- 最新动态 -->
-        <!-- <div class="content-box">
-          <div class="title">最新动态</div>
-          <el-row class="content test-dynamic-content">
-            <el-col class="test" :span="24" v-for="item in epaperList.data" :key="item.id">
-              <div class="title" @click="goTestLink(item)"><el-icon><bell /></el-icon>{{ item.name }}</div>
-            </el-col>
-            <el-col class="title" v-if="epaperList.data.length < 1">暂无数据</el-col>
-          </el-row>
-        </div> -->
+
         <!-- 专题学习 -->
         <div class="content-box">
           <div class="title">专题学习<span class="more" @click="goMoreSpecial">更多</span></div>
-
-
           <div class="content special-list">
             <div class="special" :span="24" v-for="item in newlist" :key="item.id" @click="goSpecial(item)">
               <div class="poster">
@@ -47,23 +39,9 @@
               </div>
             </div>
           </div>
-          
-          <!-- <el-row class="content special-content">
-            <el-col class="special" :span="8" v-for="item in specialList.data" :key="item.id"  @click="goSpecial(item)">
-              <img class="logo" :src="item.picture" />
-              <div class="name">{{item.title}}</div>
-            </el-col>
-          </el-row> -->
-          
-          <!-- <el-col :span="6" class="special-box" v-for="item in specialList.data" :key="item.name">
-            <div class="special" @click="goSpecial(item)">
-              <img class="logo" :src="item.picture" />
-              <p class="title"> {{item.title}} </p>
-            </div>
-          </el-col> -->
-
         </div>
       </el-col>
+
       <!-- 右边 -->
       <el-col :span="8">
 
@@ -116,7 +94,6 @@
         <!-- 成绩统计 -->
         <div class="content-box">
           <div class="title">成绩统计</div>
-
           <div class="epaper-score-box">
             <div class="epaper" v-for="item in hisEpaperScoreList" :key="item.id">
               <h3 class="title">
@@ -146,54 +123,10 @@
             </div>
             <div class="no-data" v-if="hisEpaperScoreList.length < 1">暂无数据</div>
           </div>
-          
         </div>
 
       </el-col>
     </el-row>
-
-
-
-    <!-- <div class="tit">考试类型</div>
-    <div class="level-box">
-      <el-radio-group v-model="level" @change="levelChange">
-        <el-radio :label="0">基本级执法资格考试</el-radio>
-        <el-radio :label="1">高级执法资格考试</el-radio>
-      </el-radio-group>
-    </div>
-
-
-    <div class="tit">日常学习</div>
-    <el-row class="menu-row">
-      <el-col :span="3" class="menu-box" v-for="item in menuList" :key="item.name">
-        <div class="menu" @click="goLink(item.linkName)">
-          <img class="logo" :src="item.logo" />
-          <p class="title"> {{item.name}} </p>
-        </div>
-      </el-col>
-    </el-row>
-
-    
-    <div class="tit">我的考试</div>
-    <el-row>
-      <el-card class="test-box-card" shadow="never">
-        <div class="text" v-for="item in epaperList.data" :key="item.id">
-          <div class="title" @click="goTestLink(item)">{{ item.name }}<el-icon><arrow-right /></el-icon></div>
-        </div>
-      </el-card>
-    </el-row>
-
-
-    <div class="tit">专题学习</div>
-    <el-row>
-      <el-col :span="6" class="special-box" v-for="item in specialList.data" :key="item.name">
-        <div class="special" @click="goSpecial(item)">
-          <img class="logo" :src="item.picture" />
-          <p class="title"> {{item.title}} </p>
-        </div>
-      </el-col>
-    </el-row> -->
-
 
   </div>
 </template>
@@ -226,19 +159,7 @@ const handleClick = (tab, event) => {
   console.log(tab, event)
 }
 
-let level = ref('')
-if (proxy.$cache.session.getJSON('level')) level.value = proxy.$cache.session.getJSON('level')
-else {
-  level.value = 0
-  proxy.$cache.session.setJSON('level', level.value)
-}
-
-const levelChange = e => {
-  level.value = e
-  proxy.$cache.session.setJSON('level', level.value)
-}
-
-
+// 日常学习
 const menuList = reactive([
   { name: '章节练习', tip: '分不同章节进行练习', linkName: 'chapter', logo: icon1, },
   // { name: '题型练习', tip: '强化题型练习', linkName: 'questionType', logo: icon2, },
@@ -251,60 +172,13 @@ const menuList = reactive([
   // { name: '学习报告', tip: '', linkName: 'chapter', logo: icon8, },
 ])
 
+// 考试相关
 const tableList = reactive([
   { name: '考试指南', linkName: 'guide', logo: table1, },
   { name: '我的考试', linkName: 'myTest', logo: table2, },
 ])
 
-const specialList = reactive({
-  data: []
-})
-  // [
-  //   { name: '2021年高级考试复习资料', linkName: 'chapter', logo: special, },
-  //   { name: '民警办案实务', linkName: 'chapter', logo: special, },
-  //   { name: '刑事案卷', linkName: 'chapter', logo: special, },
-  //   { name: '行政法律文书', linkName: 'chapter', logo: special, },
-  //   { name: '刑事案卷', linkName: 'chapter', logo: special, },
-  //   { name: '行政法律文书', linkName: 'chapter', logo: special, },
-  //   { name: '2021年高级考试复习资料', linkName: 'chapter', logo: special, },
-  //   { name: '民警办案实务', linkName: 'chapter', logo: special, },
-  // ]
-
-function getLearnCatalogueListFunc() {
-  getLearnCatalogueList()
-    .then(res => {
-      console.log('getLearnCatalogueList: ', res);
-      specialList.data = res.rows
-    })
-}
-getLearnCatalogueListFunc()
-
-function goSpecial(item) {
-  router.push({ name: 'specialDetail', query: { id: item.id, title: item.title } })
-}
-
 const goLink = name => router.push({ name })
-
-// 我的考试  模拟假数据
-let isLoading = ref(false)
-const epaperList = reactive({
-  data: []
-})
-function getEpaperSelflistFunc() {
-  let params = {
-    etype: 2,
-    level: proxy.$cache.session.getJSON('level'),
-  }
-  isLoading.value = true
-  getEpaperSelflist(params)
-    .then(res => {
-      console.log('getEpaperSelflist: ', res);
-      isLoading.value = false
-      epaperList.data = res.rows
-    }, err => isLoading.value = false )
-}
-getEpaperSelflistFunc()
-const goTestLink = item => router.push({ name: 'myTest' })
 
 // 获取最新5条专题学习资料
 let newlist = ref([])
@@ -318,10 +192,12 @@ function getNewlistFunc() {
     })
 }
 getNewlistFunc()
+function goSpecial(item) {
+  router.push({ name: 'specialDetail', query: { id: item.id, title: item.title } })
+}
 
 // 更多专题
 const goMoreSpecial = () => router.push({ path: '/specialLearn/index' })
-
 
 // 获取今日学习数据
 let todayLearnGrade = reactive({

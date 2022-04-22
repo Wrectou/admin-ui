@@ -143,8 +143,6 @@ import { getSelfLastQuestionId, getQuestionList, getQuestionItem, getQuestionSta
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
-import { singleQuestionData, severalQuestionData, judgeQuestionData, discussQuestionData, allQuestionData } from '@/utils/question'
-
 import { ElMessage } from 'element-plus'
 import QuestionModel from '@/components/questionModel/index'
 import QuestionToolBar from '@/components/questionToolBar/index'
@@ -175,7 +173,6 @@ const reduceQuestionIndex = () => { if (questionIndex.value > 0) questionIndex.v
 const plusQuestionIndex = () => { if (questionIndex.value < questionArr.length-1) questionIndex.value ++ }
 
 // 题目数组
-// const questionArr = reactive(allQuestionData)
 const questionArr = reactive([])
 
 // 加载题目数据

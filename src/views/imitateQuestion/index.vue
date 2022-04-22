@@ -69,7 +69,7 @@
 
 import { onBeforeRouteLeave } from 'vue-router'
 
-import { getEpaperSelflist, getEpaperDetail, createEpaperScore } from '@/api'
+import { getEpaperSelflist, createEpaperScore } from '@/api'
 
 import QuestionNotFound from '@/components/questionNotFound/index'
 

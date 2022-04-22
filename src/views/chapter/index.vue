@@ -50,15 +50,6 @@ const selflist = reactive({
   data: []
 })
 
-// const data = reactive([
-//   { name: '社会主义法制理念', type: 1, isStudy: false, difficulty: 3, quesionNum: 50, answerNum: 0, url: 'chapterAnswer' },
-//   { name: '刑法', type: 2, isStudy: true, difficulty: 4, quesionNum: 100, answerNum: 4, url: 'chapterAnswer' },
-//   { name: '办案行政案件程序', type: 3, isStudy: false, difficulty: 2, quesionNum: 60, answerNum: 0, url: 'chapterAnswer' },
-//   { name: '人民警察使用警械和武器条例', type: 4, isStudy: false, difficulty: 3, quesionNum: 50, answerNum: 0, url: 'chapterAnswer' },
-//   { name: '宪法', type: 5, isStudy: true, difficulty: 4, quesionNum: 100, answerNum: 4, url: 'chapterAnswer' },
-//   { name: '办案刑事案件程序', type: 6, isStudy: false, difficulty: 2, quesionNum: 60, answerNum: 0, url: 'chapterAnswer' },
-// ])
-
 const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id, title: item.title } })
 
 </script>

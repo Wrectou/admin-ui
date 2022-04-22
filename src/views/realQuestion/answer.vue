@@ -151,18 +151,26 @@
       :before-close="testResulthandleClose"
     >
       <div class="result-content">
-        <img src="@/assets/images/success.png" alt="">
+        <el-row>
+          <el-col :sm="24" :lg="24" v-if="testResult.totalScore >= qualifiedScore">
+            <el-result icon="success" title="合格" />
+          </el-col>
+          <el-col :sm="24" :lg="24" v-else>
+            <el-result icon="error" title="不合格" />
+          </el-col>
+        </el-row>
         <div class="content">
           <div class="item">
-            <div class="num">{{testResult.totalScore}} 分</div>
+            <div class="num">{{testResult.totalScore}}</div>
             <div>得分</div>
           </div>
           <div class="item">
             <div class="num" v-if="testResult.times">{{secondToMinth(testResult.times)}}</div>
+            <div class="num" v-else>0</div>
             <div>用时</div>
           </div>
           <div class="item">
-            <div class="num">{{testResult.questionNum - testResult.correntNum}} 题</div>
+            <div class="num">{{testResult.questionNum - testResult.correntNum}}</div>
             <div>错题</div>
           </div>
         </div>
@@ -174,7 +182,7 @@
 
 <script setup name="realQuestionAnswer">
 
-import { getSelfLastQuestionId, getTestEpaperQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, epaperCommit } from '@/api'
+import { getTestEpaperQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, epaperCommit } from '@/api'
 
 import { IndexTolLetter, LetterToIndex, questionTypeToText } from '@/utils'
 
@@ -500,6 +508,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
   if (questionArr[i].type === 1 || questionArr[i].type === 3) {
     params.reply = IndexTolLetter[questionArr[i].yourAnswer]
     params.correctAnswers = IndexTolLetter[questionArr[i].okAnswer]
+    if (params.reply !== params.correctAnswers) params.score = 0
   } else if (questionArr[i].type === 2) {
     let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
     let correctAnswersStr = ''
@@ -509,10 +518,11 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     replyArr.forEach(item => replyStr+=item)
     params.correctAnswers = correctAnswersStr
     params.reply = replyStr
+    if (params.reply !== params.correctAnswers) params.score = 0
   } else if (questionArr[i].type === 4) {
     params.reply = ''
-    params.score = questionArr[i].yourAnswer
     params.correctAnswers = questionArr[i].okAnswer
+    params.score = questionArr[i].yourAnswer
   }
   addPracticeQuestionAnswer(params)
     .then(res => {
@@ -705,6 +715,8 @@ const haveTimeCompleteTest = async () => {
   }
 }
 
+// 合格分数
+let qualifiedScore = ref(route.query.qualifiedScore)
 // 交卷接口
 function epaperCommitFunc() {
   return new Promise((resolve, reject) => {
@@ -726,7 +738,12 @@ function epaperCommitFunc() {
 // 是否显示考试结果
 let showTestResultVisible = ref(false)
 // 考试结果数据
-let testResult = ref({})
+let testResult = ref({
+  totalScore: 0,
+  times: 0,
+  questionNum: 0,
+  correntNum: 0,
+})
 // 关闭考试结果
 const testResulthandleClose = done => {
   done()
@@ -893,14 +910,14 @@ onBeforeRouteLeave(() => {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    margin: 20px 0;
     .item{
       >div{
         font-size: 16px;
       }
       .num{
+        color: var(--el-color-primary);
         margin: 0 0 10px;
-        font-size: 20px;
+        font-size: 24px;
       }
     }
   }

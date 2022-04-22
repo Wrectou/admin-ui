@@ -1,7 +1,20 @@
 <template>
   <div class="container">
 
-    <el-row class="login-box">
+    <el-row v-if="width < 900">
+      
+      <el-col :sm="12" :lg="6">
+        <el-result
+          icon="warning"
+          title="提示信息"
+          sub-title="请用电脑端访问此系统已获得更好体验！"
+        >
+        </el-result>
+      </el-col>
+
+    </el-row>
+
+    <el-row class="login-box" v-else>
       <el-col :span="12">
         <div class="back">
           <h2 class="title">智慧学法</h2>
@@ -61,14 +74,18 @@
 
 <script setup>
 
+  import { useWindowSize } from '@vueuse/core'
+
   const store = useStore()
   const router = useRouter()
   const { proxy } = getCurrentInstance()
 
   const loginParams = reactive({
-    username: "admin",
-    password: "admin123",
+    username: "",
+    password: "",
   })
+
+  const { width } = useWindowSize()
 
   const loginRules = {
     username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
@@ -110,6 +127,12 @@
     width: 1030px;
     height: 100%;
   }
+}
+
+::v-deep(.el-row) {
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .back{

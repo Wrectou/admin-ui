@@ -216,14 +216,6 @@ export const routes = [
                 meta: { title: "历年真题", icon: "edit" },
             },
             {
-                path: "detail",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/realQuestion/detail"),
-                name: "realQuestionDetail",
-                meta: { title: "历年真题", icon: "edit" },
-            },
-            {
                 path: "answer",
                 noCache: true,
                 hidden: true,
@@ -243,14 +235,6 @@ export const routes = [
                 noCache: true,
                 component: () => import ("@/views/imitateQuestion/index"),
                 name: "imitateQuestion",
-                meta: { title: "模拟考试", icon: "edit" },
-            },
-            {
-                path: "detail",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/imitateQuestion/detail"),
-                name: "imitateQuestionDetail",
                 meta: { title: "模拟考试", icon: "edit" },
             },
             {

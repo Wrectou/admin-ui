@@ -62,41 +62,6 @@
     <!-- 没有数据 -->
     <QuestionNotFound v-if="!isLoading && epaperList.data.length < 1" />
 
-    <el-dialog
-      v-model="dialogVisible"
-      title="考试详情"
-      width="46%"
-    >
-      <div class="cont">
-        <div class="item">
-          <span class="key">考试名称：</span>
-          <span class="value">{{epaperDetail.data.name}}</span>
-        </div>
-        <div class="item">
-          <span class="key">考试类型：</span>
-          <span class="value">历年真题</span>
-        </div>
-        <div class="item">
-          <span class="key">总题数：</span>
-          <span class="value">{{epaperDetail.data.questionNum}}题</span>
-        </div>
-        <div class="item">
-          <span class="key">考试时间：</span>
-          <span class="value">{{epaperDetail.data.duration}}分钟</span>
-        </div>
-        <div class="item">
-          <span class="key">合格标准：</span>
-          <span class="value">满分{{epaperDetail.data.totalScore}}分，合格：{{epaperDetail.data.qualifiedScore}}分</span>
-        </div>
-      </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="goLink">开始考试</el-button>
-        </span>
-      </template>
-    </el-dialog>
-
   </div>
 </template>
 
@@ -104,7 +69,7 @@
 
 import { onBeforeRouteLeave } from 'vue-router'
 
-import { getEpaperSelflist, getEpaperDetail, createEpaperScore } from '@/api'
+import { getEpaperSelflist, createEpaperScore } from '@/api'
 
 import QuestionNotFound from '@/components/questionNotFound/index'
 
@@ -200,7 +165,7 @@ const goTest = item => {
     .then(res => {
       console.log('createEpaperScore: ', res);
       if (res.code === 200) {
-        router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: res.data, name: item.name } })
+        router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: res.data, name: item.name, qualifiedScore: item.qualifiedScore } })
         proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000))
         proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
       }
@@ -209,43 +174,10 @@ const goTest = item => {
 
 // 继续考试
 const goContinueTest = item => {
-  // createEpaperScore({epaperId: item.id, level: proxy.$cache.session.getJSON('level')})
-  //   .then(res => {
-  //     console.log('createEpaperScore: ', res);
-  //     if (res.code === 200) {
-        router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: item.lastEpaperScoreId, name: item.name, isContinue: true } })
-        proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000 - item.lastAnswerTotalTimes*1000))
-        proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
-        proxy.$cache.session.setJSON('lastRealQuestionData', item)
-    //   }
-    // })
-}
-
-
-// 考试详情
-const epaperDetail = reactive({
-  data: {}
-})
-function getEpaperDetailFunc(id) {
-  getEpaperDetail(id)
-    .then(res => {
-      console.log('getEpaperDetail: ',res);
-      epaperDetail.data = res.data
-    })
-}
-let dialogVisible = ref(false)
-const goLink = () => {
-  let params = {
-    epaperId: 0,
-    level: proxy.$cache.session.getJSON('level'),
-  }
-  createEpaperScore(params)
-    .then(res => {
-      
-    })
-  dialogVisible.value = false
-  router.push({ name: 'realQuestionAnswer', query: { id: epaperDetail.data.id, name: epaperDetail.data.name } })
-  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + epaperDetail.data.duration*60*1000))
+  router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: item.lastEpaperScoreId, name: item.name, qualifiedScore: item.qualifiedScore, isContinue: true } })
+  proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000 - item.lastAnswerTotalTimes*1000))
+  proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
+  proxy.$cache.session.setJSON('lastRealQuestionData', item)
 }
 
 // 离开导航守卫

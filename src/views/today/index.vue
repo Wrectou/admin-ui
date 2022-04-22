@@ -362,6 +362,7 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id, practiceId) {
   if (questionArr[i].type === 1 || questionArr[i].type === 3) {
     params.reply = IndexTolLetter[questionArr[i].yourAnswer]
     params.correctAnswers = IndexTolLetter[questionArr[i].okAnswer]
+    if (params.reply !== params.correctAnswers) params.score = 0
   } else if (questionArr[i].type === 2) {
     let correctAnswersArr = params.correctAnswers.map(item => item = IndexTolLetter[item])
     let correctAnswersStr = ''
@@ -371,10 +372,11 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id, practiceId) {
     replyArr.forEach(item => replyStr+=item)
     params.correctAnswers = correctAnswersStr
     params.reply = replyStr
+    if (params.reply !== params.correctAnswers) params.score = 0
   } else if (questionArr[i].type === 4) {
     params.reply = ''
-    params.score = questionArr[i].yourAnswer
     params.correctAnswers = questionArr[i].okAnswer
+    params.score = questionArr[i].yourAnswer
   }
   addPracticeQuestionAnswer(params)
     .then(res => {

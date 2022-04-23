@@ -88,12 +88,12 @@
 
   // 编辑
   const editProduct = row => {
-    router.push({name: 'questionAdminAddSpecial', query: {id: row.id, isEdit: true }})
+    router.push({path: '/questionAdmin/special/add', query: {id: row.id, isEdit: true }})
   }
   
   // 题目管理
   const setProductCity = row => {
-    router.push({name: 'questionAdminSpecialSpecialList', query: {id: row.id, title: row.title, level: row.level }})
+    router.push({path: '/questionAdmin/special/specialList', query: {id: row.id, title: row.title, level: row.level }})
   }
   
   // 删除
@@ -110,7 +110,7 @@
   }
 
   // 添加产品
-  const addChapter = () => router.push({name: 'questionAdminAddSpecial'})
+  const addChapter = () => router.push({path: '/questionAdmin/special/add'})
 
 </script>
 

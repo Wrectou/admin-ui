@@ -359,134 +359,146 @@ export const routes = [
     },
 
 
+    // {
+    //     path: "/questionAdmin",
+    //     component: Layout,
+    //     meta: { title: "", icon: "dict", noCache: true },
+    //     // children: [
+            
+    //     // ],
+    // },
 
-    {
-        path: "/questionAdmin/chapter",
-        component: Layout,
-        meta: { title: "", icon: "dict", noCache: true },
-        children: [
-            {
-                path: "list",
-                noCache: true,
-                component: () => import ("@/views/questionAdmin/chapter/list"),
-                name: "questionAdminChapterList",
-                meta: { title: "章节练习管理", icon: "dict" },
-            },
-            {
-                path: "add",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/chapter/add"),
-                name: "questionAdminAddChapter",
-                meta: { title: "添加章节", icon: "dict" },
-            },
-            {
-                path: "questionList",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/chapter/questionList"),
-                name: "questionAdminChapterQuestionList",
-                meta: { title: "章节题目管理", icon: "dict" },
-            },
-            {
-                path: "addQuestion",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/chapter/addQuestion"),
-                name: "questionAdminAddQuestion",
-                meta: { title: "添加题目", icon: "dict" },
-            },
-        ],
-    },
-    {
-        path: "/questionAdmin/test",
-        component: Layout,
-        meta: { title: "", icon: "dict", noCache: true },
-        children: [
-            {
-                path: "list",
-                noCache: true,
-                component: () => import ("@/views/questionAdmin/test/list"),
-                name: "questionAdminTestList",
-                meta: { title: "考试试卷管理", icon: "dict" },
-            },
-        ],
-    },
-    {
-        path: "/questionAdmin/score",
-        component: Layout,
-        meta: { title: "", icon: "dict", noCache: true },
-        children: [
-            {
-                path: "list",
-                noCache: true,
-                component: () => import ("@/views/questionAdmin/score/list"),
-                name: "questionAdminScoreList",
-                meta: { title: "考试成绩管理", icon: "dict" },
-            },
-        ],
-    },
-    {
-        path: "/questionAdmin/guide",
-        component: Layout,
-        meta: { title: "", icon: "dict", noCache: true },
-        children: [
-            {
-                path: "list",
-                noCache: true,
-                component: () => import ("@/views/questionAdmin/guide/list"),
-                name: "questionAdminGuideList",
-                meta: { title: "考试指南管理", icon: "dict" },
-            },
-            {
-                path: "add",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/guide/add"),
-                name: "questionAdminAddGuide",
-                meta: { title: "添加考试指南", icon: "dict" },
-            },
-        ],
-    },
-    {
-        path: "/questionAdmin/special",
-        component: Layout,
-        meta: { title: "", icon: "dict", noCache: true },
-        children: [
-            {
-                path: "list",
-                noCache: true,
-                component: () => import ("@/views/questionAdmin/special/list"),
-                name: "questionAdminSpecialList",
-                meta: { title: "专题学习管理", icon: "dict" },
-            },
-            {
-                path: "add",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/special/add"),
-                name: "questionAdminAddSpecial",
-                meta: { title: "添加专题", icon: "dict" },
-            },
-            {
-                path: "specialList",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/special/specialList"),
-                name: "questionAdminSpecialSpecialList",
-                meta: { title: "专题学习管理", icon: "dict" },
-            },
-            {
-                path: "addSpecial",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionAdmin/special/addSpecial"),
-                name: "questionAdminAddSpecialSpecial",
-                meta: { title: "添加内容", icon: "dict" },
-            },
-        ],
-    },
+
+
+    // {
+    //     path: "/questionAdmin/chapter",
+    //     component: Layout,
+    //     meta: { title: "", icon: "dict", noCache: true },
+    //     children: [
+    //         {
+    //             path: "list",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionAdmin/chapter/list"),
+    //             name: "questionAdminChapterList",
+    //             meta: { title: "章节练习管理", icon: "dict" },
+    //         },
+    //         {
+    //             path: "add",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/chapter/add"),
+    //             name: "questionAdminAddChapter",
+    //             meta: { title: "添加章节", icon: "dict" },
+    //         },
+    //         {
+    //             path: "questionList",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/chapter/questionList"),
+    //             name: "questionAdminChapterQuestionList",
+    //             meta: { title: "章节题目管理", icon: "dict" },
+    //         },
+    //         {
+    //             path: "addQuestion",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/chapter/addQuestion"),
+    //             name: "questionAdminAddQuestion",
+    //             meta: { title: "添加题目", icon: "dict" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/questionAdmin/test",
+    //     component: Layout,
+    //     meta: { title: "", icon: "dict", noCache: true },
+    //     children: [
+    //         {
+    //             path: "list",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionAdmin/test/list"),
+    //             name: "questionAdminTestList",
+    //             meta: { title: "考试试卷管理", icon: "dict" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/questionAdmin/score",
+    //     component: Layout,
+    //     meta: { title: "", icon: "dict", noCache: true },
+    //     children: [
+    //         {
+    //             path: "list",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionAdmin/score/list"),
+    //             name: "questionAdminScoreList",
+    //             meta: { title: "考试成绩管理", icon: "dict" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/questionAdmin/guide",
+    //     component: Layout,
+    //     meta: { title: "", icon: "dict", noCache: true },
+    //     children: [
+    //         {
+    //             path: "list",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionAdmin/guide/list"),
+    //             name: "questionAdminGuideList",
+    //             meta: { title: "考试指南管理", icon: "dict" },
+    //         },
+    //         {
+    //             path: "add",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/guide/add"),
+    //             name: "questionAdminAddGuide",
+    //             meta: { title: "添加考试指南", icon: "dict" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/questionAdmin/special",
+    //     component: Layout,
+    //     meta: { title: "", icon: "dict", noCache: true },
+    //     children: [
+    //         {
+    //             path: "list",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionAdmin/special/list"),
+    //             name: "questionAdminSpecialList",
+    //             meta: { title: "专题学习管理", icon: "dict" },
+    //         },
+    //         {
+    //             path: "add",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/special/add"),
+    //             name: "questionAdminAddSpecial",
+    //             meta: { title: "添加专题", icon: "dict" },
+    //         },
+    //         {
+    //             path: "specialList",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/special/specialList"),
+    //             name: "questionAdminSpecialSpecialList",
+    //             meta: { title: "专题学习管理", icon: "dict" },
+    //         },
+    //         {
+    //             path: "addSpecial",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionAdmin/special/addSpecial"),
+    //             name: "questionAdminAddSpecialSpecial",
+    //             meta: { title: "添加内容", icon: "dict" },
+    //         },
+    //     ],
+    // },
     
 
 
 ]
+
+// vjhjreqc

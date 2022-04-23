@@ -413,7 +413,7 @@
   }
   // 查看成绩
   const testScore = row => {
-    router.push({ name: 'questionAdminScoreList', query: { epaperId: row.id} })
+    router.push({ path: '/questionAdmin/score/list', query: { epaperId: row.id} })
   }
 
 

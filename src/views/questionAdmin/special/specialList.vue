@@ -95,7 +95,7 @@
 
   // 编辑
   const editProductCityFunc = row => {
-    router.push({name: 'questionAdminAddSpecialSpecial', query: { isEdit: true, id: row.id, learnId: routeObj.value.id, title: routeObj.value.title, }})
+    router.push({path: '/questionAdmin/special/addSpecial', query: { isEdit: true, id: row.id, learnId: routeObj.value.id, title: routeObj.value.title, }})
   }
   
   // 删除
@@ -113,7 +113,7 @@
   }
 
   // 添加产城市
-  const addQuestion = () => router.push({name: 'questionAdminAddSpecialSpecial', query: { id: routeObj.value.id, learnId: routeObj.value.id, title: routeObj.value.title, }})
+  const addQuestion = () => router.push({path: '/questionAdmin/special/addSpecial', query: { id: routeObj.value.id, learnId: routeObj.value.id, title: routeObj.value.title, }})
   
 </script>
 

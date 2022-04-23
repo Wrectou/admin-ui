@@ -54,8 +54,7 @@
 
 <script setup name="questionAdminChapterQuestionList">
 
-  import { getChannelAreaList, getQuestionList, deleteQuestion } from "@/api"
-  import getEnumKeyArr from "@/hooks/getEnumKeyArr"
+  import { getQuestionList, deleteQuestion } from "@/api"
 
   const route = useRoute()
   const router = useRouter()

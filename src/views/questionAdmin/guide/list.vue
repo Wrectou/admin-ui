@@ -87,7 +87,7 @@
 
   // 编辑
   const editProduct = row => {
-    router.push({name: 'questionAdminAddGuide', query: {id: row.id, isEdit: true }})
+    router.push({path: '/questionAdmin/guide/add', query: {id: row.id, isEdit: true }})
   }
   
   // 删除
@@ -104,7 +104,7 @@
   }
 
   // 添加产品
-  const addChapter = () => router.push({name: 'questionAdminAddGuide'})
+  const addChapter = () => router.push({path: '/questionAdmin/guide/add'})
 
 </script>
 

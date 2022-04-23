@@ -76,7 +76,7 @@
       <el-table-column label="结果" align="center" prop="pass">
         <template #default="scope">
           <div class="table-res">
-            <el-button :type="scope.row.pass ? 'success' : 'danger' ">{{scope.row.pass ? '合格' : '不合格' }}</el-button>
+            <el-tag :type="scope.row.pass ? 'success' : 'danger' ">{{scope.row.pass ? '合格' : '不合格' }}</el-tag>
           </div>
         </template>
       </el-table-column>
@@ -116,6 +116,7 @@
     { value: 2, label: '正式考试'},
   ]
   
+  let tableLoading = ref(false)
 
   let peopleStaticListParams = reactive({
     epaperId: ''
@@ -126,8 +127,6 @@
     getEpaperPeopleStaticListFunc()
   }
 
-
-  let tableLoading = ref(false)
   let peopleStaticListData = ref({
     attendance: 0,
     flunk: 0,

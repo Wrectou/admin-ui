@@ -145,7 +145,7 @@ const countDown = (item) => {
 // 第一次开始按钮文字计算属性
 let firstTestButtonText = computed(item => {
   return (item) => {
-    if (!item.startTime && !item.endTime) return '开始考试'
+    if (!item.startTime || !item.endTime) return '开始考试'
     let nowTime = new Date().getTime()
     let startTime = new Date(item.startTime).getTime()
     let endTime = new Date(item.endTime).getTime()

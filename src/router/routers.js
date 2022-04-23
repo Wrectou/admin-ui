@@ -145,28 +145,28 @@ export const routes = [
             }
         ]
     },
-    {
-        path: "/chapter",
-        component: Layout,
-        meta: { title: "", icon: "swagger", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/chapter/index"),
-                name: "chapter",
-                meta: { title: "章节练习", icon: "swagger" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/chapter/answer"),
-                name: "chapterAnswer",
-                meta: { title: "章节练习", icon: "swagger" },
-            },
-        ],
-    },
+    // {
+    //     path: "/chapter",
+    //     component: Layout,
+    //     meta: { title: "", icon: "swagger", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/chapter/index"),
+    //             name: "chapter",
+    //             meta: { title: "章节练习", icon: "swagger" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/chapter/answer"),
+    //             name: "chapterAnswer",
+    //             meta: { title: "章节练习", icon: "swagger" },
+    //         },
+    //     ],
+    // },
     // {
     //     path: "/questionType",
     //     component: Layout,
@@ -189,174 +189,174 @@ export const routes = [
     //         },
     //     ],
     // },
-    {
-        path: "/today",
-        component: Layout,
-        meta: { title: "", icon: "edit", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/today/index"),
-                name: "today",
-                meta: { title: "每日练习", icon: "edit" },
-            },
-        ],
-    },
-    {
-        path: "/realQuestion",
-        component: Layout,
-        meta: { title: "", icon: "edit", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/realQuestion/index"),
-                name: "realQuestion",
-                meta: { title: "历年真题", icon: "edit" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/realQuestion/answer"),
-                name: "realQuestionAnswer",
-                meta: { title: "历年真题", icon: "edit" },
-            },
-        ],
-    },
-    {
-        path: "/imitateQuestion",
-        component: Layout,
-        meta: { title: "", icon: "edit", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/imitateQuestion/index"),
-                name: "imitateQuestion",
-                meta: { title: "模拟考试", icon: "edit" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/imitateQuestion/answer"),
-                name: "imitateQuestionAnswer",
-                meta: { title: "模拟考试", icon: "edit" },
-            },
-        ],
-    },
-    {
-        path: "/myTest",
-        component: Layout,
-        meta: { title: "", icon: "edit", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/myTest/index"),
-                name: "myTest",
-                meta: { title: "我的考试", icon: "edit" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/myTest/answer"),
-                name: "myTestAnswer",
-                meta: { title: "我的考试", icon: "edit" },
-            },
-        ],
-    },
-    {
-        path: "/errorQuestion",
-        component: Layout,
-        meta: { title: "", icon: "log", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/errorQuestion/index"),
-                name: "errorQuestion",
-                meta: { title: "错题巩固", icon: "log" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/errorQuestion/answer"),
-                name: "errorQuestionAnswer",
-                meta: { title: "错题巩固", icon: "log" },
-            },
-        ],
-    },
-    {
-        path: "/myCollect",
-        component: Layout,
-        meta: { title: "", icon: "rate", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/myCollect/index"),
-                name: "myCollect",
-                meta: { title: "我的收藏", icon: "rate" },
-            },
-            {
-                path: "answer",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/myCollect/answer"),
-                name: "myCollectAnswer",
-                meta: { title: "我的收藏", icon: "rate" },
-            },
-        ],
-    },
-    {
-        path: "/questionGuide",
-        component: Layout,
-        meta: { title: "", icon: "education", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/questionGuide/index"),
-                name: "guide",
-                meta: { title: "考试指南", icon: "education" },
-            },
-            {
-                path: "detail",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/questionGuide/detail"),
-                name: "guideDetail",
-                meta: { title: "考试指南", icon: "education" },
-            },
-        ],
-    },
-    {
-        path: "/specialLearn",
-        component: Layout,
-        meta: { title: "", icon: "education", noCache: true },
-        children: [
-            {
-                path: "index",
-                noCache: true,
-                component: () => import ("@/views/specialLearn/index"),
-                name: "special",
-                meta: { title: "专题学习", icon: "education" },
-            },
-            {
-                path: "detail",
-                noCache: true,
-                hidden: true,
-                component: () => import ("@/views/specialLearn/detail"),
-                name: "specialDetail",
-                meta: { title: "专题学习", icon: "education" },
-            },
-        ],
-    },
+    // {
+    //     path: "/today",
+    //     component: Layout,
+    //     meta: { title: "", icon: "edit", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/today/index"),
+    //             name: "today",
+    //             meta: { title: "每日练习", icon: "edit" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/realQuestion",
+    //     component: Layout,
+    //     meta: { title: "", icon: "edit", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/realQuestion/index"),
+    //             name: "realQuestion",
+    //             meta: { title: "历年真题", icon: "edit" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/realQuestion/answer"),
+    //             name: "realQuestionAnswer",
+    //             meta: { title: "历年真题", icon: "edit" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/imitateQuestion",
+    //     component: Layout,
+    //     meta: { title: "", icon: "edit", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/imitateQuestion/index"),
+    //             name: "imitateQuestion",
+    //             meta: { title: "模拟考试", icon: "edit" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/imitateQuestion/answer"),
+    //             name: "imitateQuestionAnswer",
+    //             meta: { title: "模拟考试", icon: "edit" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/myTest",
+    //     component: Layout,
+    //     meta: { title: "", icon: "edit", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/myTest/index"),
+    //             name: "myTest",
+    //             meta: { title: "我的考试", icon: "edit" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/myTest/answer"),
+    //             name: "myTestAnswer",
+    //             meta: { title: "我的考试", icon: "edit" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/errorQuestion",
+    //     component: Layout,
+    //     meta: { title: "", icon: "log", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/errorQuestion/index"),
+    //             name: "errorQuestion",
+    //             meta: { title: "错题巩固", icon: "log" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/errorQuestion/answer"),
+    //             name: "errorQuestionAnswer",
+    //             meta: { title: "错题巩固", icon: "log" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/myCollect",
+    //     component: Layout,
+    //     meta: { title: "", icon: "rate", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/myCollect/index"),
+    //             name: "myCollect",
+    //             meta: { title: "我的收藏", icon: "rate" },
+    //         },
+    //         {
+    //             path: "answer",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/myCollect/answer"),
+    //             name: "myCollectAnswer",
+    //             meta: { title: "我的收藏", icon: "rate" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/questionGuide",
+    //     component: Layout,
+    //     meta: { title: "", icon: "education", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/questionGuide/index"),
+    //             name: "guide",
+    //             meta: { title: "考试指南", icon: "education" },
+    //         },
+    //         {
+    //             path: "detail",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/questionGuide/detail"),
+    //             name: "guideDetail",
+    //             meta: { title: "考试指南", icon: "education" },
+    //         },
+    //     ],
+    // },
+    // {
+    //     path: "/specialLearn",
+    //     component: Layout,
+    //     meta: { title: "", icon: "education", noCache: true },
+    //     children: [
+    //         {
+    //             path: "index",
+    //             noCache: true,
+    //             component: () => import ("@/views/specialLearn/index"),
+    //             name: "special",
+    //             meta: { title: "专题学习", icon: "education" },
+    //         },
+    //         {
+    //             path: "detail",
+    //             noCache: true,
+    //             hidden: true,
+    //             component: () => import ("@/views/specialLearn/detail"),
+    //             name: "specialDetail",
+    //             meta: { title: "专题学习", icon: "education" },
+    //         },
+    //     ],
+    // },
 
 
     // {

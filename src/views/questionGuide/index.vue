@@ -57,7 +57,7 @@ function getGuideListFunc() {
 }
 getGuideListFunc()
 
-const goLink = item => router.push({ name: 'guideDetail', query: { id: item.id } })
+const goLink = item => router.push({ path: '/questionGuide/detail', query: { id: item.id } })
 
 
 </script>

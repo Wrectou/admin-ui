@@ -161,24 +161,22 @@ const handleClick = (tab, event) => {
 
 // 日常学习
 const menuList = reactive([
-  { name: '章节练习', tip: '分不同章节进行练习', linkName: 'chapter', logo: icon1, },
+  { name: '章节练习', tip: '分不同章节进行练习', linkName: '/chapter/index', logo: icon1, },
   // { name: '题型练习', tip: '强化题型练习', linkName: 'questionType', logo: icon2, },
-  { name: '每日练习', tip: '每日进行巩固练习', linkName: 'today', logo: icon3, },
-  { name: '历年真题', tip: '历年真题题库', linkName: 'realQuestion', logo: icon4, },
-  { name: '模拟考试', tip: '仿真考试练习', linkName: 'imitateQuestion', logo: icon5, },
-  { name: '错题巩固', tip: '对错题进行专项练习', linkName: 'errorQuestion', logo: icon6, },
-  { name: '我的收藏', tip: '收藏题目随时浏览', linkName: 'myCollect', logo: icon7, },
-  // { name: '考试指南', tip: '', linkName: 'guide', logo: icon8, },
-  // { name: '学习报告', tip: '', linkName: 'chapter', logo: icon8, },
+  { name: '每日练习', tip: '每日进行巩固练习', linkName: '/today/index', logo: icon3, },
+  { name: '历年真题', tip: '历年真题题库', linkName: '/realQuestion/index', logo: icon4, },
+  { name: '模拟考试', tip: '仿真考试练习', linkName: '/imitateQuestion/index', logo: icon5, },
+  { name: '错题巩固', tip: '对错题进行专项练习', linkName: '/errorQuestion/index', logo: icon6, },
+  { name: '我的收藏', tip: '收藏题目随时浏览', linkName: '/myCollect/index', logo: icon7, },
 ])
 
 // 考试相关
 const tableList = reactive([
-  { name: '考试指南', linkName: 'guide', logo: table1, },
-  { name: '我的考试', linkName: 'myTest', logo: table2, },
+  { name: '考试指南', linkName: '/questionGuide/index', logo: table1, },
+  { name: '我的考试', linkName: '/myTest/index', logo: table2, },
 ])
 
-const goLink = name => router.push({ name })
+const goLink = path => router.push({ path })
 
 // 获取最新5条专题学习资料
 let newlist = ref([])
@@ -193,7 +191,7 @@ function getNewlistFunc() {
 }
 getNewlistFunc()
 function goSpecial(item) {
-  router.push({ name: 'specialDetail', query: { id: item.id, title: item.title } })
+  router.push({ path: '/specialLearn/detail', query: { id: item.id, title: item.title } })
 }
 
 // 更多专题

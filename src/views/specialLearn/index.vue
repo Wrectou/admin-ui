@@ -133,7 +133,7 @@ function getLearnMaterialsListFunc() {
 }
 getLearnMaterialsListFunc()
 
-const goLink = item => router.push({ name: 'specialDetail', query: { id: item.id } })
+const goLink = item => router.push({ path: '/specialLearn/detail', query: { id: item.id } })
 
 
 </script>

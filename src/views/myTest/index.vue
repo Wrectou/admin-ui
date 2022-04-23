@@ -165,7 +165,7 @@ const goTest = item => {
     .then(res => {
       console.log('createEpaperScore: ', res);
       if (res.code === 200) {
-        router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: res.data, name: item.name, qualifiedScore: item.qualifiedScore } })
+        router.push({ path: '/myTest/index', query: { id: item.id, epaperScore: res.data, name: item.name, qualifiedScore: item.qualifiedScore } })
         proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000))
         proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
       }
@@ -174,7 +174,7 @@ const goTest = item => {
 
 // 继续考试
 const goContinueTest = item => {
-  router.push({ name: 'myTestAnswer', query: { id: item.id, epaperScore: item.lastEpaperScoreId, name: item.name, qualifiedScore: item.qualifiedScore, isContinue: true } })
+  router.push({ path: '/myTest/index', query: { id: item.id, epaperScore: item.lastEpaperScoreId, name: item.name, qualifiedScore: item.qualifiedScore, isContinue: true } })
   proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000 - item.lastAnswerTotalTimes*1000))
   proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
   proxy.$cache.session.setJSON('lastRealQuestionData', item)

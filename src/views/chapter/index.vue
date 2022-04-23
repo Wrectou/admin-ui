@@ -50,7 +50,7 @@ const selflist = reactive({
   data: []
 })
 
-const goLink = item => router.push({ name: 'chapterAnswer', query: { id: item.id, title: item.title } })
+const goLink = item => router.push({ path: '/chapter/answer', query: { id: item.id, title: item.title } })
 
 </script>
 

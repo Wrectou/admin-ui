@@ -27,6 +27,9 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="2">
+            <el-button type="primary" @click="handleExport">导出</el-button>
+          </el-col>
           <!-- <el-col :span="4">
             <el-form-item label="" prop="name" class="search-input">
               <el-input v-model="listParams.name" placeholder="输入试卷名称" />
@@ -81,7 +84,7 @@
       <el-table-column label="结果" align="center" prop="pass">
         <template #default="scope">
           <div class="table-res">
-            <el-tag :type="scope.row.pass ? 'success' : 'danger' ">{{scope.row.pass ? '合格' : '不合格' }}</el-tag>
+            <el-tag :type="scope.row.pass === '合格' ? 'success' : 'danger' ">{{scope.row.pass === '合格' ? '合格' : '不合格' }}</el-tag>
           </div>
         </template>
       </el-table-column>
@@ -135,7 +138,7 @@
   let peopleStaticListData = ref({
     attendance: 0,
     flunk: 0,
-    pass: 0,
+    pass: '不合格',
     missing: 0,
     supposed: 0,
     peopleScoreList: [],
@@ -204,6 +207,21 @@
         lefts = Math.floor(lefttime/1000%60) < 10 ? '0'+Math.floor(lefttime/1000%60) : Math.floor(lefttime/1000%60);
         if (lefth !== '00') return lefth + "时" + leftm + "分" + lefts + "秒"
         else return leftm + "分" + lefts + "秒"
+  }
+
+
+  // 导出试卷成绩
+  function handleExport() {
+    if (!peopleStaticListParams.epaperId) return ElMessage.error('请先选择所要导出成绩的试卷！')
+    let downloadUrl = `business/epaper/export`
+    proxy.download(downloadUrl, { epaperId: peopleStaticListParams.epaperId }, `《${returnTargetOptionsLabel(peopleStaticListParams.epaperId, testNameOptions)}》考试成绩统计.xlsx`);
+  }
+
+  // 根据id返回指定的的lebel
+  const returnTargetOptionsLabel = (key, target) => {
+    let str = ''
+    target.filter(item => { if (item.value === key) str = item.label })
+    return str
   }
   
 </script>

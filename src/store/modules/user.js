@@ -4,6 +4,8 @@ import defAva from '@/assets/logo/user.jpg'
 
 import { login } from "@/api"
 
+import store from '@/store'
+
 const user = {
   state: {
     token: getToken(),
@@ -58,6 +60,12 @@ const user = {
           if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', res.roles)
             commit('SET_PERMISSIONS', res.permissions)
+            if (res.roles.includes('all') || res.roles.includes('admin')) {
+              store.dispatch('settings/changeSetting', {
+                key: 'tagsView',
+                value: true
+              })
+            }
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }

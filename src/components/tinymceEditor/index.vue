@@ -18,6 +18,8 @@ import { getToken } from '@/utils/auth'
 // 引入tinymce编辑器
 import Editor from "@tinymce/tinymce-vue"
 
+import { ElMessage, ElMessageBox } from 'element-plus'
+
 // 引入方式引入node_modules里的tinymce相关文件文件
 import tinymce from "tinymce/tinymce" // tinymce默认hidden，不引入则不显示编辑器
 import "tinymce/themes/silver" // 编辑器主题，不引入则报错
@@ -207,6 +209,7 @@ export default {
                 uploadButton.innerHTML = '保存'
                 uploadButton.disabled = false
                 cancelButton.disabled = false
+                if (res.data.code !== 200) ElMessage.error(res.data.msg)
                 callback(res.data.url)
               }, err => {
                 uploadButton.innerHTML = '保存'

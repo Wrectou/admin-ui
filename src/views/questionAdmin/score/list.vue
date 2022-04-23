@@ -69,7 +69,7 @@
       <el-table-column label="姓名" align="center" prop="userName" />
       <el-table-column label="所在部门" align="center" prop="deptName" />
       <el-table-column label="得分" align="center" prop="totalScore" />
-      <el-table-column label="考试时间" align="center" prop="create_time" />
+      <el-table-column label="考试时间" align="center" prop="createTime" />
       <el-table-column label="用时" align="center" prop="times">
         <template #default="scope">{{timesToText(scope.row.times)}}</template>
       </el-table-column>

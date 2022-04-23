@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="login">
 
-    <el-row v-if="width < 900">
+    <el-row v-if="width < 600">
       
       <el-col :sm="12" :lg="6">
         <el-result
@@ -14,60 +14,55 @@
 
     </el-row>
 
-    <el-row class="login-box" v-else>
-      <el-col :span="12">
-        <div class="back">
-          <h2 class="title">智慧学法</h2>
+    <el-row v-else>
+      <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16" class="hidden-md-and-down">
+        <div class="title-area">
+          <h2>智慧学法</h2>
+          <p>依法治国，执政为民</p>
+          <p>大力弘扬法治精神， 共筑伟大中国梦。</p>
         </div>
       </el-col>
-      <el-col :span="12">
-        <div class="login">
-
-          <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form">
-            <!-- <h3 class="title">智慧学法</h3> -->
-            <el-form-item prop="username">
-              <el-input
-                v-model="loginParams.username"
-                type="text"
-                size="large"
-                auto-complete="off"
-                placeholder="账号"
-              >
-                <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
-              </el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
-                v-model="loginParams.password"
-                type="password"
-                size="large"
-                auto-complete="off"
-                placeholder="密码"
-                @keyup.enter="handleLogin"
-              >
-                <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
-              </el-input>
-            </el-form-item>
-            <el-form-item style="width:100%;">
-              <el-button
-                round
-                :loading="isLoading"
-                size="large"
-                type="primary"
-                style="width:100%;"
-                @click.prevent="handleLogin"
-              >
-                <span v-if="!isLoading">登 录</span>
-                <span v-else>登 录 中...</span>
-              </el-button>
-            </el-form-item>
-          </el-form>
-          
-        </div>
-
-      
-      </el-col>
+      <el-col :xs="22" :sm="22" :md="22" :lg="8" :xl="8">
+        <el-form ref="loginRef" :model="loginParams" :rules="loginRules" class="login-form" label-position="top">
+          <h3 class="title">登录</h3>
+          <el-form-item prop="username" label="用户名/手机号">
+            <el-input
+              v-model="loginParams.username"
+              type="text"
+              auto-complete="off"
+              placeholder="请输入用户名/手机号"
+            >
+              <!-- <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template> -->
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="password" label="密码" class="password">
+            <el-input
+              v-model="loginParams.password"
+              :type="isShow?'text':'password'"
+              auto-complete="off"
+              placeholder="请输入密码"
+              @keyup.enter="handleLogin"
+            >
+              <!-- <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template> -->
+            </el-input>
+            <div :class="['iconfont', isShow?'icon-icon_close_eyes_open':'icon-icon_close_eyes']" @click="isShow = !isShow"></div>
+          </el-form-item>
+          <el-form-item style="width:100%;">
+            <el-button
+              :loading="isLoading"
+              type="primary"
+              class="btn"
+              round
+              @click.prevent="handleLogin"
+            >
+              <span v-if="!isLoading">登 录</span>
+              <span v-else>登 录 中...</span>
+            </el-button>
+          </el-form-item>
+        </el-form>
+     </el-col>
     </el-row>
+    
 
   </div>
 </template>
@@ -86,6 +81,8 @@
   })
 
   const { width } = useWindowSize()
+
+  const isShow = ref(false)
 
   const loginRules = {
     username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
@@ -114,76 +111,83 @@
 </script>
 
 <style lang='scss' scoped>
-.container {
-  margin-bottom: 100px;
-  background: #5490e6 url("../assets/images/login-background.png") center bottom no-repeat;
-  background-size: cover;
-  height: 100%;
-  .login-box{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    width: 1030px;
-    height: 100%;
-  }
-}
-
-::v-deep(.el-row) {
-  height: 100%;
-  align-items: center;
+.login {
+  display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
 }
-
-.back{
-  padding: 180px 0 0;
-  height: 500px;
-  background: rgba(255,255,255,.2);
-  .title{
-    color: #fff;
-    font-size: 44px;
-    text-shadow: 0 2px 4px rgb(0 0 0 / 25%);
-    text-align: center;
-  }
+.login::after{
+   content: "";
+    width:100%;
+    height:100%;
+    position: absolute;
+    left:0;
+    top:0;
+    z-index: 2;
+    background-image: url("@/assets/images/login-bg.png");
+    background-size: cover;
 }
-
-.login{
-  height: 500px;
-  background: #fff;
+.title {
+  margin: 0px auto 50px auto;
+  text-align: center;
+  color: #0486FE;
+  font-size: 22px;
+  font-weight: bold;
 }
-
 
 .login-form {
-  border-radius: 6px;
-  background: #ffffff;
-  padding: 150px 40px 40px 40px;
-  .title {
-    margin: 0px auto 30px auto;
-    text-align: center;
-    color: #707070;
-  }
-  .el-input {
-    margin: 0 0 16px 0;
-    height: 42px;
-    ::v-deep(.el-input__inner) {
-      padding-left: calc(5px + 20px + 16px);
-      height: 42px;
-      font-size: 16px;
+  width: 400px;
+  padding: 50px 50px 40px;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 17px 5px rgba(217, 217, 217, 0.37);
+  border-radius: 20px;
+  position: relative;
+  z-index: 999;
+  ::v-deep(.el-input) {
+    height: 38px;
+   
+    input {
+      height: 38px;
       box-shadow: none;
-      border-bottom: 1px solid #ccc;
-      border-radius: 0;
+      border: none !important;
+      border-bottom: 1px solid #E3E3E3 !important;
+      padding-left: 10px;
+    }
+  }
+  .password{
+    position: relative;
+    input{
+      padding-right: 40px;
+    }
+    .iconfont{
+      font-size: 12px;
+      color: #eee;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 999;
+      cursor: pointer;
     }
   }
   .input-icon {
     height: 39px;
     width: 14px;
-    margin-left: 0px;
+    margin-left: 2px;
   }
-  ::v-deep(.el-button){
-    margin: 14px 0 0;
-    height: 46px;
-    font-size: 20px;
+  .btn{
+    width:100%; 
+    height:50px;
+    border-radius: 26px;
   }
+}
+
+.login-form .el-form-item__label{
+  color: #D9D9D9 !important;
+  padding-bottom: 0;
 }
 .login-tip {
   font-size: 13px;
@@ -192,7 +196,7 @@
 }
 .login-code {
   width: 33%;
-  height: 40px;
+  height: 38px;
   float: right;
   img {
     cursor: pointer;
@@ -206,13 +210,72 @@
   bottom: 0;
   width: 100%;
   text-align: center;
-  color: #fff;
+  color: #999;
   font-family: Arial;
   font-size: 12px;
   letter-spacing: 1px;
+  z-index: 999;
+  flex: 1 0 100%;
+  line-height: 1.5;
+  a{
+    color: #999;
+  }
 }
 .login-code-img {
-  height: 40px;
-  padding-left: 12px;
+  height: 38px;
+}
+.title-area{
+  position: relative;
+  margin-right: 86px;
+  z-index: 999;
+  h2{
+    font-size: 100px;
+    color: #171717;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  p{
+    font-size: 20px;
+    color: #171717;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+}
+@media screen and (max-width: 768px) {
+  #app{
+    background-color: initial;
+  }
+  .login {
+    // background: #999;
+    filter:(12px)
+  }
+  .login:after{
+    filter: blur(10px);
+    opacity: 0.1;
+}
+  .login-form {
+    width: 330px;
+    padding: 30px 40px;
+    box-shadow: 0px 1px 17px 1px rgb(217 217 217 / 37%);
+    .btn{
+      height:42px;
+    }
+  }
+  .title{
+    margin-bottom: 30px;
+  }
+  // .el-login-footer {
+  //   color: #fff;
+  // }
+}
+@media screen and (min-width: 1204px) and (max-width: 1440px) {
+  .title-area h2{
+    font-size: 80px;
+    padding-top: 0px;
+  }
+  .title-area p{
+    font-size: 16px;
+    line-height: 1;
+  }
 }
 </style>

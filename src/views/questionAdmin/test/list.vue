@@ -599,15 +599,13 @@
   function getAllSectionQuestionListFunc() {
     subjectTreeData.value = []
     subjectTreeCheckedData.value = []
-    return new Promise((resolve, reject) => {
       getAllSectionQuestionList({ level: paramsLevel.value })
         .then(res => {
           console.log('getAllSectionQuestionList: ', res);
           originalSubjectTreeData.value = res.data
           subjectTreeData.value = proxy.handleTree(res.data, "id");
           isEditSubject.value = true
-          resolve('')
-        }, err => reject(''))
+          getEpaperQuestionListFunc()
     })
   }
   // 获取已经添加的参考试题
@@ -642,10 +640,9 @@
   // 试题管理按钮
   const setTestSubject = async item => {
     testObj.value = item
-    await getAllSectionQuestionListFunc()
-    epaperId.value = item.id
     paramsLevel.value = item.level
-    getEpaperQuestionListFunc()
+    epaperId.value = item.id
+    getAllSectionQuestionListFunc()
     setTestSubjectVisible.value = true
   }
   // 添加试题弹窗关闭事件

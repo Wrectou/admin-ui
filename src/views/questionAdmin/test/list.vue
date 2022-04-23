@@ -343,7 +343,7 @@
       if (valid) {
         if (addParams.qualifiedScore > addParams.totalScore) return ElMessage.error("合格分数不能大于总分数！")
         if (addParams.difficulty <= 0) return ElMessage.error("请选择考试难度")
-        if (addParams.startTime !== '' && addParams.endTime !== '' && (new Date(addParams.endTime).getTime() < new Date(addParams.startTime).getTime())) return ElMessage.error("考试停考时间不能早于考试开考时间！")
+        if ((addParams.startTime !== '' && addParams.startTime !== null) && (addParams.endTime !== '' && addParams.endTime !== null) && (new Date(addParams.endTime).getTime() < new Date(addParams.startTime).getTime())) return ElMessage.error("考试停考时间不能早于考试开考时间！")
         addTestLoading.value = true
         if (!isEdit.value) addProductFunc(addParams)
         else editProductFunc(addParams)

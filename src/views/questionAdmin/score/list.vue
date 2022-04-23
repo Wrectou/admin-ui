@@ -69,9 +69,14 @@
       <el-table-column label="姓名" align="center" prop="userName" />
       <el-table-column label="所在部门" align="center" prop="deptName" />
       <el-table-column label="得分" align="center" prop="totalScore" />
-      <el-table-column label="考试时间" align="center" prop="createTime" />
+      <el-table-column label="考试时间" align="center" prop="createTime" width="170" />
       <el-table-column label="用时" align="center" prop="times">
         <template #default="scope">{{timesToText(scope.row.times)}}</template>
+      </el-table-column>
+      <el-table-column label="题目数量" align="center" prop="questionNum" />
+      <el-table-column label="正确数量" align="center" prop="correntNum" />
+      <el-table-column label="正确率" align="center" prop="">
+        <template #default="scope">{{((scope.row.correntNum/scope.row.questionNum)*100).toFixed()}}%</template>
       </el-table-column>
       <el-table-column label="结果" align="center" prop="pass">
         <template #default="scope">

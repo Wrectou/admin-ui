@@ -265,7 +265,7 @@ function getQuestionStatisFunc(i, id) {
 function favoriteErrQuestionFunc() {
   let params = {
     level: proxy.$cache.session.getJSON('level'),
-    practiceId: route.query.id,
+    practiceId: questionArr[questionIndex.value].practiceId,
     qtype: 2,
     questionId: questionArr[questionIndex.value].id,
     type: 0,
@@ -299,7 +299,7 @@ const changeCollectTitle = () => {
   if (!questionArr[questionIndex.value].isCollect) {
     let params = {
       level: proxy.$cache.session.getJSON('level'),
-      practiceId: route.query.id,
+      practiceId: questionArr[questionIndex.value].practiceId,
       qtype: 2,
       questionId: questionArr[questionIndex.value].id,
       type: 1,

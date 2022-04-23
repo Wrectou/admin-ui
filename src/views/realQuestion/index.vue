@@ -23,9 +23,10 @@
             难度<el-rate v-model="item.difficulty" disabled text-color="#ff9900" />
           </div>
           <div class="button-box">
-            <el-button v-if="item.lastEpaperScoreId !== null && calcEndtTime(item.endTime) > 0" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
+            <el-button :loading="buttonLoading" v-if="item.lastEpaperScoreId !== null && calcEndtTime(item.endTime) > 0" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
             <el-button 
               v-if="item.hisNum === 0" 
+              :loading="buttonLoading"
               :disabled="firstTestButtonText(item) !== '开始考试'" 
               class="button" 
               :type="firstTestButtonText(item) === '开始考试' ? 'primary' : firstTestButtonText(item) === '停止考试' ? 'danger' : 'warning'" 
@@ -33,8 +34,8 @@
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
-            <el-button v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
+            <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
+            <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
             <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
           </div>
         </div>
@@ -159,16 +160,19 @@ let firstTestButtonText = computed(item => {
 })
 
 // 开始考试按钮
+let buttonLoading = ref(false)
 const goTest = item => {
+  buttonLoading.value = true
   createEpaperScore({epaperId: item.id, level: proxy.$cache.session.getJSON('level')})
     .then(res => {
       console.log('createEpaperScore: ', res);
+      buttonLoading.value = false
       if (res.code === 200) {
         router.push({ path: '/realQuestion/answer', query: { id: item.id, epaperScore: res.data, name: item.name, qualifiedScore: item.qualifiedScore } })
         proxy.$cache.session.setJSON('endRealQuestionTime', (new Date().getTime() + item.duration*60*1000))
         proxy.$cache.session.setJSON('seartRealQuestionTime', new Date().getTime())
       }
-    })
+    }, err => buttonLoading.value = false )
 }
 
 // 继续考试

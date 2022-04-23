@@ -468,10 +468,21 @@
         console.log('getEpaperUserList: ', res);
         if (res.code === 200) {
           oldPersonTreeCheckedData = res.data
+          // 姓名回显
           res.data.forEach(item => {
             originalPersonTreeData.value.forEach(i => {
-              if (i.type === 1 && i.dataId === item) refPersonTree.value.setChecked(i.id, true, false)
+              if (i.type === 1 && i.dataId === item) {
+                refPersonTree.value.setChecked(i.id, true, false)
+              }
             })
+          })
+          // 部门回显
+          originalPersonTreeData.value.forEach(item => {
+            if (item.type === 1) {
+              originalPersonTreeData.value.forEach(i => {
+                if (item.parentId === i.id) item.parentName = i.name
+              })
+            }
           })
         }
       })

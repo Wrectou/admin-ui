@@ -158,7 +158,7 @@
               <div class="title">已选（{{personTreeCheckedData.length}}）人</div>
               <div class="checked-list">
                 <div class="checked" v-for="item in personTreeCheckedData" :key="item.id" @click="deleteTestPerson(item)">
-                  {{item.name}}（{{item.parentName}}）
+                  <div>{{item.name}}（{{item.parentName}}）</div>
                   <el-icon><circle-close-filled /></el-icon>
                 </div>
               </div>
@@ -198,12 +198,13 @@
           <el-col :span="11">
             <div class="checked-content person-checked-content">
               <div class="title">
-                <div>已选（{{subjectTreeCheckedData.length}}）题</div>
-                <div>共（{{subjectTreeCheckedDataAllScore}}）分</div>
+                <div>试卷总分：{{testObj.totalScore}}分</div>
+                <div>已选({{subjectTreeCheckedData.length}})题, 共({{subjectTreeCheckedDataAllScore}})分</div>
               </div>
               <div class="checked-list">
                 <div class="checked" v-for="item in subjectTreeCheckedData" :key="item.id" @click="deleteTestSubject(item)">
-                  {{item.title}}
+                  <span class="score">({{item.score}}分)</span>
+                  <div>{{item.title}}</div>
                   <el-icon><circle-close-filled /></el-icon>
                 </div>
               </div>
@@ -944,21 +945,31 @@
   .title{
     display: flex;
     justify-content: space-between;
-    padding: 0 0 10px 0;
+    padding: 0 0 6px 0;
     font-size: 16px;
     color: #333;
     line-height: 30px;
     border-bottom: solid 1px #e1e1e1;
   }
   .checked-list{
-    margin: 12px 12px 0 0;
-    line-height: 26px;
+    margin: 4px 10px 0 0;
     font-size: 15px;
+    line-height: 26px;
     .checked{
       display: flex;
-      align-items: center;
+      align-items: start;
       justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: dashed 1px #e1e1e1;
+      >span{
+        color: #F56C6C;
+      }
+      >div{
+        flex: 1;
+        margin: 0 0 0 2px;
+      }
       ::v-deep(.el-icon){
+        margin: 4px 0 0;
         color: #F56C6C;
         cursor: pointer;
       }

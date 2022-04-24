@@ -10,14 +10,14 @@
         <el-col :span="20" class="control-left">
           <el-col :span="5">
             <el-form-item label="类型" prop="level">
-              <el-select v-model="sectionListParams.level" @change="levelChange">
+              <el-select v-model="sectionListParams.level">
                 <el-option v-for="item in levelOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item label="难度" prop="difficulty">
-              <el-select v-model="sectionListParams.difficulty" @change="difficultyChange">
+              <el-select v-model="sectionListParams.difficulty">
                 <el-option v-for="item in difficultyOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -66,7 +66,7 @@
   </div>
 </template>
 
-<script setup name="questionAdminChapterList">
+<script setup name="Chapter/list">
 
   import { getSectionList, deleteBusinessSection } from "@/api"
 
@@ -90,14 +90,6 @@
     { value: 5, label: '5星'},
   ]
 
-  const levelChange = e => {
-    proxy.$cache.session.setJSON('levelChange', e)
-  }
-
-  const difficultyChange = e => {
-    proxy.$cache.session.setJSON('difficultyChange', e)
-  }
-  
   // 产品列表参数
   const sectionListParams = reactive({
     pageNum: 1,
@@ -107,10 +99,6 @@
     title: '',
   })
 
-  if (proxy.$cache.session.getJSON('levelChange') !== undefined) sectionListParams.level = proxy.$cache.session.getJSON('levelChange')
-
-  if (proxy.$cache.session.getJSON('difficultyChange')) sectionListParams.difficulty = proxy.$cache.session.getJSON('difficultyChange')
-  
   let isLoading = ref(false)
 
   // 产品列表接口返回数据
@@ -134,8 +122,6 @@
 
   // 重置搜索项
   const resetFormParams = () => {
-    proxy.$cache.session.remove('levelChange')
-    proxy.$cache.session.remove('difficultyChange')
     proxy.resetForm("queryRef")
     searchSections()
   }

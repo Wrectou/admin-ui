@@ -138,7 +138,7 @@
   let peopleStaticListData = ref({
     attendance: 0,
     flunk: 0,
-    pass: '不合格',
+    pass: 0,
     missing: 0,
     supposed: 0,
     peopleScoreList: [],

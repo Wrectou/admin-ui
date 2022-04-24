@@ -220,7 +220,7 @@
   </div>
 </template>
 
-<script setup name="questionAdminTestList">
+<script setup name="Test/list">
   
   import { ElMessage, ElMessageBox } from 'element-plus'
 

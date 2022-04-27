@@ -1,7 +1,7 @@
 <template>
   <div class="container home">
 
-    <el-row :gutter="20">
+    <el-row :gutter="20" v-if="!isSystem">
 
       <!-- 左边 -->
       <el-col :span="16">
@@ -128,6 +128,10 @@
       </el-col>
     </el-row>
 
+    <el-row class="welcome" v-else>
+      <h3>欢迎使用智慧学法管理平台</h3>
+    </el-row>
+
   </div>
 </template>
 
@@ -158,6 +162,11 @@ let tabsActiveName = ref('today')
 const handleClick = (tab, event) => {
   console.log(tab, event)
 }
+
+// 系统管理员显示欢迎文字，不跳转模块
+let isSystem = ref(false)
+const store = useStore()
+if (store.getters.roles.includes('all')) isSystem.value = true
 
 // 日常学习
 const menuList = reactive([
@@ -653,6 +662,26 @@ getHisEpaperScoreListFunc()
     padding: 8px 25px;
     font-size: 12px;
     color: #999;
+  }
+}
+
+.welcome{
+  // position: fixed;
+  // left:0;
+  // top:0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // width: 100%;
+  // height: 100%;
+  // background-image: url("@/assets/images/login-bg.png");
+  // background-size: 100%;
+  // background-position: center;
+  h3{
+    margin: 20vh 0 0;
+    font-size: 40px;
+    color: #444;
+    letter-spacing: 2px;
   }
 }
 

@@ -1,6 +1,11 @@
 <template>
   <div class="container chapter">
-    
+
+    <el-radio-group v-model="typeRadio" style="margin: 0 0 20px">
+      <el-radio-button label="练习错题" />
+      <el-radio-button label="试卷错题" />
+    </el-radio-group>
+
     <el-row>
 
       <!--  左边 -->
@@ -221,6 +226,8 @@ const { proxy } = getCurrentInstance()
 
 const route = useRoute()
 const router = useRouter()
+
+const typeRadio = ref('练习错题')
 
 let isLoading = ref(false)
 

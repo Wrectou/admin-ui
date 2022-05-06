@@ -94,7 +94,7 @@
         <!-- 骨架屏 -->
         <el-skeleton v-if="tableLoading1 && tableFirstLoading1" :rows="5" animated style="margin: 27px 10px 0;" />
         <!-- 列表搜索项 -->
-        <el-form :model="favoritesQuestionListParams1" ref="queryRef" :inline="true" v-if="!tableFirstLoading1 && favoritesSectionList1.length > 1">
+        <el-form :model="favoritesQuestionListParams1" ref="queryRef1" :inline="true" v-if="!tableFirstLoading1 && favoritesSectionList1.length > 1">
           <el-row class="control-bar">
             <el-col :span="4" class="control-left">
             </el-col>

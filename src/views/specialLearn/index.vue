@@ -70,7 +70,7 @@
   </div>
 </template>
 
-<script setup name="special">
+<script setup name="SpecialLearn/index">
 
 import { getLearnCatalogueList, getLearnMaterialsList } from '@/api'
 

@@ -568,3 +568,21 @@ export const getEpaperPeopleStaticList = params => {
         params
     })
 }
+
+// 获取收藏-试卷列表（自己）
+export const getPracticeFavoritesEpaperList = params => {
+    return request({
+        url: '/business/practiceFavorites/epaperList',
+        method: 'get',
+        params
+    })
+}
+
+// 获取收藏-试卷题目列表（自己）
+export const getPracticeFavoritesEpaperQuestionList = params => {
+    return request({
+        url: '/business/practiceFavorites/epaperQuestionList',
+        method: 'get',
+        params
+    })
+}

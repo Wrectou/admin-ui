@@ -409,11 +409,11 @@ function getQuestionStatisFunc(i, id) {
 // 错题自动收藏
 function favoriteErrQuestionFunc() {
   let params = {
-    level: proxy.$cache.session.getJSON('level'),
-    practiceId: questionArr[questionIndex.value].practiceId,
-    qtype: 1,
+    // level: proxy.$cache.session.getJSON('level'),
+    practiceId: route.query.id,
+    // qtype: 1,
     questionId: questionArr[questionIndex.value].id,
-    type: 0,
+    type: 2,
   }
   addFavorite(params)
     .then(res => {
@@ -559,6 +559,7 @@ const checkAnswerSingleFunc = item => {
       // 回答错误显示答题解析
       // getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       // questionArr[questionIndex.value].isShowQuestionAnalysis = true
+      favoriteErrQuestionFunc()
     }
     plusQuestionIndex()
     // 取消loading
@@ -608,6 +609,7 @@ const checkAnswerSeveralFunc = () => {
       // questionArr[questionIndex.value].isShowQuestionAnalysis = true
       // 回答错误显示答题解析
       // getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
+      favoriteErrQuestionFunc()
     }
     plusQuestionIndex()
     // 取消loading
@@ -642,6 +644,7 @@ const checkAnswerJudgeFunc = item => {
       // 回答错误显示答题解析
       // getQuestionStatisFunc(questionIndex.value, questionArr[questionIndex.value].id)
       // questionArr[questionIndex.value].isShowQuestionAnalysis = true
+      favoriteErrQuestionFunc()
     }
       plusQuestionIndex()
     // 取消loading

@@ -1,12 +1,12 @@
 <template>
   <div class="container chapter">
 
-    <el-radio-group v-model="typeRadio" style="margin: 0 0 20px">
+    <el-radio-group v-model="typeRadio" @change="typeRadioChange" style="margin: 0 0 20px">
       <el-radio-button label="练习错题" />
       <el-radio-button label="试卷错题" />
     </el-radio-group>
 
-    <el-row>
+    <el-row v-if="typeRadio === '练习错题'">
 
       <!--  左边 -->
       <el-col :span="5" style="margin: 27px 0 0;">
@@ -69,8 +69,73 @@
 
     </el-row>
 
+    <el-row v-else>
+
+      <!--  左边 -->
+      <el-col :span="5" style="margin: 27px 0 0;">
+        <!-- 骨架屏 -->
+        <el-skeleton v-if="isLoading1" :rows="5" animated />
+        <div 
+          :class="['item', practiceId1 === item.id ? 'active' : '']" 
+          v-if="favoritesSectionList1.length > 1"
+          v-for="item in favoritesSectionList1" 
+          :key="item.id" 
+          @click="changePracticeId1(item)"
+        >
+          <p class="title">
+            <p>{{item.name}}</p>
+            <el-icon><arrow-right /></el-icon>
+          </p>
+          <span class="can-do" v-if="item.num">{{item.num}}题</span>
+        </div>
+      </el-col>
+      <!-- 右边 -->
+      <el-col :span="19">
+        <!-- 骨架屏 -->
+        <el-skeleton v-if="tableLoading1 && tableFirstLoading1" :rows="5" animated style="margin: 27px 10px 0;" />
+        <!-- 列表搜索项 -->
+        <el-form :model="favoritesQuestionListParams1" ref="queryRef" :inline="true" v-if="!tableFirstLoading1 && favoritesSectionList1.length > 1">
+          <el-row class="control-bar">
+            <el-col :span="4" class="control-left">
+            </el-col>
+            <el-col :span="20" class="control-right">
+              <el-col :span="24">
+                <el-form-item label="" prop="title" class="search-input">
+                  <el-input v-model="favoritesQuestionListParams1.title" placeholder="输入标题名称" />
+                </el-form-item>
+                <el-button icon="Search" type="primary" @click="getFavoritesQuestionListFunc1">搜索</el-button>
+                <el-button icon="Refresh" @click="resetListParams1">重置</el-button>
+              </el-col>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div class="table-box" v-if="!tableFirstLoading1 && favoritesSectionList1.length > 1">
+
+          <!-- 表格 -->
+          <el-table v-loading="tableLoading1" :data="favoritesQuestionList1.list">
+            <el-table-column label="标题" align="left" prop="title" min-width="220" />
+            <el-table-column label="章节" align="center" prop="sectionName" width="210" />
+            <!-- <el-table-column label="熟悉程度" align="center" prop="score" width="170">
+              <template #default="scope"><el-rate v-model="scope.row.score" disabled text-color="#ff9900" /></template>
+            </el-table-column> -->
+            <el-table-column label="时间" align="center" prop="updateTime" width="170" />
+            <el-table-column label="操作" align="center" width="200">
+              <template #default="scope">
+                <el-button plain type="primary" @click="toAnswer1(scope.row)">详情</el-button>
+                <el-button plain type="danger" @click="deleteFavoriteFunc1(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页器 -->
+          <pagination @pagination="getFavoritesQuestionListFunc1" v-show="favoritesQuestionList1.total > 0" :total="favoritesQuestionList1.total" v-model:page="favoritesQuestionListParams1.pageNum" v-model:limit="favoritesQuestionListParams1.pageSize" />
+        </div>
+      </el-col>
+
+    </el-row>
+
     <!-- 没有数据 -->
-    <QuestionNotFound v-if="!isLoading && favoritesSectionList.length < 2" />
+    <QuestionNotFound v-if="typeRadio === '练习错题' && !isLoading && favoritesSectionList.length < 2" />
+    <QuestionNotFound v-if="typeRadio === '试卷错题' && !isLoading1 && favoritesSectionList1.length < 2" />
 
     <!-- 答题弹框 -->
     <el-dialog
@@ -202,7 +267,7 @@
 
 <script setup name="errorQuestion">
 
-import { getFavoritesQuestionSectionList, getFavoritesQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite } from '@/api'
+import { getFavoritesQuestionSectionList, getFavoritesQuestionList, getQuestionItem, getQuestionStatis, addPracticeQuestionAnswer, addFavorite, deleteFavorite, getPracticeFavoritesEpaperList, getPracticeFavoritesEpaperQuestionList } from '@/api'
 
 import QuestionNotFound from '@/components/questionNotFound/index'
 
@@ -227,7 +292,176 @@ const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
 
-const typeRadio = ref('练习错题')
+// 错题类型
+let typeRadio = ref('练习错题')
+const typeRadioChange = e => {
+  console.log(e);
+  if (e === '试卷错题') {
+    getPracticeFavoritesEpaperListFunc()
+    getFavoritesQuestionListFunc1()
+  } else {
+    getFavoritesQuestionSectionListFunc()
+    getFavoritesQuestionListFunc()
+  }
+}
+
+
+let isLoading1 = ref(false)
+
+// 获取收藏题目的id 默认空取所有
+let practiceId1 = ref('')
+
+// 收藏目录数据
+let favoritesSectionList1 = ref([
+  { id: "", name: '全部',  }
+])
+// 获取收藏-试卷列表（自己）
+function getPracticeFavoritesEpaperListFunc() {
+  isLoading1.value = true
+  getPracticeFavoritesEpaperList({level: proxy.$cache.session.getJSON('level')})
+    .then(res => {
+      console.log('获取收藏-试卷列表（自己）getPracticeFavoritesEpaperList: ', res);
+      isLoading1.value = false
+      if (res.code === 200) {
+        favoritesSectionList1.value.length = 1
+        res.data.forEach(item => favoritesSectionList1.value.push(item))
+      }
+    }, err => isLoading1.value = false )
+}
+
+
+let tableLoading1 = ref(false)
+let tableFirstLoading1 = ref(true)
+// 收藏目录数据
+let favoritesQuestionList1 = reactive({
+  total: 0,
+  list: []
+})
+// 获取收藏题目
+let favoritesQuestionListParams1 = reactive({
+  pageNum: 1,
+  pageSize: 10,
+  level: proxy.$cache.session.getJSON('level'),
+  epaperId: practiceId1.value,
+  title: '',
+})
+function getFavoritesQuestionListFunc1() {
+  tableLoading1.value = true
+  getPracticeFavoritesEpaperQuestionList(favoritesQuestionListParams1)
+    .then(res => {
+      console.log('dasdasda: ', res);
+      tableLoading1.value = false
+      tableFirstLoading1.value = false
+      if (res.code === 200) {
+        favoritesQuestionList1.total = res.total
+        favoritesQuestionList1.list = res.rows
+      }
+    }, err => tableLoading1.value = false )
+}
+
+// 更改章节id
+const changePracticeId1 = item => {
+  practiceId1.value = item.id
+  favoritesQuestionListParams1.epaperId = item.id
+  getFavoritesQuestionListFunc1()
+}
+
+ // 重置搜索项
+const resetListParams1 = () => {
+  proxy.resetForm("queryRef1")
+  getFavoritesQuestionListFunc1()
+}
+
+
+let questionArrPracticeId1 = ref('')
+
+// 详情
+const toAnswer1 = item => {
+
+  questionArrPracticeId1.value = item.practiceId
+
+  let thisId = item.id
+
+  let params = {
+    pageNum: 1,
+    pageSize: 1000,
+    level: proxy.$cache.session.getJSON('level'),
+    epaperId: practiceId1.value,
+    title: '',
+  }
+  isLoadingData.value = true
+  questionArr.length = 0
+  getPracticeFavoritesEpaperQuestionList(params)
+    .then( async res => {
+      console.log('toAnswer1: ', res);
+      if (res.code === 200) {
+        dialogVisible.value = true
+        res.rows.forEach((item, i) => {
+          if (thisId === item.id) questionIndex.value = i
+          let obj = {
+            id: item.id,
+            type: item.type,
+            showType: item.type,
+            fraction: item.score,
+            title: item.title,
+            isCollect: item.favorite === 1 ? true : false,
+            answerList: [],
+            yourAnswer: '',
+            answerTime: '',
+            okAnswer: '',
+            allAnswerNum: '',
+            allAnswerCorrectRate: '',
+            fallibility: '',
+            analysis: item.explanation,
+            isShowQuestionAnalysis: false,
+          }
+          if (item.type === 1) {
+            obj.type = 3
+            obj.okAnswer = LetterToIndex[item.correctAnswers]
+          } else if (item.type === 2) {
+            obj.type = 1
+            obj.okAnswer = LetterToIndex[item.correctAnswers]
+          } else if (item.type === 3 || item.type === 4) {
+            obj.type = 2
+            obj.okAnswer = []
+            obj.yourAnswer = []
+            let correctAnswersArr = item.correctAnswers.split('')
+            correctAnswersArr = correctAnswersArr.map(item => item = LetterToIndex[item])
+            obj.okAnswer = correctAnswersArr
+          } else if (item.type === 5) {
+            obj.type = 4
+          }
+          questionArr.push(obj)
+        })
+        isLoadingData.value = false
+      }
+      // getSelfLastQuestionIdFunc()
+      getQuestionItemFunc(0, res.rows[0].id)
+    }, err => isLoadingData.value = false )
+}
+
+// 删除  /  取消收藏
+function deleteFavoriteFunc1(item) {
+  console.log(item);
+  let params = {
+    quesionId: item.id,
+    type: 2,
+  }
+  deleteFavorite(params)
+    .then(res => {
+      console.log('deleteFavorite: ', res);
+      if (res.code === 200) {
+        ElMessage.success('取消收藏成功！') 
+        getFavoritesQuestionListFunc1()
+      } else ElMessage.error('取消收藏出错，请稍后再试！')
+    })
+}
+
+
+
+
+
+
 
 let isLoading = ref(false)
 
@@ -250,6 +484,7 @@ function getFavoritesQuestionSectionListFunc() {
       console.log('getFavoritesQuestionSectionList: ', res);
       isLoading.value = false
       if (res.code === 200) {
+        favoritesSectionList.value.length = 1
         res.data.forEach(item => favoritesSectionList.value.push(item))
       }
     }, err => isLoading.value = false )
@@ -558,10 +793,12 @@ function addPracticeQuestionAnswerFunc(isCorrect, i, id) {
     params.correctAnswers = questionArr[i].okAnswer
     params.score = questionArr[i].yourAnswer
   }
-  addPracticeQuestionAnswer(params)
-    .then(res => {
-      console.log('addPracticeQuestionAnswer: ', res);
-    })
+  if (typeRadio.value === '练习错题') {
+    addPracticeQuestionAnswer(params)
+      .then(res => {
+        console.log('addPracticeQuestionAnswer: ', res);
+      })
+  }
 }
 
 // // 是否显示问题解析界面

@@ -112,6 +112,15 @@
             <el-rate v-model="addParams.difficulty" show-score text-color="#ff9900" :score-template="''" />
           </el-form-item>
           <br />
+          <el-form-item label="考试次数" prop="allowNum">
+            <el-input v-model.number="addParams.allowNum" type="number" placeholder="请输入合格分数（0代表无数次）">
+              <template #append>次</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="" prop="">
+            0代表无数次，不限制次数
+          </el-form-item>
+          <br />
           <el-form-item label="开考时间" prop="startTime">
             <el-date-picker v-model="addParams.startTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开考时间" />
           </el-form-item>
@@ -306,6 +315,7 @@
     name: '',
     qualifiedScore: '',
     totalScore: '',
+    allowNum: 0
   })
   // 表单验证
   const addRuleFormRef = ref()
@@ -317,9 +327,13 @@
     qualifiedScore: [ { required: true, message: "请输入合格分数", trigger: "blur" } ],
     duration: [ { required: true, message: "请输入考试时长", trigger: "blur" } ],
     difficulty: [ { required: true, message: "请选择考试难度", trigger: "change" } ],
+    allowNum: [ { required: true, message: "请选择考试次数", trigger: "blur" } ],
   })
   // 添加
-  const addTest = () => addTestVisible.value = true
+  const addTest = () => {
+    resetAddForm(addRuleFormRef.value)
+    addTestVisible.value = true
+  }
   // 添加弹窗关闭按钮
   const addHandleClose = done => {
     if (addTestLoading.value) return ElMessage.warning('正在添加，请稍后！')
@@ -395,6 +409,7 @@
           addParams.name = res.data.name
           addParams.qualifiedScore = res.data.qualifiedScore
           addParams.totalScore = res.data.totalScore
+          addParams.allowNum = res.data.allowNum
           addTestVisible.value = true
           isEdit.value = true
         }

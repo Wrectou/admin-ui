@@ -34,8 +34,9 @@
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
-            <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
+            <el-button :loading="buttonLoading" v-if="item.hisNum > 0" class="button" type="info" disabled @click="goTest(item)">已参加考试</el-button>
+            <!-- <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button> -->
+            <!-- <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button> -->
             <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
           </div>
         </div>

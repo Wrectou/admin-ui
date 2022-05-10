@@ -23,20 +23,54 @@
             难度<el-rate v-model="item.difficulty" disabled text-color="#ff9900" />
           </div>
           <div class="button-box">
-            <el-button :loading="buttonLoading" v-if="item.lastEpaperScoreId !== null && calcEndtTime(item.endTime) > 0" class="button" type="primary" @click="goContinueTest(item)">继续考试</el-button>
+
+            <!-- 继续考试 -->
             <el-button 
-              v-if="item.hisNum === 0"
-               :loading="buttonLoading" 
+              :loading="buttonLoading" class="button" type="primary" 
+              v-if="item.lastEpaperScoreId !== null && calcEndtTime(item.endTime) > 0" 
+              @click="goContinueTest(item)"
+            >
+              继续考试
+            </el-button>
+
+            <!-- 开始考试 / 停止考试 -->
+            <el-button 
+              v-if="item.hisNum === 0" 
+              :loading="buttonLoading"
               :disabled="firstTestButtonText(item) !== '开始考试'" 
               class="button" 
-              :type="firstTestButtonText(item) === '开始考试' ? 'primary' : firstTestButtonText(item) === '停止考试' ? 'danger' : 'warning'" 
+              :type="firstTestButtonText(item) === '开始考试' ? 'primary' : firstTestButtonText(item) === '停止考试' ? 'danger' : ''" 
               @click="goTest(item)"
             >
               {{ firstTestButtonText(item) }}
             </el-button>
-            <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" class="button" type="primary" @click="goTest(item)">再考一次</el-button>
-            <el-button :loading="buttonLoading" v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" disabled class="button" type="danger">停止考试</el-button>
+
+            <!-- 再考一次 -->
+            <el-button 
+              :loading="buttonLoading" class="button" type="primary" 
+              v-if="item.hisNum > 0 && (item.allowNum === 0 || item.hisNum < item.allowNum) && calcStartTime(item.startTime) < 0 && calcEndtTime(item.endTime) > 0 && item.lastEpaperScoreId == null" 
+              @click="goTest(item)"
+            >
+              再考一次
+            </el-button>
+
+            <!-- 停止考试 -->
+            <el-button 
+              :loading="buttonLoading"  class="button" type="danger" disabled
+              v-if="item.hisNum > 0 && firstTestButtonText(item) === '停止考试'" 
+            >
+              停止考试
+            </el-button>
+
+            <!-- 已参加考试 -->
+            <el-button :loading="buttonLoading" class="button" type="info" disabled 
+              v-if="item.allowNum !== 0 && item.hisNum >= item.allowNum && firstTestButtonText(item) !== '停止考试'"
+            >
+              已参加考试
+            </el-button>
+
             <!-- <el-button v-if="item.hisNum > 0" plain class="button" type="primary" @click="goTest(item)">查看考试</el-button> -->
+            
           </div>
         </div>
 
@@ -103,7 +137,7 @@ getEpaperSelflistFunc()
 // 开始时间 / 结束时间 计算属性
 let calcStartTime = computed(time => {
   return (time) => {
-    if (time == null) return 1
+    if (time == null) return -1
     var nowTime = new Date().getTime()
     var startTime = new Date(time).getTime()
     return startTime-nowTime
@@ -145,13 +179,15 @@ const countDown = (item) => {
 // 第一次开始按钮文字计算属性
 let firstTestButtonText = computed(item => {
   return (item) => {
-    if (!item.startTime || !item.endTime) return '开始考试'
+    if (!item.startTime && !item.endTime) return '开始考试'
     let nowTime = new Date().getTime()
     let startTime = new Date(item.startTime).getTime()
     let endTime = new Date(item.endTime).getTime()
     let calcStartTime = startTime-nowTime
     let calcEndTime = endTime-nowTime
-    if (calcStartTime < 0 && calcEndTime < 0) return '停止考试'
+    if (item.startTime == null) calcStartTime = -1
+    if (item.endTime == null) calcEndTime = 1
+    if (calcStartTime < 0 && (calcEndTime < 0 || calcEndTime === -1)) return '停止考试'
     else if (calcStartTime < 0 && calcEndTime > 0) return '开始考试'
     else {
       countDown(item)

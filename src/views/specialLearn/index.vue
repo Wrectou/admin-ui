@@ -1,6 +1,22 @@
 <template>
   <div class="container chapter">
 
+    <!-- 列表搜索项 -->
+    <el-form ref="queryRef" :inline="true">
+      <el-row class="control-bar">
+        <el-col :span="3" class="control-left">
+        </el-col>
+        <el-col :span="20" class="control-right">
+          <el-col :span="24">
+            <el-form-item label="" prop="title" class="search-input">
+              <el-input v-model="searchTitle" placeholder="输入专题名称" />
+            </el-form-item>
+            <el-button icon="Search" type="primary" @click="getLearnMaterialsListFunc">搜索</el-button>
+            <el-button icon="Refresh" @click="resetListParams">重置</el-button>
+          </el-col>
+        </el-col>
+      </el-row>
+    </el-form>
 
     <el-row>
 
@@ -84,6 +100,11 @@ const { proxy } = getCurrentInstance()
 let isLoading = ref(false)
 
 let learnId = ref('')
+let searchTitle = ref('')
+const resetListParams = () => {
+  searchTitle.value = ''
+  getLearnMaterialsListFunc()
+}
 
 // 获取专题学习目录
 const guideTypeData = ref([
@@ -113,7 +134,7 @@ const guideListData = reactive([])
 function getLearnMaterialsListFunc() {
   guideListData.length = 0
   tableLoading.value = true
-  getLearnMaterialsList({learnId: learnId.value})
+  getLearnMaterialsList({learnId: learnId.value, title: searchTitle.value})
     .then(res => {
       console.log('getLearnMaterialsList: ', res);
       tableLoading.value = false
@@ -144,6 +165,19 @@ const goLink = item => router.push({ path: '/specialLearn/detail', query: { id: 
   padding: 40px 20px;
   background: #fff;
   min-height: 100vh;
+}
+
+
+
+.control-bar{
+  .search-input{
+    margin: 0;
+  }
+  .control-right{
+    display: flex;
+    padding: 0 8px 0 0;
+    text-align: right;
+  }
 }
 
 .item {

@@ -1,6 +1,8 @@
 <template>
   <div class="container home">
 
+    <el-alert v-if="selflistLength" @click="goMyTest" title="您有等待参考的试卷，点击此处可快速跳转考试！" type="info" effect="dark" show-icon :closable="false" />
+
     <el-row :gutter="20" v-if="!isSystem">
 
       <!-- 左边 -->
@@ -50,8 +52,10 @@
           <div class="title">考试相关</div>
           <el-row class="content test-content">
             <el-col class="test" :span="12" v-for="item in tableList" :key="item.name"  @click="goLink(item.linkName)">
-              <img class="logo" :src="item.logo" />
-              <!-- <div class="name">{{item.name}}</div> -->
+              <el-badge :value="item.badge" class="item">
+                <img class="logo" :src="item.logo" />
+                <!-- <div class="name">{{item.name}}</div> -->
+              </el-badge>
             </el-col>
           </el-row>
         </div>
@@ -181,8 +185,8 @@ const menuList = reactive([
 
 // 考试相关
 const tableList = reactive([
-  { name: '考试指南', linkName: '/questionGuide/index', logo: table1, },
-  { name: '我的考试', linkName: '/myTest/index', logo: table2, },
+  { name: '考试指南', linkName: '/questionGuide/index', logo: table1, badge: '' },
+  { name: '我的考试', linkName: '/myTest/index', logo: table2, badge: '' }
 ])
 
 const goLink = path => router.push({ path })
@@ -253,6 +257,45 @@ function getHisEpaperScoreListFunc() {
     })
 }
 getHisEpaperScoreListFunc()
+
+
+
+// 第一次开始按钮文字计算属性
+let firstTestButtonText = item => {
+  if (!item.startTime && !item.endTime) return '开始考试'
+  let nowTime = new Date().getTime()
+  let startTime = new Date(item.startTime).getTime()
+  let endTime = new Date(item.endTime).getTime()
+  let calcStartTime = startTime-nowTime
+  let calcEndTime = endTime-nowTime
+  if (item.startTime == null) calcStartTime = -1
+  if (item.endTime == null) calcEndTime = 1
+  if (calcStartTime < 0 && (calcEndTime < 0 || calcEndTime === -1)) return '停止考试'
+  else if (calcStartTime < 0 && calcEndTime > 0) return '开始考试'
+  else {
+    countDown(item)
+    return countTime.value + ' 后开始'
+  }
+}
+
+// 有考试提示
+let selflistLength = ref(0)
+function getEpaperSelflistFunc() {
+  let params = {
+    etype: 2,
+    level: proxy.$cache.session.getJSON('level'),
+  }
+  getEpaperSelflist(params)
+    .then(res => {
+      console.log('getEpaperSelflist: ', res);
+      res.rows.forEach(item => {
+        if (firstTestButtonText(item) === '开始考试' && item.hisNum === 0) selflistLength.value ++
+      })
+      if (selflistLength.value > 0) tableList[1].badge = selflistLength.value
+    })
+}
+getEpaperSelflistFunc()
+const goMyTest = () => goLink('/myTest/index')
 
 </script>
 
@@ -560,6 +603,7 @@ getHisEpaperScoreListFunc()
       width: 100%;
       max-width: 200px;
       height: 90px;
+      cursor: pointer;
     }
     .name{
       margin: 4px 0 0;
@@ -683,6 +727,11 @@ getHisEpaperScoreListFunc()
     color: #444;
     letter-spacing: 2px;
   }
+}
+
+::v-deep(.el-alert){
+  margin: 0 0 20px 0;
+  cursor: pointer;
 }
 
 </style>

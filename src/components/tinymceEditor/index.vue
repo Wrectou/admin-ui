@@ -68,8 +68,6 @@ import "tinymce/plugins/wordcount"; //字数统计
 
 import { ref, watch, onMounted } from "vue"
 
-let globalcounter = 1;
-
 export default {
   name: "TEditor",
   components: {
@@ -179,6 +177,7 @@ export default {
         axios.post(uploadFileUrl, formdata, { headers: { 'Authorization': 'Bearer ' + getToken() } })
           .then(res => {
             console.log('images_upload_handler: ',res);
+            // if (res.data.code !== 200) ElMessage.error(res.data.msg)
             success(res.data.url)
           }, err => failure('error') )
       },
@@ -212,10 +211,11 @@ export default {
                 if (res.data.code !== 200) ElMessage.error(res.data.msg)
                 callback(res.data.url)
               }, err => {
+                console.log('err: ',err);
                 uploadButton.innerHTML = '保存'
                 uploadButton.disabled = false
                 cancelButton.disabled = false
-                failure('error')
+                ElMessage.error('上传视频出错，请稍后再试！')
               })
           }
           // 触发点击

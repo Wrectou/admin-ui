@@ -5,40 +5,30 @@
     <el-form :model="listParams" ref="queryRef" :inline="true">
       <el-row class="control-bar">
         <el-col :span="24" class="control-left">
-          <!-- <el-col :span="5">
-            <el-form-item label="题目类型" prop="level">
-              <el-select v-model="listParams.level">
-                <el-option v-for="item in levelOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item label="考试类型" prop="etype">
-              <el-select v-model="listParams.etype">
-                <el-option v-for="item in etypeOptions" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          
-          <el-col :span="10">
+          <el-col :span="18">
             <el-form-item label="选择试卷名称" prop="epaperId">
               <el-select style="width: 300px;" v-model="peopleStaticListParams.epaperId" @change="getEpaperPeopleStaticListFunc">
                 <el-option v-for="item in testNameOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="handleExport">导出</el-button>
-          </el-col>
-          <!-- <el-col :span="4">
-            <el-form-item label="" prop="name" class="search-input">
-              <el-input v-model="listParams.name" placeholder="输入试卷名称" />
+            <el-form-item label="所在部门" prop="deptId">
+              <el-select style="width: 300px;" v-model="peopleStaticListParams.deptId" @change="departmentChange">
+                <el-option v-for="item in departmentOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="姓名" prop="userId">
+              <el-select style="width: 300px;" v-model="peopleStaticListParams.userId" @click="departmentPeopleClick">
+                <el-option v-for="item in departmentPeopleOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-button icon="Search" type="primary" @click="searchList">搜索</el-button>
+            <el-button icon="Search" type="primary" @click="getEpaperPeopleStaticListFunc">搜索</el-button>
             <el-button icon="Refresh" @click="resetListParams">重置</el-button>
-          </el-col> -->
+          </el-col>
+          <el-col class="right" :span="2">
+            <el-button icon="download" type="primary" @click="handleExport">导出成绩</el-button>
+          </el-col>
         </el-col>
       </el-row>
     </el-form>
@@ -97,7 +87,7 @@
   
   import { ElMessage, ElMessageBox } from 'element-plus'
 
-  import { getEpaperPeopleStaticList, getAdminEpaperList } from "@/api"
+  import { getEpaperPeopleStaticList, getAdminEpaperList, getDeptUsersList } from "@/api"
 
   const route = useRoute()
   const router = useRouter()
@@ -123,11 +113,61 @@
     { value: 1, label: '模拟考试'},
     { value: 2, label: '正式考试'},
   ]
+
+  // 部门
+  let departmentOptions = reactive([])
+  // 已选部门人员
+  let departmentPeopleOptions = reactive([])
+  // 所有部门人员
+  let allDepartmentPeopleOptions = reactive([])
+
+  // 获取部门人员信息
+  function getDeptUsersListFunc() {
+    getDeptUsersList()
+      .then(res => {
+        console.log('getDeptUsersList: ',res);
+        // 人员
+        res.data.forEach(item => {
+          if (item.type === 1 && item.name !== '系统管理员') {
+            let obj = { value: item.dataId, label: item.name, parentId: item.parentId }
+            allDepartmentPeopleOptions.push(obj)
+          }
+        })
+        // 部门
+        let departmentOptionsObj = {}
+        allDepartmentPeopleOptions.forEach(item => {
+          res.data.forEach(i => {
+            if (item.parentId === i.dataId) {
+              let obj = { value: i.dataId, label: i.name }
+              departmentOptionsObj[i.dataId] = obj
+            }
+          })
+        })
+        for (let key in departmentOptionsObj) {
+          departmentOptions.push(departmentOptionsObj[key])
+        }
+      })
+  }
+  getDeptUsersListFunc()
+
+  // 切换部门
+  const departmentChange = e => {
+    allDepartmentPeopleOptions.forEach(item => {
+      if (item.parentId === e) departmentPeopleOptions.push(item)
+    })
+  }
+  // 没选部门点击人员提示
+  const departmentPeopleClick = () => {
+    if (peopleStaticListParams.deptId === "") ElMessage.error('请先选择所在部门再选择人员姓名')
+  }
+
   
   let tableLoading = ref(false)
 
   let peopleStaticListParams = reactive({
-    epaperId: ''
+    epaperId: '',
+    deptId: '',
+    userId: ''
   })
 
   if (route.query.epaperId) {
@@ -135,6 +175,7 @@
     getEpaperPeopleStaticListFunc()
   }
 
+  // 试卷信息统计
   let peopleStaticListData = ref({
     attendance: 0,
     flunk: 0,
@@ -166,21 +207,15 @@
   // 列表加载
   let isLoading = ref(false)
   // 列表数据
-  const listData = reactive({
-    total: 0,
-    items: []
-  })
   
   let testNameOptions = reactive([])
-  // 获取列表
+  // 获取试卷列表
   function searchList() {
     isLoading.value = true
     getAdminEpaperList(listParams)
       .then(res => {
         console.log('getAdminEpaperList: ',res);
         isLoading.value = false
-        listData.total = res.total
-        listData.items = res.rows
         testNameOptions.length = 0
         res.rows.forEach(item => {
           let obj = {}
@@ -194,8 +229,10 @@
   searchList()
   // 重置搜索项
   const resetListParams = () => {
-    proxy.resetForm("queryRef")
-    searchList()
+    peopleStaticListParams.deptId = ''
+    peopleStaticListParams.userId = ''
+    departmentPeopleOptions.length = 0
+    getEpaperPeopleStaticListFunc()
   }
 
 
@@ -214,7 +251,7 @@
   function handleExport() {
     if (!peopleStaticListParams.epaperId) return ElMessage.error('请先选择所要导出成绩的试卷！')
     let downloadUrl = `business/epaper/export`
-    proxy.download(downloadUrl, { epaperId: peopleStaticListParams.epaperId }, `《${returnTargetOptionsLabel(peopleStaticListParams.epaperId, testNameOptions)}》考试成绩统计.xlsx`);
+    proxy.download( downloadUrl, { ...peopleStaticListParams }, `《${returnTargetOptionsLabel(peopleStaticListParams.epaperId, testNameOptions)}》考试成绩统计.xlsx` )
   }
 
   // 根据id返回指定的的lebel
@@ -270,6 +307,10 @@
   .control-right{
     text-align: right;
   }
+}
+
+.right{
+  float: right;
 }
 </style>
 

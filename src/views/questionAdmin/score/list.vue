@@ -7,25 +7,25 @@
         <el-col :span="24" class="control-left">
           <el-col :span="18">
             <el-form-item label="选择试卷名称" prop="epaperId">
-              <el-select style="width: 300px;" v-model="peopleStaticListParams.epaperId" @change="getEpaperPeopleStaticListFunc">
+              <el-select style="width: 280px;" v-model="peopleStaticListParams.epaperId" @change="getEpaperPeopleStaticListFunc">
                 <el-option v-for="item in testNameOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="所在部门" prop="deptId">
-              <el-select style="width: 300px;" v-model="peopleStaticListParams.deptId" @change="departmentChange">
+              <el-select v-model="peopleStaticListParams.deptId" clearable @change="departmentChange" @clear="departmentClear">
                 <el-option v-for="item in departmentOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="姓名" prop="userId">
-              <el-select style="width: 300px;" v-model="peopleStaticListParams.userId" @click="departmentPeopleClick">
+              <el-select v-model="peopleStaticListParams.userId" clearable @change="departmentPeopleChange" @click="departmentPeopleClick">
                 <el-option v-for="item in departmentPeopleOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <!-- <el-col :span="5">
             <el-button icon="Search" type="primary" @click="getEpaperPeopleStaticListFunc">搜索</el-button>
             <el-button icon="Refresh" @click="resetListParams">重置</el-button>
-          </el-col>
+          </el-col> -->
           <el-col class="right" :span="2">
             <el-button icon="download" type="primary" @click="handleExport">导出成绩</el-button>
           </el-col>
@@ -155,6 +155,17 @@
     allDepartmentPeopleOptions.forEach(item => {
       if (item.parentId === e) departmentPeopleOptions.push(item)
     })
+    getEpaperPeopleStaticListFunc()
+  }
+  // 清空部门
+  const departmentClear = () => {
+    peopleStaticListParams.userId = ''
+    departmentPeopleOptions.length = 0
+    setTimeout(() => getEpaperPeopleStaticListFunc(), 100)
+  }
+  // 切换人员
+  const departmentPeopleChange = e => {
+    if (peopleStaticListParams.deptId !== "") getEpaperPeopleStaticListFunc()
   }
   // 没选部门点击人员提示
   const departmentPeopleClick = () => {
@@ -185,6 +196,7 @@
     peopleScoreList: [],
   })
   function getEpaperPeopleStaticListFunc() {
+    if (!peopleStaticListParams.epaperId) return ElMessage.error('请先选择试卷名称！')
     tableLoading.value = true
     getEpaperPeopleStaticList(peopleStaticListParams)
       .then(res => {

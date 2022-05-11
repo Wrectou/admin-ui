@@ -1,7 +1,7 @@
 <template>
   <div class="container home">
 
-    <el-alert v-if="selflistLength" @click="goMyTest" title="您有等待参考的试卷，点击此处可快速跳转考试！" type="info" effect="dark" show-icon :closable="false" />
+    <el-alert v-if="selflistLength && !isSystem" @click="goMyTest" title="您有等待参考的试卷，点击此处可快速跳转考试！" type="info" effect="dark" show-icon :closable="false" />
 
     <el-row :gutter="20" v-if="!isSystem">
 

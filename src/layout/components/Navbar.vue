@@ -27,7 +27,7 @@
       </template>
       <div class="avatar-container">
 
-        <el-select class="level-select" v-model="level" @change="levelChange">
+        <el-select v-if="!isSystem" class="level-select" v-model="level" @change="levelChange">
           <el-option label="基本级执法资格考试" value="0" />
           <el-option label="高级执法资格考试" value="1" />
         </el-select>
@@ -108,6 +108,11 @@ watch(() => route.name, () => {
 const goRepalce = () => router.replace({path: replacePath.value})
 
 const { proxy } = getCurrentInstance()
+
+
+// 系统管理员显示欢迎文字，不跳转模块
+let isSystem = ref(false)
+if (store.getters.roles.includes('all')) isSystem.value = true
 
 let level = ref("0")
 if (proxy.$cache.session.getJSON('level')) level.value = proxy.$cache.session.getJSON('level')

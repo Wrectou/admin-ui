@@ -6,10 +6,18 @@
       <el-row class="control-bar">
         <el-col :span="24" class="control-left">
           <el-col :span="20">
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="试卷名称" prop="epaperId">
-                <el-select style="width: 380px;" v-model="peopleStaticListParams.epaperId" @change="getEpaperPeopleStaticListFunc">
+                <el-select v-model="peopleStaticListParams.epaperId" @change="getEpaperPeopleStaticListFunc">
                   <el-option v-for="item in testNameOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="类型" prop="">
+                <el-select v-model="listParams.level" @change="levelChange">
+                  <el-option label="基本级执法资格考试" value="0" />
+                  <el-option label="高级执法资格考试" value="1" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -238,14 +246,18 @@
         res.rows.forEach(item => {
           let obj = {}
           obj.value = item.id
-          if (item.level === 0) obj.label = item.name + ' (基本级执法资格考试)'
-          else obj.label = item.name + ' (高级执法资格考试)'
+          obj.label = item.name
           testNameOptions.push(obj)
         })
 
       }, err => isLoading.value = false )
   }
   searchList()
+
+  const levelChange = e => {
+    searchList()
+    peopleStaticListParams.epaperId = ''
+  }
   // 重置搜索项
   const resetListParams = () => {
     peopleStaticListParams.deptId = ''

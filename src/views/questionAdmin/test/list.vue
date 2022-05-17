@@ -38,10 +38,13 @@
     <!-- 表格 -->
     <el-table v-loading="isLoading" :data="listData.items" style="width: 100%;">
       <el-table-column label="试卷名称" align="center" prop="name" />
-      <el-table-column label="考试类型" align="center" prop="etype">
+      <el-table-column label="试卷状态" align="center" prop="status" width="100">
+        <template #default="scope">{{returnTargetOptionsLabel(scope.row.status, testOptions)}}</template>
+      </el-table-column>
+      <el-table-column label="考试类型" align="center" prop="etype" width="100">
         <template #default="scope">{{returnTargetOptionsLabel(scope.row.etype, etypeOptions)}}</template>
       </el-table-column>
-      <el-table-column label="题目类型" align="center" prop="level">
+      <el-table-column label="题目类型" align="center" prop="level" width="160">
         <template #default="scope">{{returnTargetOptionsLabel(scope.row.level, levelOptions)}}</template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="460">
@@ -79,6 +82,11 @@
         >
           <el-form-item label="试卷名称" class="name" prop="name">
             <el-input v-model="addParams.name" placeholder="请输入试卷名称" />
+          </el-form-item>
+          <el-form-item label="试卷状态" prop="status">
+            <el-select v-model="addParams.status" :disabled="!isEdit">
+              <el-option v-for="item in testOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <br />
           <el-form-item label="考试类型" prop="etype">
@@ -239,6 +247,11 @@
   
   const { proxy } = getCurrentInstance()
 
+  // 试卷状态
+  let testOptions = [
+    { value: 0, label: '启用'},
+    { value: 1, label: '停用'},
+  ]
   // 题目类型
   let levelOptions = [
     { value: 0, label: '基本级执法资格考试'},
@@ -304,6 +317,10 @@
   let addTestLoading = ref(false)
   // 是否编辑
   let isEdit = ref(false)
+  // 试卷参考人数
+  let testPersonNum = ref(0)
+  // 试卷题目数
+  let testSubjectNum = ref(0)
   //  添加参数
   const addParams = reactive({
     difficulty: 0,
@@ -313,6 +330,7 @@
     etype: '',
     level: '',
     name: '',
+    status: 1,
     qualifiedScore: '',
     totalScore: '',
     allowNum: 0
@@ -321,6 +339,7 @@
   const addRuleFormRef = ref()
   const addRules = reactive({
     name: [ { required: true, message: "请输入试卷名称", trigger: "blur" } ],
+    status: [ { required: true, message: "请选择试卷状态", trigger: "change" } ],
     etype: [ { required: true, message: "请选择考试类型", trigger: "change" } ],
     level: [ { required: true, message: "请选择题目类型", trigger: "change" } ],
     totalScore: [ { required: true, message: "请输入总分数", trigger: "blur" } ],
@@ -331,6 +350,7 @@
   })
   // 添加
   const addTest = () => {
+    isEdit.value = false
     resetAddForm(addRuleFormRef.value)
     addTestVisible.value = true
   }
@@ -356,6 +376,11 @@
     if (!formEl) return
     formEl.validate((valid) => {
       if (valid) {
+        if (isEdit.value) {
+          if (addParams.status === 0) {
+            if (testPersonNum.value < 1 || testSubjectNum.value < 1) return ElMessage.error("需要添加考试人员和考试题目后才能启用试卷，请检查！")
+          }
+        }
         if (addParams.qualifiedScore > addParams.totalScore) return ElMessage.error("合格分数不能大于总分数！")
         if (addParams.difficulty <= 0) return ElMessage.error("请选择考试难度")
         if ((addParams.startTime !== '' && addParams.startTime !== null) && (addParams.endTime !== '' && addParams.endTime !== null) && (new Date(addParams.endTime).getTime() < new Date(addParams.startTime).getTime())) return ElMessage.error("考试停考时间不能早于考试开考时间！")
@@ -393,10 +418,10 @@
   }
   // 编辑
   const editTest = row => getEpaperDetailFunc(row.id)
-  // 获取详情
+  // 获取试卷详情
   function getEpaperDetailFunc(id) {
     getEpaperDetail(id)
-      .then(res => {
+      .then(async res => {
         console.log('getEpaperDetail: ', res);
         if (res.code === 200) {
           addParams.id = res.data.id
@@ -407,13 +432,46 @@
           addParams.etype = res.data.etype
           addParams.level = res.data.level
           addParams.name = res.data.name
+          addParams.status = res.data.status
           addParams.qualifiedScore = res.data.qualifiedScore
           addParams.totalScore = res.data.totalScore
           addParams.allowNum = res.data.allowNum
           addTestVisible.value = true
           isEdit.value = true
+
+          // 试卷是否可以启用状态判断
+          testPersonNum.value = 0
+          testSubjectNum.value = 0
+          await getEpaperDetailFuncGetEpaperUserListFunc(id)
+          await getEpaperDetailFuncGetEpaperQuestionListFunc(id)
         }
       })
+  }
+  // 获取试卷参考人
+  async function getEpaperDetailFuncGetEpaperUserListFunc(id) {
+    return new Promise((resolve, reject) => {
+      getEpaperUserList({epaperId: id})
+        .then(res => {
+          console.log('获取试卷参考人: ',res.data);
+          if (res.code === 200) {
+            if (res.data.length > 0) testPersonNum.value = res.data.length
+          }
+          resolve(res.data)
+        }, err => reject(err))
+    })
+  }
+  // 获取试卷题目数量
+  async function getEpaperDetailFuncGetEpaperQuestionListFunc(id) {
+    return new Promise((resolve, reject) => {
+      getEpaperQuestionList({epaperId: id})
+        .then(res => {
+          console.log('获取试卷题目数量: ',res.data);
+          if (res.code === 200) {
+            if (res.data.length > 0) testSubjectNum.value = res.data.length
+          }
+          resolve(res.data)
+        }, err => reject(err))
+    })
   }
   // 删除
   const deleteTest = row => {

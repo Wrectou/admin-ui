@@ -308,7 +308,7 @@ function getTestEpaperQuestionListFunc() {
         questionArr.push(obj)
       })
       if (route.query.isContinue) await arrangeLastRealQuestionData()
-      else getQuestionItemFunc(0, res.data[0].id)
+      else getQuestionItemFunc(0, res.data.length > 0 ? res.data[0].id : 1)
       isLoadingData.value = false
     }, err => isLoadingData.value = false )
 }

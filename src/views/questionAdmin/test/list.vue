@@ -39,7 +39,9 @@
     <el-table v-loading="isLoading" :data="listData.items" style="width: 100%;">
       <el-table-column label="试卷名称" align="center" prop="name" />
       <el-table-column label="试卷状态" align="center" prop="status" width="100">
-        <template #default="scope">{{returnTargetOptionsLabel(scope.row.status, testOptions)}}</template>
+        <template #default="scope">
+          <el-tag class="ml-2" :type="scope.row.status === 0 ? 'success' : 'danger'">{{returnTargetOptionsLabel(scope.row.status, testOptions)}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column label="考试类型" align="center" prop="etype" width="100">
         <template #default="scope">{{returnTargetOptionsLabel(scope.row.etype, etypeOptions)}}</template>
@@ -352,6 +354,17 @@
   const addTest = () => {
     isEdit.value = false
     resetAddForm(addRuleFormRef.value)
+    addParams.difficulty  = 0
+    addParams.startTime = ''
+    addParams.endTime = ''
+    addParams.duration  = ''
+    addParams.etype = ''
+    addParams.level = ''
+    addParams.name  = ''
+    addParams.status  = 1
+    addParams.qualifiedScore  = ''
+    addParams.totalScore  = ''
+    addParams.allowNum  = 0
     addTestVisible.value = true
   }
   // 添加弹窗关闭按钮
